@@ -2,5 +2,8 @@
 #
 
 from django.conf.urls import url
+from userpage.views import *
 
-urlpatterns = []
+urlpatterns = [
+    url(r'^bind$', UserBind.as_view()),
+]

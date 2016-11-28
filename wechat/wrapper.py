@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 from codex.baseview import BaseView
 from django.http import Http404, HttpResponse
 from django.template.loader import get_template
@@ -24,6 +26,9 @@ class WeChatHandler(object):
 
 	def msg_type_is(self, typ):
 		return self.msg.type == typ
+
+	def is_text(self, *args):
+		return self.msg_type_is('text') and (self.msg.content.lower() in args)
 
 
 class WeChatEmptyHandler(WeChatHandler):
@@ -78,5 +83,5 @@ class WeChatView(BaseView):
 					return inst.handle()
 			return self.default_handler(self, user).handle()
 		except:
-			self.logger.exception('Error occurred when handling WeChat message %s' % msg)
+			self.logger.exception('Error occurred when handling WeChat message {}'.format(self.wechat.message.raw))
 			return self.error_message_handler(self, user).handle()
