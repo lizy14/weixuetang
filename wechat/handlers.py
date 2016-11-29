@@ -30,8 +30,8 @@ class BindStudentHandler(WeChatHandler):
         return self.msg_type_is('click') and self.msg.key == self.context.event_keys['info_bind']
 
     def handle(self):
-        if self.user.student_id is not None:
-            return self.wechat.response_text(content=self.res_unbind.format(self.user.student_id))
+        if self.user.xt_id is not None:
+            return self.wechat.response_text(content=self.res_unbind.format(self.user.xt_id))
         else:
         	return self.wechat.response_text(content=self.res_bind.format(settings.get_url('u/bind', {
                 'openid': self.user.open_id
@@ -44,7 +44,8 @@ class UnBindStudentHandler(WeChatHandler):
         return self.is_text('解绑')
 
     def handle(self):
-        self.user.student_id = None
+        self.user.xt_id = None
+        self.user.xt_pw = None
         self.user.save()
         return self.wechat.response_text(content=self.response.format(settings.get_url('u/bind', {
             'openid': self.user.open_id
