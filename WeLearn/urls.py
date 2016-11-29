@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^wechat/?$', CustomWeChatView.as_view()),
     url(r'^api/u/', include('userpage.urls')),
+    url(r'^api/hw/', include('homework.urls')),
     url(r'^', StaticFileView.as_view()),
 ]

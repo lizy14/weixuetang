@@ -8,6 +8,9 @@ import datetime
 import pytz
 from WeLearn import settings
 
+# !IMPORTENT
+# HANDLERS ONLY
+# DO NOT DEFINE ANY OTHER CLASSES
 
 class CalculatorHandler(WeChatHandler):
 

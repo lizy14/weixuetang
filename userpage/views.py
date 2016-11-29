@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from codex.baseview import APIView
 from codex.baseerror import *
-from wechat.models import Student
+from .models import Student
 import urllib.request
 
 class UserBind(APIView):
