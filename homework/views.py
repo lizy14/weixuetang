@@ -29,8 +29,8 @@ class UnifinishedList(APIView):
         token = self.input['token']
 
         student = Student.objects.get(xt_id=xt_id)
-        #if token != student.token:
-        #    return []
+        if token != student.token:
+            return []
 
         result = []
         for hwStatus in HomeworkStatus.objects.filter(student__id=student.id):
