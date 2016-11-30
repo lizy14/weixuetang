@@ -3,6 +3,7 @@ from codex.baseview import APIView
 from codex.baseerror import *
 from .models import Student
 import urllib.request
+import uuid
 
 class UserBind(APIView):
 
@@ -28,4 +29,5 @@ class UserBind(APIView):
         self.validate_user()
         user.xt_id = self.input['student_id']
         user.xt_pw = self.input['password']
+        user.xt_token = uuid.uuid4()
         user.save()
