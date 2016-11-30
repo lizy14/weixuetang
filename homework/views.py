@@ -1,6 +1,10 @@
 from django.shortcuts import render
-from userpage.models import Student, HomeworkStatus, Homework
+from userpage.models import *
+from codex.baseview import APIView
+from codex.baseerror import *
+
 # Create your views here.
+
 
 class UnifinishedList(APIView):
     def wrap_homework(hw):
@@ -10,6 +14,7 @@ class UnifinishedList(APIView):
             'title'      : hw.title,
             'course_name': hw.course.name
         }
+
     def get(self):
         self.check_input('student_id', 'token')
         xt_id = self.input['student_id']
