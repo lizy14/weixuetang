@@ -23,20 +23,20 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <h1 class="news_title">作业</h1>
+    <div class="weui-panel__bd" id="hw-list-container">
+        <!-- Header -->
+        <h1 class="news_title">作业</h1>
 
-    <!-- update button -->
-    <div class="news_subtitle">
-        <div class="weui-cells__title">您现在有2个需要交的作业</div>
-        <div class="update-container">
-            <a href="javascript:;" class="weui-btn weui-btn_primary" id="update-button">update</a></div>
-    </div>
+        <!-- update button -->
+        <div class="news_subtitle">
+            <div class="weui-cells__title">您现在有{{ items.length }}个需要交的作业</div>
+            <div class="update-container">
+                <a href="javascript:;" class="weui-btn weui-btn_primary" id="update-button">update</a></div>
+        </div>
 
-    <!-- news list -->
-    <div class="news-container">
-        <div class="weui-panel weui-panel_access">
-            <div class="weui-panel__bd" id="hw-list-container">
+        <!-- news list -->
+        <div class="news-container">
+            <div class="weui-panel weui-panel_access">
 
                 <!-- List Item -->
                 <div class="weui-media-box weui-media-box_text" v-for="item in items">
