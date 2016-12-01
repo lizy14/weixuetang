@@ -97,7 +97,7 @@ async def update_student_course_work(student, course, _homework):
     homework.title      = _homework.title
     homework.start_time = _homework.start_time
     homework.end_time   = _homework.end_time
-    homework.detail     = await _homework.detail
+    homework.detail     = _homework.detail  # CHANGED: remove await
     homework.save()
 
     newly_created = False
