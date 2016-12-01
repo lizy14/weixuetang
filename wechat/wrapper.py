@@ -6,7 +6,7 @@ from django.template.loader import get_template
 import logging
 from wechat_sdk import WechatBasic
 from WeLearn.settings import wechat_conf
-from wechat.models import Student
+from userpage.models import Student
 
 
 class WeChatHandler(object):
