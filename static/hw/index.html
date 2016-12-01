@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="zh">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="moqunzhu">
 
-        <title>Homework</title>
-        <!-- Custom styles -->
-        <link href="../css/news.css" rel="stylesheet">
+<head>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="moqunzhu">
 
-        <!-- WeUI styles -->
-        <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
+    <title>Homework</title>
+    <!-- Custom styles -->
+    <link href="../css/news.css" rel="stylesheet">
 
-        
+    <!-- WeUI styles -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
 
-        <!-- WeUI Javascript library -->
-        <script type="text/javascript" src="dist/weui.min.js"></script>
-        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-      
+    <!-- WeUI Javascript library -->
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
 </head>
 
 <body>
@@ -36,42 +36,52 @@
     <!-- news list -->
     <div class="news-container">
         <div class="weui-panel weui-panel_access">
-        <div class="weui-panel__bd">
+            <div class="weui-panel__bd" id="hw-list-container">
 
-            <!-- List Item -->
-            <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">交互设计更新&迭代1计划</h5>
-                <h5 class="weui-media-box__title">ddl: 2016-12-03，还有<span class="weui-badge ddl-badge">2</span>天</h5>
-                <p class="weui-media-box__desc">（1）以附件形式提交最新版的产品交互设计文档 2）直接在作业内容中回复迭代1计划完成的工作及其小组人员分工，时间节点是下周四 说明：每个小组提交一份即可
-                </p>
-                <div class="weui-media-box__info">软件工程（3）</div>
-                <ul class="weui-media-box__info">
-                        <li class="weui-media-box__info__meta">发布时间:2016-12-01</li>
-                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">无附件</li>
-                </ul>
-            </div>
+                <!-- List Item -->
+                <div class="weui-media-box weui-media-box_text" v-for="item in items">
+                    <h5 class="weui-media-box__title">{{item.title}}</h5>
+                    <h5 class="weui-media-box__title">ddl: {{item.end_time}}，还有<span class="weui-badge ddl-badge">{{item.days_left}}</span>天</h5>
+                    <p class="weui-media-box__desc">{{item.detail}}</p>
+                    <div class="weui-media-box__info">{{item.course_name}}</div>
+                    <ul class="weui-media-box__info">
+                        <li class="weui-media-box__info__meta">发布时间:{{item.start_time}}</li>
+                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">有或者没有附件</li>
+                    </ul>
+                </div>
 
-            <!-- List Item -->
-            <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">网络部分第二次大作业——WSN</h5>
-                
-                <h5 class="weui-media-box__title">ddl: 2016-12-25，还有<span class="weui-badge ddl-badge">24</span>天</h5>
-                <p class="weui-media-box__desc">1. 之后会在教学资源区上传TinyOS的Linux镜像，大家可以用之以节约配置环境的时间。
-2. 本次实验的检查日期和提交日期为同一天，想这一天晚上交作业是行不通的，至少要完成一个能应付检查的版本。</p>
-                <div class="weui-media-box__info">计算机与网络体系结构(1)</div>
-                <ul class="weui-media-box__info">
-                        <li class="weui-media-box__info__meta">发布时间:2016-11-30</li>
-                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">有附件</li>
-                </ul>
             </div>
-        </div>
-        <div class="weui-panel__ft">
-            <a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
-                <div class="weui-cell__bd">查看本学期全部作业</div>
-                <span class="weui-cell__ft"></span>
-            </a>    
+            <div class="weui-panel__ft">
+                <a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
+                    <div class="weui-cell__bd">查看本学期全部作业</div>
+                    <span class="weui-cell__ft"></span>
+                </a>
+            </div>
         </div>
     </div>
-</div>
+    <script>
+    today =  new Date()
+    function expand(items){
+        items.forEach(function(i){
+            i.days_left = Math.floor((parseDate(i.end_time) - today) / 86400 / 1000)
+        })
+    }
+    function parseDate(str){
+        return new Date(str);
+    }
+    $.getJSON('/api/hw/unfinished-list/?student_id=2014013432&token=foo',function(data){
+        expand(data.data);
+        data.data.sort(function(a, b){
+            return parseDate(a.end_time) > parseDate(b.end_time)
+        })
+        new Vue({
+            el: '#hw-list-container',
+            data: {
+                'items': data.data
+            }
+        })
+    })
+
+    </script>
 
 </body>
