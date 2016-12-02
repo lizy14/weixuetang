@@ -12,7 +12,7 @@
 
     <title>Homework</title>
     <!-- Custom styles -->
-    <link href="../css/news.css" rel="stylesheet">
+    <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
     <!-- WeUI styles -->
     <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
@@ -25,10 +25,10 @@
 <body>
     <div class="weui-panel__bd" id="hw-list-container">
         <!-- Header -->
-        <h1 class="news_title">作业</h1>
+        <h1 class="news-title">作业</h1>
 
         <!-- update button -->
-        <div class="news_subtitle">
+        <div class="news-subtitle">
             <div class="weui-cells__title">您现在有{{ items.length }}个需要交的作业</div>
             <div class="update-container">
                 <a href="javascript:;" class="weui-btn weui-btn_primary" id="update-button">update</a></div>
@@ -39,26 +39,48 @@
             <div class="weui-panel weui-panel_access">
 
                 <!-- List Item -->
-                <div class="weui-media-box weui-media-box_text" v-for="item in items">
+                <div class="weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
                     <h5 class="weui-media-box__title">{{item.title}}</h5>
                     <h5 class="weui-media-box__title">ddl: {{item.end_time}}，还有<span class="weui-badge ddl-badge">{{item.days_left}}</span>天</h5>
-                    <p class="weui-media-box__desc">{{item.detail}}</p>
+                    <p class="detail-box weui-media-box__desc" >{{item.detail}}</p>
                     <div class="weui-media-box__info">{{item.course_name}}</div>
                     <ul class="weui-media-box__info">
-                        <li class="weui-media-box__info__meta">发布时间:{{item.start_time}}</li>
+                        <li class="weui-media-box__info__meta">发布时间: {{item.start_time}}</li>
                         <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">有或者没有附件</li>
                     </ul>
                 </div>
 
-            </div>
+            
             <div class="weui-panel__ft">
                 <a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
                     <div class="weui-cell__bd">查看本学期全部作业</div>
                     <span class="weui-cell__ft"></span>
                 </a>
             </div>
+
+            </div>
+        </div>
+    
+
+        <!-- Detail Dialog -->
+        <div id="dialog-container">
+            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.title">
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__hd">
+                        <strong class="weui-dialog__title">{{item.title}}</strong>
+                    </div>
+                    <div class="weui-dialog__bd">{{item.detail}}</div>
+                     <div class="weui-dialog__ft">
+                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
+                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+
     <script>
     today =  new Date()
     function expand(items){
@@ -82,6 +104,21 @@
         })
     })
 
+    $(function(){
+        var $DetailDialog = $('.detail-dialog');
+
+        $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
+            $(this).parents('.detail-dialog').fadeOut(200);
+        });
+
+        $('.detail-box').on('click', function(){
+            id = '#dialog-' + $(this).parents('.weui-media-box')[0].id;
+            $(id).fadeIn(200);
+        });
+    });
+
     </script>
 
 </body>
+
+
