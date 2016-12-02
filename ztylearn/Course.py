@@ -14,58 +14,58 @@ class Course:
 
     @property
     async def works(self):
-        response = await wrapped_json('/learnhelper/{username}/courses/{courseid}/assignments' % {
+        response = await wrapped_json('/learnhelper/{username}/courses/{courseid}/assignments'.format_map({
             'username': self.user.username,
             'courseid': self.id
-        })
+        }))
         return [
             Work(
                 user       = user,
-                id         = _.sequencenum,
-                title      = _.title,
-                detail     = _.detail,
-                start_time = _.startdate,
-                end_time   = _.duedate,
+                id         = _['sequencenum'],
+                title      = _['title'],
+                detail     = _['detail'],
+                start_time = _['startdate'],
+                end_time   = _['duedate'],
                 completion = 0 # TODO
                 # TODO grading
             )
-            for _ in response.assignments
+            for _ in response['assignments']
         ]
 
     @property
     async def messages(self):
-        response = await wrapped_json('/learnhelper/{username}/courses/{courseid}/notices' % {
+        response = await wrapped_json('/learnhelper/{username}/courses/{courseid}/notices'.format_map({
             'username': self.user.username,
             'courseid': self.id
-        })
+        }))
         return [
             Message(
                 user      = user,
-                id        = _.sequencenum,
-                title     = _.title,
-                date      = _.publishtime
-                detail    = _.content
+                id        = _['sequencenum'],
+                title     = _['title'],
+                date      = _['publishtime'],
+                detail    = _['content']
             )
-            for _ in response.notices
+            for _ in response['notices']
         ]
 
     @property
     async def files(self):
-        response = await wrapped_json('/learnhelper/{username}/courses/{courseid}/documents' % {
+        response = await wrapped_json('/learnhelper/{username}/courses/{courseid}/documents'.format_map({
             'username': self.user.username,
             'courseid': self.id
-        })
+        }))
         return [
             File(
                 user = user,
-                id   = _.sequencenum,
-                name = _.title,
-                title= _.explanation,
-                size = _.size,
-                date = _.updatingtime,
-                url  = _.url
+                id   = _['sequencenum'],
+                name = _['title'],
+                title= _['explanation'],
+                size = _['size'],
+                date = _['updatingtime'],
+                url  = _['url']
             )
-            for _ in response.documents
+            for _ in response['documents']
         ]
 
     @property

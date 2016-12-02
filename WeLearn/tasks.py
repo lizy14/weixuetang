@@ -2,7 +2,7 @@ from django.db import models
 from userpage.models import *
 from homework.models import *
 
-import aiolearn
+import ztylearn as LearnDAO
 import asyncio
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 def main():
     loop = asyncio.get_event_loop()
     loop.run_until_complete(update_all())
-#import timeit;import WeLearn.tasks as t; timeit.timeit(t.main, number=1)
+# echo "import WeLearn.tasks as t; t.main()" | python manage.py shell
 
 
 async def notification_hw_new(homeworkStatus):
@@ -49,11 +49,10 @@ async def update_all():
 
 async def update_student(student):
     xt_id = student.xt_id
-    _user = aiolearn.User(
-        username=xt_id,
-        password=student.xt_pw
+    _user = LearnDAO.User(
+        username=xt_id
     )
-    _semester = aiolearn.Semester(_user, current=True)
+    _semester = LearnDAO.Semester(_user)
 
     tasks = [update_student_course(student, _course) for _course in await _semester.courses]
     await asyncio.gather(*tasks)
