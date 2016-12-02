@@ -31,10 +31,10 @@ def token_required(function=None):
     return wrapper
 
 
-class UnifinishedList(APIView):
+class UnfinishedList(APIView):
     @token_required
     def get(self):
-        def wrap_homework(hw):
+        def wrap(hw):
             return {
                 'id'         : hw.id,
                 'start_time' : wrap_date(hw.start_time),
@@ -42,20 +42,21 @@ class UnifinishedList(APIView):
                 'title'      : hw.title,
                 'course_name': hw.course.name,
                 'detail'     : hw.detail,
-                'attachment' : "" # TODO
+                'attachment' : ""  # TODO
             }
 
-        result = []
-        for hwStatus in HomeworkStatus.objects.filter(student__id=self.student.id):
-            if not hwStatus.submitted:
-                result.append(wrap_homework(hwStatus.homework))
-        return result
+        result = HomeworkStatus.objects.filter(
+            student__id=self.student.id,
+            submitted=False,
+            homework__end_time__gte=datetime.today()
+        )
+        return [wrap(hwStatus.homework) for hwStatus in result]
 
 
 class List(APIView):
     @token_required
     def get(self):
-        def wrap_homework_status(hwSt):
+        def wrap(hwSt):
             hw = hwSt.homework
             return {
                 'id'         : hw.id,
@@ -66,15 +67,16 @@ class List(APIView):
                 'status'     : wrap_homework_status_status(hwSt)
             }
 
-        result = HomeworkStatus.objects.filter(student__id=self.student.id)
-        return wrap_homework_status(result)
-
+        result = HomeworkStatus.objects.filter(
+            student__id=self.student.id
+        )
+        return [wrap(hwSt) for hwSt in result]
 
 
 class Detail(APIView):
     @token_required
     def get(self):
-        def wrap_homework_status(hwSt):
+        def wrap(hwSt):
             hw = hwSt.homework
             return {
                 'id'         : hw.id,
@@ -84,10 +86,11 @@ class Detail(APIView):
                 'course_name': hw.course.name,
                 'status'     : wrap_homework_status_status(hwSt),
                 'detail'     : hw.detail,
-                'attachment' : "" # TODO
+                'attachment' : ""  # TODO
             }
-
-        result = []
-        for hwStatus in HomeworkStatus.objects.filter(student__id=self.student.id):
-            result.append(wrap_homework_status(hwStatus))
-        return result
+        self.check_input('id')
+        result = HomeworkStatus.objects.get(
+            student__id=self.student.id,
+            homework__id=self.input['id']
+        )
+        return wrap(result)

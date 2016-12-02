@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 def main():
     loop = asyncio.get_event_loop()
     loop.run_until_complete(update_all())
-#import timeit;import WeLearn.tasks as t; timeit.timeit(t.main, number=1)
+# import timeit;import WeLearn.tasks as t; timeit.timeit(t.main, number=1)
 
 
 async def notification_hw_new(homeworkStatus):
@@ -39,12 +39,10 @@ async def notification_hw_ddl_modified(homeworkStatus, oldDdl):
     pass
 
 
-
 async def update_all():
-    students = Student.objects.all() # TODO
+    students = Student.objects.all()  # TODO
     tasks = [update_student(i) for i in students]
     await asyncio.gather(*tasks)
-
 
 
 async def update_student(student):
@@ -55,9 +53,11 @@ async def update_student(student):
     )
     _semester = aiolearn.Semester(_user, current=True)
 
-    tasks = [update_student_course(student, _course) for _course in await _semester.courses]
+    tasks = [
+        update_student_course(student, _course)
+        for _course in await _semester.courses
+    ]
     await asyncio.gather(*tasks)
-
 
 
 async def update_student_course(student, _course):
@@ -74,9 +74,11 @@ async def update_student_course(student, _course):
         student_id = student.id
     )
 
-    tasks = [update_student_course_work(student, course, _homework) for _homework in await _course.works]
+    tasks = [
+        update_student_course_work(student, course, _homework)
+        for _homework in await _course.works
+    ]
     await asyncio.gather(*tasks)
-
 
 
 async def update_student_course_work(student, course, _homework):
@@ -115,7 +117,7 @@ async def update_student_course_work(student, course, _homework):
     graded = _homework.completion > 1
     newly_graded = (not newly_created) and graded and not homeworkStatus.graded
 
-    homeworkStatus.grading   = "" # TODO
+    homeworkStatus.grading   = ""  # TODO
     homeworkStatus.graded    = graded
     homeworkStatus.submitted = _homework.completion > 0
     homeworkStatus.save()
