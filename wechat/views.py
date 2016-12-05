@@ -19,6 +19,7 @@ class CustomWeChatView(WeChatView):
 		'talk_discuss': 'TALK_DIS',
 		'info_bind': 'INFO_BIN',
 		'info_SETTING': 'INFO_SET',
+		'info_test': 'INFO_TEST',
 	}
 	menu = {
 		'button': [
@@ -74,6 +75,11 @@ class CustomWeChatView(WeChatView):
 						'type': 'click',
 						'name': '设置',
 						'key': event_keys['info_SETTING'],
+					},
+					{
+						'type': 'click',
+						'name': '测试',
+						'key': event_keys['info_test'],
 					}
 				]
 			}

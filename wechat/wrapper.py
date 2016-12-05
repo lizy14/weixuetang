@@ -30,6 +30,9 @@ class WeChatHandler(object):
 	def is_text(self, *args):
 		return self.msg_type_is('text') and (self.msg.content.lower() in args)
 
+	def is_click_of_event(self, eve):
+		return self.msg.type == 'click' and self.msg.key == self.context.event_keys[eve]
+
 
 class WeChatEmptyHandler(WeChatHandler):
 
