@@ -30,8 +30,6 @@
         <!-- update button -->
         <div class="news-subtitle">
             <div class="weui-cells__title">您现在有{{ items.length }}个需要交的作业</div>
-            <div class="update-container">
-                <a href="javascript:;" class="weui-btn weui-btn_primary" id="update-button">update</a></div>
         </div>
 
         <!-- news list -->
@@ -46,11 +44,11 @@
                     <div class="weui-media-box__info">{{item.course_name}}</div>
                     <ul class="weui-media-box__info">
                         <li class="weui-media-box__info__meta">发布时间: {{item.start_time}}</li>
-                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">有或者没有附件</li>
+                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.attachment }}</li>
                     </ul>
                 </div>
 
-            
+
             <div class="weui-panel__ft">
                 <a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
                     <div class="weui-cell__bd">查看本学期全部作业</div>
@@ -60,7 +58,7 @@
 
             </div>
         </div>
-    
+
 
         <!-- Detail Dialog -->
         <div id="dialog-container">
@@ -72,7 +70,7 @@
                     </div>
                     <div class="weui-dialog__bd">{{item.detail}}</div>
                      <div class="weui-dialog__ft">
-                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
+                        <a :href="'/hw/detail/?id=' + item.id" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
                     </div>
                 </div>
@@ -120,5 +118,3 @@
     </script>
 
 </body>
-
-
