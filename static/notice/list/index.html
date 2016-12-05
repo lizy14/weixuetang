@@ -25,40 +25,27 @@
 <body>
     <div class="weui-panel__bd" id="hw-list-container">
         <!-- Header -->
-        <h1 class="news-title">作业</h1>
+        <h1 class="news-title">公告</h1>
 
-        <!-- update button -->
-        <div class="news-subtitle">
-            <div class="weui-cells__title">您现在有{{ items.length }}个需要交的作业</div>
-        </div>
+        <div class="weui-cells__title">每日格言</div>
 
-        <!-- news list -->
+        <!-- notices -->
         <div class="news-container">
             <div class="weui-panel weui-panel_access">
 
                 <!-- List Item -->
                 <div class="weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
-                    <h5 class="weui-media-box__title">{{item.title}}</h5>
-                    <h5 class="weui-media-box__title">ddl: {{item.end_time}}，还有<span class="weui-badge ddl-badge">{{item.days_left}}</span>天</h5>
+                    <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge">new</span>公告名</h5>
                     <p class="detail-box weui-media-box__desc" >{{item.detail}}</p>
-                    <div class="weui-media-box__info">{{item.course_name}}</div>
                     <ul class="weui-media-box__info">
                         <li class="weui-media-box__info__meta">发布时间: {{item.start_time}}</li>
-                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.attachment }}</li>
+                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">课程名</li>
                     </ul>
                 </div>
 
-
-            <div class="weui-panel__ft">
-                <a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
-                    <div class="weui-cell__bd">查看本学期全部作业</div>
-                    <span class="weui-cell__ft"></span>
-                </a>
-            </div>
-
             </div>
         </div>
-
+    
 
         <!-- Detail Dialog -->
         <div id="dialog-container">
@@ -70,7 +57,7 @@
                     </div>
                     <div class="weui-dialog__bd">{{item.detail}}</div>
                      <div class="weui-dialog__ft">
-                        <a :href="'/hw/detail/?id=' + item.id" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
+                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
                     </div>
                 </div>
@@ -118,3 +105,5 @@
     </script>
 
 </body>
+
+
