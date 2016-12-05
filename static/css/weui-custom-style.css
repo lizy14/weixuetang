@@ -34,10 +34,20 @@ body {
     margin-bottom: 3px;
 }
 
-.detail-title{
+.detail-title {
     margin:30px 0 0 10px;
-    font-weight:400;
-    font-size:34px;
-    color:black;
-    #text-align:center;
+    text-align: left;
+    font-size: 30px;
+    font-weight: 400;
 }
+
+.detail-description {
+    -webkit-line-clamp:10;
+    overflow: scroll;
+}
+
+
+/*.detail-subtitle {
+    margin:10px 0 0 0px;
+    font-size: 20px;
+}*/
