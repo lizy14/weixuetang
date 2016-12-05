@@ -3,6 +3,7 @@
     <head>
         <script src="https://unpkg.com/vue/dist/vue.js"></script>
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="../../js/base.js"></script>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,8 +19,8 @@
 
         <!-- WeUI Javascript library -->
         <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-      
-</head>
+
+    </head>
 
 <body>
     <div id="detail-container">
@@ -37,8 +38,8 @@
                 <h5 class="weui-media-box__title">截止时间: {{item.end_time}}</h5>
                 <div class="weui-media-box__desc" id="detail-description">作业描述: {{item.detail}}
                 </div>
-           
-            
+
+
                 <ul class="weui-media-box__info">
                         <li class="weui-media-box__info__meta">发布时间: {{item.start_time}}</li>
                         <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">
@@ -62,7 +63,7 @@
     function parseDate(str){
         return new Date(str);
     }
-    $.getJSON('/api/hw/unfinished-list/?student_id=2014013432&token=foo',function(data){
+    $.getJSON('/api/hw/detail/',urlParam, function(data){
         expand(data.data);
         data.data.sort(function(a, b){
             return parseDate(a.end_time) > parseDate(b.end_time)
@@ -76,8 +77,4 @@
     })
     </script>
 
-
-
-
 </body>
-
