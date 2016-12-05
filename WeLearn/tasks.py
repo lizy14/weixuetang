@@ -2,7 +2,7 @@ from django.db import models
 from userpage.models import *
 from homework.models import *
 
-import aiolearn
+import ztylearn as LearnDAO
 import asyncio
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -12,7 +12,6 @@ _logger = logging.getLogger(__name__)
 def main():
     loop = asyncio.get_event_loop()
     loop.run_until_complete(update_all())
-#import timeit;import WeLearn.tasks as t; timeit.timeit(t.main, number=1)
 
 
 async def notification_hw_new(homeworkStatus):
@@ -39,25 +38,24 @@ async def notification_hw_ddl_modified(homeworkStatus, oldDdl):
     pass
 
 
-
 async def update_all():
-    students = Student.objects.all() # TODO
+    students = Student.objects.all()  # TODO
     tasks = [update_student(i) for i in students]
     await asyncio.gather(*tasks)
 
 
-
 async def update_student(student):
     xt_id = student.xt_id
-    _user = aiolearn.User(
-        username=xt_id,
-        password=student.xt_pw
+    _user = LearnDAO.User(
+        username=xt_id
     )
-    _semester = aiolearn.Semester(_user, current=True)
+    _semester = LearnDAO.Semester(_user)
 
-    tasks = [update_student_course(student, _course) for _course in await _semester.courses]
+    tasks = [
+        update_student_course(student, _course)
+        for _course in await _semester.courses
+    ]
     await asyncio.gather(*tasks)
-
 
 
 async def update_student_course(student, _course):
@@ -74,9 +72,11 @@ async def update_student_course(student, _course):
         student_id = student.id
     )
 
-    tasks = [update_student_course_work(student, course, _homework) for _homework in await _course.works]
+    tasks = [
+        update_student_course_work(student, course, _homework)
+        for _homework in await _course.works
+    ]
     await asyncio.gather(*tasks)
-
 
 
 async def update_student_course_work(student, course, _homework):
@@ -97,7 +97,7 @@ async def update_student_course_work(student, course, _homework):
     homework.title      = _homework.title
     homework.start_time = _homework.start_time
     homework.end_time   = _homework.end_time
-    homework.detail     = await _homework.detail
+    homework.detail     = _homework.detail  # CHANGED: remove await
     homework.save()
 
     newly_created = False
@@ -115,7 +115,7 @@ async def update_student_course_work(student, course, _homework):
     graded = _homework.completion > 1
     newly_graded = (not newly_created) and graded and not homeworkStatus.graded
 
-    homeworkStatus.grading   = "" # TODO
+    homeworkStatus.grading   = ""  # TODO
     homeworkStatus.graded    = graded
     homeworkStatus.submitted = _homework.completion > 0
     homeworkStatus.save()

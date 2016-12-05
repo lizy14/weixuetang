@@ -96,3 +96,4 @@ ENV/
 # others
 /configs.json
 active.bat
+__.json
