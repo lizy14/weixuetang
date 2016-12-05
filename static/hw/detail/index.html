@@ -32,17 +32,22 @@
         <div class="weui-panel weui-panel_access">
         <div class="weui-panel__bd">
 
-            <!-- List Item -->
             <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">发布时间: {{item.start_time}}</h5>
                 <h5 class="weui-media-box__title">截止时间: {{item.end_time}}</h5>
-                <div class=" weui-media-box__desc detail-description">（1）以附件形式提交最新版的产品交互设计文档 2）直接在作业内容中回复迭代1计划完成的工作及其小组人员分工，时间节点是下周四 说明：每个小组提交一份即可
+                <div class="weui-media-box__desc" id="detail-description">作业描述: {{item.detail}}
                 </div>
-            </div>
-            </div>
+           
             
+                <ul class="weui-media-box__info">
+                        <li class="weui-media-box__info__meta">发布时间: {{item.start_time}}</li>
+                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">
+                        <span v-if="item.attachment">有附件: {{item.attachment}}</span><span v-else>无附件</span></li>
+                    </ul>
+            </div>
         </div>
-        <a href="javascript:;" class="weui-btn weui-btn_primary">返回作业新鲜事</a></div>
+        </div>
+        <a href="javascript:;" class="weui-btn weui-btn_primary" id="detail-return-button">返回作业新鲜事</a>
+    </div>
     </div>
 
     <script>
@@ -55,7 +60,7 @@
     function parseDate(str){
         return new Date(str);
     }
-    $.getJSON('/api/hw/unfinished-list/?student_id=2014013432&token=foo',function(data){
+    $.getJSON('/api/hw/detail/?homework_id=?student_id=2014013432&token=foo',function(data){
         expand(data.data);
         data.data.sort(function(a, b){
             return parseDate(a.end_time) > parseDate(b.end_time)
