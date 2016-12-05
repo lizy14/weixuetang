@@ -41,13 +41,14 @@ body {
     font-weight: 400;
 }
 
-.detail-description {
-    -webkit-line-clamp:10;
-    overflow: scroll;
+#detail-description {
+    display: block;
 }
 
+#detail-return-button {
+    margin-top: 10px;
+}
 
-/*.detail-subtitle {
-    margin:10px 0 0 0px;
-    font-size: 20px;
-}*/
+.notice-detail {
+    -webkit-line-clamp:1;
+}

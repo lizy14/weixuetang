@@ -3,7 +3,6 @@
     <head>
         <script src="https://unpkg.com/vue/dist/vue.js"></script>
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-        <script src="../../js/base.js"></script>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,77 +18,43 @@
 
         <!-- WeUI Javascript library -->
         <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-
-    </head>
+      
+</head>
 
 <body>
     <div id="detail-container">
 
     <!-- Header -->
-    <h1 class="news-title">作业详情</h1>
+    <h1 class="news-title">公告详情</h1>
 
     <div class="news-container">
         <div class="weui-panel weui-panel_access">
         <div class="weui-panel__bd">
 
             <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">{{item.title}}</h5>
-                <div class="weui-media-box__info">{{item.course_name}}</div>
+                <h5 class="weui-media-box__title">公告名称</h5>
+                <div class="weui-media-box__info">课程名</div>
             </div>
         </div>
         </div>
     </div>
 
     <!-- Description -->
-    <p class="weui-cells__title">作业信息</p>
     <div class="news-container">
         <div class="weui-panel weui-panel_access">
         <div class="weui-panel__bd">
 
             <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">截止时间: {{item.end_time}}</h5>
-                <h5 class="weui-media-box__title">发布时间: {{item.start_time}}</h5>
-                <div class="weui-media-box__desc" id="detail-description">{{item.detail}}
-                </div>
-
-
-                <ul class="weui-media-box__info">
-                        <li class="weui-media-box__info__meta">
-                        <span v-if="item.attachment">附件:{{item.attachment}}</span></li>
-                    </ul>
-            </div>
-        </div>
-        </div>
-    </div>
-
-    <!-- Submission -->
-    <div class="news-container">
-        <div class="weui-panel weui-panel_access">
-        <div class="weui-panel__bd">
-            <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">已提交／未提交</h5>
-            </div>
-        </div>
-        </div>
-    </div>
-
-    <!-- Grade -->
-    <p class="weui-cells__title">批改信息 或未批改</p>
-    <div class="news-container">
-        <div class="weui-panel weui-panel_access">
-        <div class="weui-panel__bd">
-
-            <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">分数: </h5>
-                <h5 class="weui-media-box__title">批改人:</h5>
-                <div class="weui-media-box__desc" id="detail-description">反馈信息blahblahblahblahblahblahblahblahblahblahblahblahblah
+                <h5 class="weui-media-box__title">发布时间: </h5>
+                <h5 class="weui-media-box__title">发布人: </h5>
+                <div class="weui-media-box__desc" id="detail-description">公告内容2333333333333333333333333333333333333333333333333
                 </div>
             </div>
         </div>
         </div>
     </div>
 
-    <a href="javascript:;" class="weui-btn weui-btn_primary" id="detail-return-button">返回作业新鲜事</a>
+    <a href="javascript:;" class="weui-btn weui-btn_primary" id="detail-return-button">返回公告新鲜事</a>
     </div>
 
     <script>
@@ -103,7 +68,7 @@
     function parseDate(str){
         return new Date(str);
     }
-    $.getJSON('/api/hw/detail/',urlParam, function(data){
+    $.getJSON('/api/notice/detail/?',function(data){
         expand(data.data);
         data.data.sort(function(a, b){
             return parseDate(a.end_time) > parseDate(b.end_time)
@@ -117,4 +82,8 @@
     })
     </script>
 
+
+
+
 </body>
+
