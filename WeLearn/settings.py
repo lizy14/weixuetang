@@ -62,6 +62,7 @@ INSTALLED_APPS = [
 	'wechat',
 	'userpage',
 	'homework',
+	'notice',
 ]
 
 MIDDLEWARE_CLASSES = [
