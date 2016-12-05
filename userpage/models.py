@@ -12,3 +12,7 @@ class Student(models.Model):
 			return cls.objects.get(open_id=openid)
 		except cls.DoesNotExist:
 			raise LogicError('User not found.')
+
+class Subscription(models.Model):
+	student = models.ForeignKey(Student, db_index=True)
+	
