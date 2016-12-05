@@ -25,7 +25,8 @@
     <div id="detail-container">
 
     <!-- Header -->
-    <h1 class="detail-title">{{ item.title }}<span class="weui-cells__title">|&nbsp&nbsp{{ item.course_name }}</span></h1>
+    <h1 class="detail-title">{{ item.title }}</h1>
+    <p class="weui-cells__title">课程: {{ item.course_name }}</p>
 
     <!-- news list -->
     <div class="news-container">
@@ -41,7 +42,7 @@
                 <ul class="weui-media-box__info">
                         <li class="weui-media-box__info__meta">发布时间: {{item.start_time}}</li>
                         <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">
-                        <span v-if="item.attachment">有附件: {{item.attachment}}</span><span v-else>无附件</span></li>
+                        <span v-if="item.attachment">有附件:{{item.attachment}}</span><span v-else>无附件</span></li>
                     </ul>
             </div>
         </div>
@@ -55,12 +56,13 @@
     function expand(items){
         items.forEach(function(i){
             i.days_left = Math.floor((parseDate(i.end_time) - today) / 86400 / 1000)
+            i.detail.replace(/\\n\\n/g, "<br/>")
         })
     }
     function parseDate(str){
         return new Date(str);
     }
-    $.getJSON('/api/hw/detail/?homework_id=?student_id=2014013432&token=foo',function(data){
+    $.getJSON('/api/hw/unfinished-list/?student_id=2014013432&token=foo',function(data){
         expand(data.data);
         data.data.sort(function(a, b){
             return parseDate(a.end_time) > parseDate(b.end_time)
@@ -68,7 +70,7 @@
         new Vue({
             el: '#detail-container',
             data: {
-                'item': data.data[0]
+                'item': data.data[5]
             }
         })
     })

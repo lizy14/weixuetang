@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="moqunzhu">
+
+    <title>Homework</title>
+    <!-- Custom styles -->
+    <link href="../../css/weui-custom-style.css" rel="stylesheet">
+
+    <!-- WeUI styles -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
+
+    <!-- WeUI Javascript library -->
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+</head>
+
+<body>
+    <div class="weui-panel__bd" id="hw-list-container">
+        <!-- Header -->
+        <h1 class="news-title">公告</h1>
+
+        <div class="weui-cells__title">每日格言</div>
+
+        <!-- notices -->
+        <div class="news-container">
+            <div class="weui-panel weui-panel_access">
+
+                <!-- List Item -->
+                <div class="weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
+                    <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge">new</span>公告名</h5>
+                    <p class="detail-box weui-media-box__desc" >{{item.detail}}</p>
+                    <ul class="weui-media-box__info">
+                        <li class="weui-media-box__info__meta">发布时间: {{item.start_time}}</li>
+                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">课程名</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    
+
+        <!-- Detail Dialog -->
+        <div id="dialog-container">
+            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.title">
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__hd">
+                        <strong class="weui-dialog__title">{{item.title}}</strong>
+                    </div>
+                    <div class="weui-dialog__bd">{{item.detail}}</div>
+                     <div class="weui-dialog__ft">
+                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
+                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    today =  new Date()
+    function expand(items){
+        items.forEach(function(i){
+            i.days_left = Math.floor((parseDate(i.end_time) - today) / 86400 / 1000)
+        })
+    }
+    function parseDate(str){
+        return new Date(str);
+    }
+    $.getJSON('/api/hw/unfinished-list/?student_id=2014013432&token=foo',function(data){
+        expand(data.data);
+        data.data.sort(function(a, b){
+            return parseDate(a.end_time) > parseDate(b.end_time)
+        })
+        new Vue({
+            el: '#hw-list-container',
+            data: {
+                'items': data.data
+            }
+        })
+    })
+
+    $(function(){
+        var $DetailDialog = $('.detail-dialog');
+
+        $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
+            $(this).parents('.detail-dialog').fadeOut(200);
+        });
+
+        $('.detail-box').on('click', function(){
+            id = '#dialog-' + $(this).parents('.weui-media-box')[0].id;
+            $(id).fadeIn(200);
+        });
+    });
+
+    </script>
+
+</body>
+
+
