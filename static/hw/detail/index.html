@@ -25,30 +25,70 @@
     <div id="detail-container">
 
     <!-- Header -->
-    <h1 class="detail-title">{{ item.title }}</h1>
-    <p class="weui-cells__title">课程: {{ item.course_name }}</p>
+    <h1 class="news-title">作业详情</h1>
 
-    <!-- news list -->
+    <div class="news-container">
+        <div class="weui-panel weui-panel_access">
+        <div class="weui-panel__bd">
+
+            <div class="weui-media-box weui-media-box_text">
+                <h5 class="weui-media-box__title">{{item.title}}</h5>
+                <div class="weui-media-box__info">{{item.course_name}}</div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Description -->
+    <p class="weui-cells__title">作业信息</p>
     <div class="news-container">
         <div class="weui-panel weui-panel_access">
         <div class="weui-panel__bd">
 
             <div class="weui-media-box weui-media-box_text">
                 <h5 class="weui-media-box__title">截止时间: {{item.end_time}}</h5>
-                <div class="weui-media-box__desc" id="detail-description">作业描述: {{item.detail}}
+                <h5 class="weui-media-box__title">发布时间: {{item.start_time}}</h5>
+                <div class="weui-media-box__desc" id="detail-description">{{item.detail}}
                 </div>
            
             
                 <ul class="weui-media-box__info">
-                        <li class="weui-media-box__info__meta">发布时间: {{item.start_time}}</li>
-                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">
-                        <span v-if="item.attachment">有附件:{{item.attachment}}</span><span v-else>无附件</span></li>
+                        <li class="weui-media-box__info__meta">
+                        <span v-if="item.attachment">附件:{{item.attachment}}</span></li>
                     </ul>
             </div>
         </div>
         </div>
-        <a href="javascript:;" class="weui-btn weui-btn_primary" id="detail-return-button">返回作业新鲜事</a>
     </div>
+
+    <!-- Submission -->
+    <div class="news-container">
+        <div class="weui-panel weui-panel_access">
+        <div class="weui-panel__bd">
+            <div class="weui-media-box weui-media-box_text">
+                <h5 class="weui-media-box__title">已提交／未提交</h5>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Grade -->
+    <p class="weui-cells__title">批改信息 或未批改</p>
+    <div class="news-container">
+        <div class="weui-panel weui-panel_access">
+        <div class="weui-panel__bd">
+
+            <div class="weui-media-box weui-media-box_text">
+                <h5 class="weui-media-box__title">分数: </h5>
+                <h5 class="weui-media-box__title">批改人:</h5>
+                <div class="weui-media-box__desc" id="detail-description">反馈信息blahblahblahblahblahblahblahblahblahblahblahblahblah
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <a href="javascript:;" class="weui-btn weui-btn_primary" id="detail-return-button">返回作业新鲜事</a>
     </div>
 
     <script>
@@ -70,7 +110,7 @@
         new Vue({
             el: '#detail-container',
             data: {
-                'item': data.data[5]
+                'item': data.data[3]
             }
         })
     })
