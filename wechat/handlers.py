@@ -49,7 +49,6 @@ class UnBindStudentHandler(WeChatHandler):
 
     def handle(self):
         self.user.xt_id = None
-        self.user.xt_pw = None
         self.user.save()
         return self.wechat.response_text(content=self.response.format(settings.get_url('u/bind', {
             'openid': self.user.open_id

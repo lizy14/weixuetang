@@ -2,7 +2,7 @@ from django.db import models
 from userpage.models import *
 from homework.models import *
 
-import aiolearn
+import ztylearn as LearnDAO
 import asyncio
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -47,11 +47,10 @@ async def update_all():
 
 async def update_student(student):
     xt_id = student.xt_id
-    _user = aiolearn.User(
-        username=xt_id,
-        password=student.xt_pw
+    _user = LearnDAO.User(
+        username=xt_id
     )
-    _semester = aiolearn.Semester(_user, current=True)
+    _semester = LearnDAO.Semester(_user)
 
     tasks = [
         update_student_course(student, _course)
@@ -99,7 +98,7 @@ async def update_student_course_work(student, course, _homework):
     homework.title      = _homework.title
     homework.start_time = _homework.start_time
     homework.end_time   = _homework.end_time
-    homework.detail     = await _homework.detail
+    homework.detail     = _homework.detail  # CHANGED: remove await
     homework.save()
 
     newly_created = False

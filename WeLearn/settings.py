@@ -182,10 +182,11 @@ logging.basicConfig(
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_BROKER_URL = 'amqp://'
 
 import djcelery
 djcelery.setup_loader()
+
+BROKER_URL = 'django://'
 
 # Site and URL
 SITE_DOMAIN = CONFIGS['SITE_DOMAIN'].rstrip('/')
