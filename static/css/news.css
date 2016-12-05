@@ -1,0 +1,35 @@
+body {
+    background-color: #efeff4;
+    -webkit-tap-highlight-color: transparent;
+    margin: 0 10px;
+}
+
+.news_title{
+    margin:30px 0 0 10px;
+    font-weight:400;
+    font-size:34px;
+    color:#3cc51f;
+    #text-align:center;
+}
+
+.news_subtitle{
+    display: flex;
+    -webkit-box-align: center;
+    margin: 10px 0;
+}
+
+.update-container {
+    margin-left: auto;
+    margin-right: 2px;
+    padding: 0;
+}
+
+#update-button {
+    transform: scale(.6);
+}
+
+.ddl-badge {
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 3px;
+}

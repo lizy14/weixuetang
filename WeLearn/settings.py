@@ -61,6 +61,8 @@ INSTALLED_APPS = [
 	'djcelery',
 	'wechat',
 	'userpage',
+	'homework',
+	'notice',
 ]
 
 MIDDLEWARE_CLASSES = [
