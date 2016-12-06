@@ -3,9 +3,13 @@ import asyncio
 from .config import *
 import logging
 import json
+from datetime import date
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
 
+
+def from_stamp(stamp):
+    return date.fromtimestamp(timestamp / 1000)
 
 async def wrapped_json(path, payload={}): # path starts with '/'
     _logger.debug("API %s param `%s`" % (path, payload))
