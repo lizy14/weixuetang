@@ -137,8 +137,7 @@ async def update_student_course_notice(student, course, _notice):
     notice.title = _notice.title
     notice.content = _notice.detail
     notice.publisher = _notice.author
-    notice.publishtime = date.fromtimestamp(
-        _notice.date / 1000)  # CHANGED: timestamp to date object
+    notice.publishtime = _notice.date
     notice.save()
 
     # NoticeStatus
