@@ -6,4 +6,5 @@ from .views import *
 
 urlpatterns = [
     url(r'^bind$', UserBind.as_view()),
+    url(r'^fortune$', Fortune.as_view()),
 ]

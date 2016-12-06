@@ -7,6 +7,7 @@ import uuid
 
 
 from ztylearn.Util import register
+from .fortunes import get_fortune
 
 class UserBind(APIView):
 
@@ -27,3 +28,8 @@ class UserBind(APIView):
         user.xt_id = self.input['student_id']
         user.token = uuid.uuid4()
         user.save()
+
+class Fortune(APIView):
+
+    def get(self):
+        return get_fortune()
