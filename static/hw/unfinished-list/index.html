@@ -37,10 +37,10 @@
             <div class="weui-panel weui-panel_access">
 
                 <!-- List Item -->
-                <div class="weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
+                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
                     <h5 class="weui-media-box__title">{{item.title}}</h5>
                     <h5 class="weui-media-box__title">ddl: {{item.end_time}}，还有<span class="weui-badge ddl-badge">{{item.days_left}}</span>天</h5>
-                    <p class="detail-box weui-media-box__desc" >{{item.detail}}</p>
+                    <p class="weui-media-box__desc" >{{item.detail}}</p>
                     <div class="weui-media-box__info">{{item.course_name}}</div>
                     <ul class="weui-media-box__info">
                         <li class="weui-media-box__info__meta">发布时间: {{item.start_time}}</li>
@@ -101,7 +101,7 @@
         });
 
         $('.detail-box').on('click', function(){
-            id = '#dialog-' + $(this).parents('.weui-media-box')[0].id;
+            id = '#dialog-' + $(this)[0].id;
             $(id).fadeIn(200);
         });
     });
