@@ -35,7 +35,7 @@
             <div class="weui-panel weui-panel_access">
 
                 <!-- List Item -->
-                <div class="weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
+                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.notice_id" v-for="item in items">
                     <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge" v-if="item.status==0">new</span>{{ item.title }}</h5>
                     <p class="notice-detail weui-media-box__desc" >{{ item.detail }}</p>
                     <ul class="weui-media-box__info">
@@ -50,13 +50,13 @@
 
         <!-- Detail Dialog -->
         <div id="dialog-container">
-            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.title">
+            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.notice_id">
                 <div class="weui-mask"></div>
                 <div class="weui-dialog">
                     <div class="weui-dialog__hd">
-                        <strong class="weui-dialog__title">{{item.title}}</strong>
+                        <strong class="weui-dialog__title">{{ item.title }}</strong>
                     </div>
-                    <div class="weui-dialog__bd">{{item.detail}}</div>
+                    <div class="weui-dialog__bd">{{ item.detail }}</div>
                      <div class="weui-dialog__ft">
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
@@ -88,7 +88,7 @@
         });
 
         $('.detail-box').on('click', function(){
-            id = '#dialog-' + $(this).parents('.weui-media-box')[0].id;
+            id = '#dialog-' + $(this)[0].id;
             $(id).fadeIn(200);
         });
     });
