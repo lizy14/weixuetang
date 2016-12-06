@@ -132,6 +132,7 @@ async def update_student_course_notice(student, course, _notice):
 
 
 async def update_student_course_work(student, course, _homework):
+
     try:
         homework = Homework.objects.get(
             xt_id=_homework.id,
@@ -149,7 +150,8 @@ async def update_student_course_work(student, course, _homework):
     homework.title      = _homework.title
     homework.start_time = _homework.start_time
     homework.end_time   = _homework.end_time
-    homework.detail     = _homework.detail  # CHANGED: remove await
+    homework.detail     = _homework.detail
+    homework.attachment = _homework.attachment
     homework.save()
 
     newly_created = False
@@ -167,8 +169,10 @@ async def update_student_course_work(student, course, _homework):
     graded = _homework.completion > 1
     newly_graded = (not newly_created) and graded and not homeworkStatus.graded
 
-    homeworkStatus.grading   = ""  # TODO
     homeworkStatus.graded    = graded
+    homeworkStatus.grading   = _homework.grading
+    homeworkStatus.grading_comment = _homework.grading_comment
+    homeworkStatus.graded_by = _homework.grading_author
     homeworkStatus.submitted = _homework.completion > 0
     homeworkStatus.save()
 

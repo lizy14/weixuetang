@@ -5,6 +5,17 @@ from .File import File
 from .Work import Work
 from .Util import *
 
+import random
+
+
+def get_completion(_):
+    if _['scored']:
+        return 2
+    if _['state'] == "已经提交":
+        return 1
+    return 0
+
+
 class Course:
 
     def __init__(self, user, id, name=None):
@@ -14,21 +25,25 @@ class Course:
 
     @property
     async def works(self):
-        return []
         response = await wrapped_json('/learnhelper/{username}/courses/{courseid}/assignments'.format_map({
             'username': self.user.username,
             'courseid': self.id
         }))
+
         return [
             Work(
-                user       = user,
-                id         = _['sequencenum'],
+                user       = self.user,
+                id         = random.randint(0,2333333),  # _['sequencenum'],  # TODO
+                course_id  = self.id,
                 title      = _['title'],
                 detail     = _['detail'],
-                start_time = _['startdate'],
-                end_time   = _['duedate'],
-                completion = 0 # TODO
-                # TODO grading
+                start_time = from_stamp(_['startdate']),
+                end_time   = from_stamp(_['duedate']),
+                attachment = _['filename'],
+                completion = get_completion(_),
+                grading    = _['grade'],
+                grading_comment = _['comment'],
+                grading_author  = _['evaluatingteacher']
             )
             for _ in response['assignments']
         ]
