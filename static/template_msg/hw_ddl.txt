@@ -1,0 +1,6 @@
+title:
+您有一个作业ddl有变化！
+content:
+{ {hw_name.DATA} }
+{ {course_name.DATA} }
+截止于{ {days_left.DATA} }天后（{ {ddl.DATA} }）

@@ -54,8 +54,14 @@ window.api = {
     }
 };
 
-window.updateDate = function (obj) {
-    for (var i = 1, len = arguments.length; i < len; ++i) {
-		obj[arguments[i]] = new Date(obj[arguments[i]] * 1000);
-    }
-};
+window.expand = function (items){
+    items.forEach(function(i){
+        i.days_left = Math.floor((parseDate(i.end_time) - today) / 86400 / 1000)
+    })
+}
+
+window.parseDate = function (str){
+    return new Date(str);
+}
+
+window.today =  new Date()
