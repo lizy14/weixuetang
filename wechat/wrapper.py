@@ -7,6 +7,7 @@ import logging
 from wechat_sdk import WechatBasic
 from WeLearn.settings import wechat_conf
 from userpage.models import Student
+from .models import Template
 
 
 class WeChatHandler(object):
@@ -54,6 +55,10 @@ class WeChatView(BaseView):
 	@property
 	def wechat(self):
 		return self._wechat
+
+	@classmethod
+	def get_template_id(cls, name):
+		return Template.get_template_id(name)
 
 	def _check_signature(self):
 		query = self.request.GET

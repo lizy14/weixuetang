@@ -8,19 +8,12 @@ import datetime
 import pytz
 from WeLearn import settings
 from celery import shared_task
-from wechat.tasks import t_send_test
 from .models import Template
 
 # !IMPORTENT
 # HANDLERS ONLY
 # DO NOT DEFINE ANY OTHER CLASSES
 # WITH SUFFIX 'Handler'
-
-template_name = {
-    'new_hw': '您有一个新作业',
-    'ddl_changed': '作业DDL有变化',
-    'hw_checked': '您有一个作业被批改了'
-}
 
 class CalculatorHandler(WeChatHandler):
 
@@ -69,18 +62,4 @@ class TestHandler(WeChatHandler):
         return self.is_click_of_event('info_test')
 
     def handle(self):
-        t_send_test.delay(self.user.open_id, Template.get_template_id(template_name['new_hw']), {
-            'hw_name': {
-                'value': '作业名',
-            },
-            'course_name': {
-                'value': '软件工程(3)',
-            },
-            'days_left': {
-                'value': '233',
-            },
-            'ddl': {
-                'value': datetime.datetime.now().isoformat(),
-            }
-        })
         return self.wechat.response_text(content='Done')
