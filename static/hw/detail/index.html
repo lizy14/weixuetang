@@ -93,21 +93,7 @@
     </div>
 
     <script>
-    today =  new Date()
-    function expand(items){
-        items.forEach(function(i){
-            i.days_left = Math.floor((parseDate(i.end_time) - today) / 86400 / 1000)
-            i.detail.replace(/\\n\\n/g, "<br/>")
-        })
-    }
-    function parseDate(str){
-        return new Date(str);
-    }
-    $.getJSON('/api/hw/detail/',urlParam, function(data){
-        expand(data.data);
-        data.data.sort(function(a, b){
-            return parseDate(a.end_time) > parseDate(b.end_time)
-        })
+        $.getJSON('/api/hw/detail/',urlParam, function(data){
         new Vue({
             el: '#detail-container',
             data: {
@@ -116,5 +102,4 @@
         })
     })
     </script>
-
 </body>

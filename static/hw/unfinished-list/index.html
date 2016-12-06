@@ -28,7 +28,6 @@
         <!-- Header -->
         <h1 class="news-title">作业</h1>
 
-        <!-- update button -->
         <div class="news-subtitle">
             <div class="weui-cells__title">您现在有{{ items.length }}个需要交的作业</div>
         </div>
@@ -81,15 +80,6 @@
 
 
     <script>
-    today =  new Date()
-    function expand(items){
-        items.forEach(function(i){
-            i.days_left = Math.floor((parseDate(i.end_time) - today) / 86400 / 1000)
-        })
-    }
-    function parseDate(str){
-        return new Date(str);
-    }
     $.getJSON('/api/hw/unfinished-list/', urlParam, function(data){
         expand(data.data);
         data.data.sort(function(a, b){
