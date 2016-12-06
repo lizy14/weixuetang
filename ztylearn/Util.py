@@ -9,7 +9,7 @@ _logger = logging.getLogger(__name__)
 
 
 def from_stamp(stamp):
-    return date.fromtimestamp(timestamp / 1000)
+    return date.fromtimestamp(stamp / 1000)
 
 async def wrapped_json(path, payload={}): # path starts with '/'
     _logger.debug("API %s param `%s`" % (path, payload))
