@@ -1,6 +1,8 @@
 from django.db import models
 from userpage.models import *
 from homework.models import *
+from notice.models import *
+
 import ztylearn as LearnDAO
 import asyncio
 import logging
@@ -10,12 +12,18 @@ from celery import shared_task
 
 @shared_task(name='WeLearn.tasks.main')
 def main():
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(update_all())
-    except:
-        _logger.debug('Error occured.')
-# import timeit;import WeLearn.tasks as t; timeit.timeit(t.main, number=1)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(update_all())
+
+
+async def notification_notice_new(noticeStatus):
+    _logger.debug("NOTIFICATION %s new notice `%s` for course `%s`" % (
+        noticeStatus.student.xt_id,
+        noticeStatus.notice.title,
+        noticeStatus.notice.course.name)
+    )
+    pass
+
 
 async def notification_hw_new(homeworkStatus):
     _logger.debug("NOTIFICATION %s new homework `%s`" % (
@@ -80,6 +88,48 @@ async def update_student_course(student, _course):
         for _homework in await _course.works
     ]
     await asyncio.gather(*tasks)
+
+    for _notice in await _course.messages:
+        await update_student_course_notice(student, course, _notice)
+
+
+async def update_student_course_notice(student, course, _notice):
+
+    # Notice
+    try:
+        notice = Notice.objects.get(
+            xt_id=_notice.id,
+            course__id=course.id
+        )
+        # TODO detect changes
+    except Notice.DoesNotExist:
+        notice = Notice()
+        notice.course = course
+        notice.xt_id = _notice.id
+
+    notice.title = _notice.title
+    notice.content = _notice.detail
+    notice.publisher = _notice.author
+    notice.publishtime = _notice.date
+    notice.save()
+
+    # NoticeStatus
+    newly_created = False
+    try:
+        noticeStatus = NoticeStatus.objects.get(
+            student = student,
+            notice = notice
+        )
+    except NoticeStatus.DoesNotExist:
+        newly_created = True
+        noticeStatus = NoticeStatus()
+        noticeStatus.student = student
+        noticeStatus.notice = notice
+        noticeStatus.read = False  # TODO
+        noticeStatus.save()
+
+    if newly_created:
+        await notification_notice_new(noticeStatus)
 
 
 async def update_student_course_work(student, course, _homework):

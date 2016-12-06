@@ -2,6 +2,7 @@ import aiohttp
 import asyncio
 from .config import *
 import logging
+import json
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
 
@@ -14,11 +15,15 @@ async def wrapped_json(path, payload={}): # path starts with '/'
         'apikey': API_KEY,
         'apisecret': API_SECRET
     }
-    body = {**auth, **payload} # merge two dicts
-    r = await session.post(URL_PREFIX + path, data=body)
-    json = await r.json()
+    body = {**auth, **payload}  # merge two dicts
+    r = await session.post(
+        URL_PREFIX + path,
+        data=json.dumps(body),
+        headers={'content-type': 'application/json'}
+    )
+    resp_json = await r.json()
     session.close()
-    return json
+    return resp_json
 
 async def _register(username, password):
     result = await wrapped_json('/users/register', payload={

@@ -14,6 +14,7 @@ class Course:
 
     @property
     async def works(self):
+        return []
         response = await wrapped_json('/learnhelper/{username}/courses/{courseid}/assignments'.format_map({
             'username': self.user.username,
             'courseid': self.id
@@ -40,10 +41,11 @@ class Course:
         }))
         return [
             Message(
-                user      = user,
+                user      = self.user,
                 id        = _['sequencenum'],
                 title     = _['title'],
                 date      = _['publishtime'],
+                author    = _['publisher'],
                 detail    = _['content']
             )
             for _ in response['notices']

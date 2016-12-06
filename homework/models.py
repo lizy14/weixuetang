@@ -7,7 +7,7 @@ class Course(models.Model):
 
 
 class Homework(models.Model):
-    xt_id = models.CharField(max_length=32, db_index=True)
+    xt_id = models.CharField(max_length=32)
     course = models.ForeignKey(Course)
     title = models.TextField()
     start_time = models.DateField()
