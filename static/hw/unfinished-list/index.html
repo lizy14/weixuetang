@@ -4,6 +4,7 @@
 <head>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="../../js/base.js"></script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,7 +28,6 @@
         <!-- Header -->
         <h1 class="news-title">作业</h1>
 
-        <!-- update button -->
         <div class="news-subtitle">
             <div class="weui-cells__title">您现在有{{ items.length }}个需要交的作业</div>
         </div>
@@ -80,16 +80,7 @@
 
 
     <script>
-    today =  new Date()
-    function expand(items){
-        items.forEach(function(i){
-            i.days_left = Math.floor((parseDate(i.end_time) - today) / 86400 / 1000)
-        })
-    }
-    function parseDate(str){
-        return new Date(str);
-    }
-    $.getJSON('/api/hw/unfinished-list/?student_id=2014013432&token=foo',function(data){
+    $.getJSON('/api/hw/unfinished-list/', urlParam, function(data){
         expand(data.data);
         data.data.sort(function(a, b){
             return parseDate(a.end_time) > parseDate(b.end_time)
