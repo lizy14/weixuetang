@@ -36,11 +36,11 @@
 
                 <!-- List Item -->
                 <div class="weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
-                    <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge">new</span>公告名</h5>
-                    <p class="notice-detail weui-media-box__desc" >公告描述</p>
+                    <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge" v-if="item.status==0">new</span>{{ item.title }}</h5>
+                    <p class="notice-detail weui-media-box__desc" >{{ item.detail }}</p>
                     <ul class="weui-media-box__info">
-                        <li class="weui-media-box__info__meta">发布时间: xxxx-xx-xx</li>
-                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">课程名</li>
+                        <li class="weui-media-box__info__meta">发布时间: {{ item.publish_time }}</li>
+                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.course_name }} </li>
                     </ul>
                 </div>
 
@@ -68,7 +68,7 @@
 
 
     <script>
-    $.getJSON('/api/hw/unfinished-list/', urlParam, function(data){
+    $.getJSON('/api/notice/list/', urlParam, function(data){
         expand(data.data);
         data.data.sort(function(a, b){
             return parseDate(a.end_time) > parseDate(b.end_time)
