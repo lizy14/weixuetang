@@ -75,7 +75,7 @@ class UnfinishedList(APIView):
 
         def wrap(hw):
             return {
-                'id'         : hw.id,
+                'homework_id'         : hw.id,
                 'start_time' : wrap_date(hw.start_time),
                 'end_time'   : wrap_date(hw.end_time),
                 'title'      : hw.title,
@@ -98,7 +98,7 @@ class List(APIView):
         def wrap(hwSt):
             hw = hwSt.homework
             return {
-                'id'         : hw.id,
+                'homework_id': hw.id,
                 'start_time' : wrap_date(hw.start_time),
                 'end_time'   : wrap_date(hw.end_time),
                 'title'      : hw.title,
@@ -118,7 +118,7 @@ class Detail(APIView):
         def wrap(hwSt):
             hw = hwSt.homework
             return {
-                'id'         : hw.id,
+                'homework_id': hw.id,
                 'start_time' : wrap_date(hw.start_time),
                 'end_time'   : wrap_date(hw.end_time),
                 'title'      : hw.title,
@@ -127,9 +127,9 @@ class Detail(APIView):
                 'detail'     : hw.detail,
                 'attachment' : ""  # TODO
             }
-        self.check_input('id')
+        self.check_input('homework_id')
         result = HomeworkStatus.objects.get(
             student__id=self.student.id,
-            homework__id=self.input['id']
+            homework__id=self.input['homework_id']
         )
         return wrap(result)
