@@ -56,7 +56,7 @@
                     <div class="weui-dialog__hd">
                         <strong class="weui-dialog__title">{{ item.title }}</strong>
                     </div>
-                    <div class="weui-dialog__bd">{{ item.detail }}</div>
+                    <div class="weui-dialog__bd"><span class="dialog-detail-box">{{ item.detail }}</span></div>
                      <div class="weui-dialog__ft">
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
@@ -69,10 +69,7 @@
 
     <script>
     $.getJSON('/api/notice/list/', urlParam, function(data){
-        expand(data.data);
-        data.data.sort(function(a, b){
-            return parseDate(a.end_time) > parseDate(b.end_time)
-        })
+        prune(data.data);
         new Vue({
             el: '#hw-list-container',
             data: {
@@ -92,6 +89,7 @@
             $(id).fadeIn(200);
         });
     });
+
 
     </script>
 
