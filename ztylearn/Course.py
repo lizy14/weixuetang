@@ -42,9 +42,9 @@ class Course:
         return [
             Message(
                 user      = self.user,
-                id        = _['sequencenum'],
+                id        = _['noticeid'],
                 title     = _['title'],
-                date      = _['publishtime'],
+                date      = from_stamp(_['publishtime']),
                 author    = _['publisher'],
                 detail    = _['content']
             )
