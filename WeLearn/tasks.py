@@ -1,19 +1,21 @@
 from django.db import models
 from userpage.models import *
 from homework.models import *
-
 import ztylearn as LearnDAO
 import asyncio
 import logging
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
+from celery import shared_task
 
-
+@shared_task(name='WeLearn.tasks.main')
 def main():
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(update_all())
+    try:
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(update_all())
+    except:
+        _logger.debug('Error occured.')
 # import timeit;import WeLearn.tasks as t; timeit.timeit(t.main, number=1)
-
 
 async def notification_hw_new(homeworkStatus):
     _logger.debug("NOTIFICATION %s new homework `%s`" % (

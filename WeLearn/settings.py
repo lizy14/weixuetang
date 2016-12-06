@@ -149,7 +149,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -187,6 +187,14 @@ import djcelery
 djcelery.setup_loader()
 
 BROKER_URL = 'amqp://'
+
+CELERY_IMPORTS = ('WeLearn.tasks',)
+CELERYBEAT_SCHEDULE = {
+    'Mo Qunzhu': {
+        'task': 'WeLearn.tasks.main',
+        'schedule': 60,  # in seconds, or timedelta(seconds=10)
+    },
+}
 
 # Site and URL
 SITE_DOMAIN = CONFIGS['SITE_DOMAIN'].rstrip('/')
