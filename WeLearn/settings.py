@@ -186,7 +186,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 import djcelery
 djcelery.setup_loader()
 
-BROKER_URL = 'django://'
+BROKER_URL = 'amqp://'
 
 # Site and URL
 SITE_DOMAIN = CONFIGS['SITE_DOMAIN'].rstrip('/')
