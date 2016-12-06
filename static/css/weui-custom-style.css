@@ -50,5 +50,13 @@ body {
 }
 
 .notice-detail {
-    -webkit-line-clamp:1;
+    -webkit-line-clamp:1 !important;
+}
+
+.dialog-detail-box {
+    display: -webkit-box;
+    -webkit-line-clamp: 10 !important;
+    -webkit-box-orient: vertical;
+    overflow: scroll;
+    text-overflow: clip !important;
 }

@@ -60,6 +60,14 @@ window.expand = function (items){
     })
 }
 
+window.prune = function (items) {
+    console.log(items[0].detail);
+    items.forEach(function(i){
+        i.detail.replace('&nbsp;', '');
+    })
+    console.log(items[0].detail);
+}
+
 window.parseDate = function (str){
     return new Date(str);
 }
