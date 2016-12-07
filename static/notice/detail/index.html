@@ -46,16 +46,16 @@
         <div class="weui-panel__bd">
 
             <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">发布时间: </h5>
-                <h5 class="weui-media-box__title">发布人: </h5>
-                <div class="weui-media-box__desc" id="detail-description">公告内容2333333333333333333333333333333333333333333333333
+                <h5 class="weui-media-box__title">发布时间: {{ item.publish_time }}</h5>
+                <h5 class="weui-media-box__title">发布人: {{ item.publisher }}</h5>
+                <div class="weui-media-box__desc" id="detail-description">{{ item.detail }}
                 </div>
             </div>
         </div>
         </div>
     </div>
 
-    <a href="javascript:;" class="weui-btn weui-btn_primary" id="detail-return-button">返回公告新鲜事</a>
+    <a :href="'/notice/list/?code=' + urlParam.code + '&state=' + urlParam.state" class="weui-btn weui-btn_primary" id="detail-return-button">返回公告新鲜事</a>
     </div>
 
     <script>
@@ -67,7 +67,8 @@
         new Vue({
             el: '#detail-container',
             data: {
-                'item': data.data
+                'item': data.data,
+                'urlParam': urlParam,
             }
         })
     })
