@@ -56,12 +56,12 @@ window.api = {
 
 window.expand = function (items){
     items.forEach(function(i){
-        i.days_left = Math.floor((parseDate(i.end_time) - today) / 86400 / 1000)
-    })
-}
+        i.days_left = Math.floor((parseDate(i.end_time) - today) / 86400 / 1000);
+    });
+};
 
 window.parseDate = function (str){
     return new Date(str);
-}
+};
 
-window.today =  new Date()
+window.today =  new Date();

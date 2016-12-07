@@ -158,7 +158,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -181,6 +181,17 @@ def get_url(path, params=None):
     else:
         return full_path
 
+def get_redirect_url(path, params=None, scope='snsapi_base', state='view'):
+	params = urllib.parse.urlencode([
+		('appid', WECHAT_APPID),
+		('redirect_uri', get_url(path, params)),
+		('response_type', 'code'),
+		('scope', scope),
+		('state', state)
+	])
+	return 'https://open.weixin.qq.com/connect/oauth2/authorize?{}{}'.format(
+		params, '#wechat_redirect'
+	)
 
 # Logging configurations
 logging.basicConfig(
@@ -191,7 +202,19 @@ logging.basicConfig(
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+import djcelery
+djcelery.setup_loader()
+
 BROKER_URL = 'amqp://'
+
+CELERY_IMPORTS = ('WeLearn.tasks',)
+CELERYBEAT_SCHEDULE = {
+    'Mo Qunzhu': {
+        'task': 'WeLearn.tasks.main',
+        'schedule': 60,  # in seconds, or timedelta(seconds=10)
+    },
+}
 
 # Site and URL
 SITE_DOMAIN = CONFIGS['SITE_DOMAIN'].rstrip('/')

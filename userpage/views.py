@@ -3,7 +3,6 @@ from codex.baseview import APIView
 from codex.baseerror import *
 from .models import Student
 import urllib.request
-import uuid
 
 
 from ztylearn.Util import register
@@ -25,5 +24,4 @@ class UserBind(APIView):
         user = Student.get_by_openid(self.input['openid'])
         self.validate_user()
         user.xt_id = self.input['student_id']
-        user.token = uuid.uuid4()
         user.save()
