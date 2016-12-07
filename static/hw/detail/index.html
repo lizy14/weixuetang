@@ -67,25 +67,27 @@
         <div class="weui-panel weui-panel_access">
         <div class="weui-panel__bd">
             <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">已提交／未提交</h5>
+                <h5 v-if="item.status === 0" class="weui-media-box__title">未提交</h5>
+                <h5 v-else class="weui-media-box__title">已提交</h5>
             </div>
         </div>
         </div>
     </div>
 
     <!-- Grade -->
-    <p class="weui-cells__title">批改信息 或未批改</p>
-    <div class="news-container">
-        <div class="weui-panel weui-panel_access">
-        <div class="weui-panel__bd">
-
-            <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">分数: </h5>
-                <h5 class="weui-media-box__title">批改人:</h5>
-                <div class="weui-media-box__desc" id="detail-description">反馈信息blahblahblahblahblahblahblahblahblahblahblahblahblah
+    <div v-if="item.status === 2" >
+        <p class="weui-cells__title">批改信息</p>
+        <div class="news-container">
+            <div class="weui-panel weui-panel_access">
+            <div class="weui-panel__bd">
+                <div class="weui-media-box weui-media-box_text">
+                    <h5 class="weui-media-box__title">分数: {{ item.grade }}</h5>
+                    <h5 class="weui-media-box__title">批改人: {{ item.grade_by }}</h5>
+                    <div class="weui-media-box__desc" id="detail-description">{{ item.comment }}
+                    </div>
                 </div>
             </div>
-        </div>
+            </div>
         </div>
     </div>
 

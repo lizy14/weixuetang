@@ -27,9 +27,7 @@
     <div class="weui-panel__bd" id="hw-list-container">
         <!-- Header -->
         <h1 class="news-title">公告</h1>
-
-        <div class="weui-cells__title">每日格言</div>
-
+        <div id="fortune" class="weui-cells__title"> {{ fortune }} </div>
         <!-- notices -->
         <div class="news-container">
             <div class="weui-panel weui-panel_access">
@@ -91,13 +89,13 @@
             });
         });
     })
-
-
-
-
-
-
-
+    $.getJSON('/api/u/fortune', function(data){
+        new Vue({
+            el: '#fortune',
+            data: {
+                'fortune':data.data
+            }
+        })
+    })
     </script>
-
 </body>
