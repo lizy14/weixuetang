@@ -13,7 +13,7 @@ class List(APIView):
         def wrap(ntSt):
             nt = ntSt.notice
             return {
-                'notice_id'   : nt.xt_id,
+                'notice_id'   : nt.id,
                 'publisher'   : nt.publisher,
                 'publish_time': wrap_date(nt.publishtime),
                 'title'       : nt.title,
@@ -36,7 +36,7 @@ class Detail(APIView):
         def wrap(ntSt):
             nt = ntSt.notice
             return {
-                'notice_id'   : nt.xt_id,
+                'notice_id'   : nt.id,
                 'publisher'   : nt.publisher,
                 'publish_time': wrap_date(nt.publishtime),
                 'title'       : nt.title,
