@@ -57,7 +57,7 @@
                         <strong class="weui-dialog__title">{{ item.title }}</strong>
                     </div>
                     <div class="weui-dialog__bd"><span class="dialog-detail-box">{{ item.detail }}</span></div>
-                     <div class="weui-dialog__ft">
+                    <div class="weui-dialog__ft">
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
                     </div>
@@ -68,6 +68,7 @@
 
 
     <script>
+
     $.getJSON('/api/notice/list/', urlParam, function(data){
         prune(data.data);
         new Vue({
@@ -76,10 +77,6 @@
                 'items': data.data,
             }
         })
-    })
-    $(function(){
-        var $DetailDialog = $('.detail-dialog');
-
         $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
             $(this).parents('.detail-dialog').fadeOut(200);
         });
@@ -89,7 +86,12 @@
             id = '#dialog-' + $(this)[0].id;
             $(id).fadeIn(200);
         });
-    });
+    })
+
+
+
+
+
 
 
     </script>

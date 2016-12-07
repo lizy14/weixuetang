@@ -91,20 +91,21 @@
                 'items': data.data
             }
         })
+        $(function(){
+            var $DetailDialog = $('.detail-dialog');
+
+            $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
+                $(this).parents('.detail-dialog').fadeOut(200);
+            });
+
+            $('.detail-box').on('click', function(){
+                id = '#dialog-' + $(this)[0].id;
+                $(id).fadeIn(200);
+            });
+        });
     })
 
-    $(function(){
-        var $DetailDialog = $('.detail-dialog');
 
-        $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
-            $(this).parents('.detail-dialog').fadeOut(200);
-        });
-
-        $('.detail-box').on('click', function(){
-            id = '#dialog-' + $(this)[0].id;
-            $(id).fadeIn(200);
-        });
-    });
 
     </script>
 
