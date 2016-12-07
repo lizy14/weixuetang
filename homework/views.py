@@ -96,10 +96,8 @@ class Detail(APIView):
                 'detail': hw.detail,
                 'attachment': hw.attachment,
                 'grade': hwSt.grading,
-                'comment': "{}\r\n——{}".format(
-                    hwSt.grading_comment,
-                    hwSt.graded_by
-                )
+                'graded_by': hwSt.graded_by,
+                'comment': hwSt.grading_comment,
             }
         self.check_input('homework_id')
         result = HomeworkStatus.objects.get(
