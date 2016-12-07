@@ -7,10 +7,13 @@ from codex.baseerror import *
 import datetime
 import pytz
 from WeLearn import settings
+from celery import shared_task
+from .models import Template
 
 # !IMPORTENT
 # HANDLERS ONLY
 # DO NOT DEFINE ANY OTHER CLASSES
+# WITH SUFFIX 'Handler'
 
 class CalculatorHandler(WeChatHandler):
 
@@ -30,7 +33,7 @@ class BindStudentHandler(WeChatHandler):
     res_unbind = '您已经绑定学号:\n{}\n\n回复“解绑”解除绑定'
 
     def check(self):
-        return self.msg_type_is('click') and self.msg.key == self.context.event_keys['info_bind']
+        return self.is_click_of_event('info_bind')
 
     def handle(self):
         if self.user.xt_id is not None:
@@ -52,3 +55,30 @@ class UnBindStudentHandler(WeChatHandler):
         return self.wechat.response_text(content=self.response.format(settings.get_url('u/bind', {
             'openid': self.user.open_id
         })))
+
+class TestHandler(WeChatHandler):
+
+    def check(self):
+        return self.is_click_of_event('info_test')
+
+    def handle(self):
+        return self.wechat.response_text(content='Done')
+
+class TemplateHandler(WeChatHandler):
+
+    def check(self):
+        return self.is_template_msg()
+
+    def handle(self):
+        if self.msg.status == 'success':
+            return
+        else:
+            raise OperationError(self.msg.status)
+
+class MenuHandler(WeChatHandler):
+
+    def check(self):
+        return self.msg_type_is('view')
+
+    def handle(self):
+        pass

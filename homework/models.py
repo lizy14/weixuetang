@@ -13,6 +13,7 @@ class Homework(models.Model):
     start_time = models.DateField()
     end_time = models.DateField()
     detail = models.TextField()
+    attachment = models.TextField()
 
 
 class HomeworkStatus(models.Model):
@@ -21,6 +22,8 @@ class HomeworkStatus(models.Model):
     submitted = models.BooleanField()
     graded = models.BooleanField()
     grading = models.TextField()
+    grading_comment = models.TextField()
+    graded_by = models.CharField(max_length=32)
 
 
 class CourseStatus(models.Model):
