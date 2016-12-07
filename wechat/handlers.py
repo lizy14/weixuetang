@@ -63,3 +63,22 @@ class TestHandler(WeChatHandler):
 
     def handle(self):
         return self.wechat.response_text(content='Done')
+
+class TemplateHandler(WeChatHandler):
+
+    def check(self):
+        return self.is_template_msg()
+
+    def handle(self):
+        if self.msg.status == 'success':
+            return
+        else:
+            raise OperationError(self.msg.status)
+
+class MenuHandler(WeChatHandler):
+
+    def check(self):
+        return self.msg_type_is('view')
+
+    def handle(self):
+        pass

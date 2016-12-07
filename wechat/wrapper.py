@@ -8,6 +8,7 @@ from wechat_sdk import WechatBasic
 from WeLearn.settings import wechat_conf
 from userpage.models import Student
 from .models import Template
+from wechat_sdk.messages import *
 
 
 class WeChatHandler(object):
@@ -33,6 +34,9 @@ class WeChatHandler(object):
 
     def is_click_of_event(self, eve):
         return self.msg.type == 'click' and self.msg.key == self.context.event_keys[eve]
+
+    def is_template_msg(self):
+        return isinstance(self.msg, EventMessage) and self.msg.type == 'templatesendjobfinish'
 
 
 class WeChatEmptyHandler(WeChatHandler):
