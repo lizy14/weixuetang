@@ -6,6 +6,7 @@ import urllib.request
 
 
 from ztylearn.Util import register
+from .fortunes import get_fortune
 
 class UserBind(APIView):
 
@@ -25,3 +26,8 @@ class UserBind(APIView):
         self.validate_user()
         user.xt_id = self.input['student_id']
         user.save()
+
+class Fortune(APIView):
+
+    def get(self):
+        return get_fortune()
