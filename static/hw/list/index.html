@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="../../js/base.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="moqunzhu">
+
+    <title>Homework</title>
+    <!-- Custom styles -->
+    <link href="../../css/weui-custom-style.css" rel="stylesheet">
+
+    <!-- WeUI styles -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
+
+    <!-- WeUI Javascript library -->
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+</head>
+
+<body>
+    <div class="weui-panel__bd" id="hw-list-container">
+        <!-- Header -->
+        <h1 class="news-title">全部作业</h1>
+
+        <div class="news-subtitle">
+            <div class="weui-cells__title">每日格言（或者 这学期目前共发布了xxx个作业）</div>
+        </div>
+
+        <!-- news list -->
+        <div class="news-container">
+            <div class="weui-panel weui-panel_access">
+
+                <!-- 3 homework status -->
+
+                <!-- Unfinished homework -->
+                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
+                    <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge">未交</span>作业名</h5>
+                    <p class="weui-media-box__desc" >结束时间: {{item.end_time}}，还有xx天</p>
+                    <ul class="weui-media-box__info">
+                        <li class="weui-media-box__info__meta">{{item.course_name}}</li>
+                    </ul>
+                </div>
+
+                <!-- Submitted homework -->
+                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
+                    <h5 class="weui-media-box__title"><span class="green-badge weui-badge">已交</span>作业名</h5>
+                    <p class="weui-media-box__desc" >结束时间: {{item.end_time}}</p>
+                    <ul class="weui-media-box__info">
+                        <li class="weui-media-box__info__meta">{{item.course_name}}</li>
+                    </ul>
+                </div>
+
+                <!-- Graded homework -->
+                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
+                    <h5 class="weui-media-box__title"><span class="green-badge weui-badge">已批</span>作业名</h5>
+                    <p class="weui-media-box__desc" >批阅时间: {{item.end_time}}</p>
+                    <ul class="weui-media-box__info">
+                        <li class="weui-media-box__info__meta">{{item.course_name}}</li>
+                    </ul>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    $.getJSON('/api/hw/list/', urlParam, function(data){
+        expand(data.data);
+        data.data.sort(function(a, b){
+            return parseDate(a.end_time) > parseDate(b.end_time)
+        })
+        new Vue({
+            el: '#hw-list-container',
+            data: {
+                'items': data.data
+            }
+        })
+        $(function(){
+
+            $('.detail-box').on('click', function(){
+                // TODO: jump to detail page
+            });
+        });
+    })
+
+
+
+    </script>
+
+</body>
