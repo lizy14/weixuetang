@@ -1,8 +1,9 @@
-import random
+from datetime import date
 
 
 def get_fortune():
-    return random.choice(fortunes)
+    dt = date(1970, 1, 1)
+    return fortunes[(date.today() - dt).days % len(fortunes)]
 
 
 fortunes = [
