@@ -181,6 +181,17 @@ def get_url(path, params=None):
     else:
         return full_path
 
+def get_redirect_url(url, scope='snsapi_base', state='view'):
+	params = urllib.parse.urlencode([
+		('appid', WECHAT_APPID),
+		('redirect_uri', url),
+		('response_type', 'code'),
+		('scope', scope),
+		('state', state)
+	])
+	return 'https://open.weixin.qq.com/connect/oauth2/authorize?{}{}'.format(
+		params, '#wechat_redirect'
+	)
 
 # Logging configurations
 logging.basicConfig(
