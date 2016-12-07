@@ -9,6 +9,7 @@ from wechat.wrapper import WeChatView
 import inspect
 from .models import Template
 import logging
+from WeLearn.settings import get_redirect_url
 
 logger = logging.getLogger(name=__name__)
 
@@ -35,22 +36,22 @@ class CustomWeChatView(WeChatView):
                         {
                             'type': 'click',
                             'name': '全部',
-                                    'key': event_keys['news_all'],
+                            'key': event_keys['news_all'],
                         },
                     {
-                            'type': 'click',
+                            'type': 'view',
                             'name': '作业',
-                                    'key': event_keys['news_assignments'],
+                            'url': get_redirect_url('hw/unfinished-list'),
                         },
                     {
-                            'type': 'click',
+                            'type': 'view',
                             'name': '公告',
-                                    'key': event_keys['news_broadcasts'],
+                            'url': get_redirect_url('notice/list'),
                         },
                     {
                             'type': 'click',
                             'name': '讲座',
-                                    'key': event_keys['news_lectures'],
+                            'key': event_keys['news_lectures'],
                         }
                 ]
             },
@@ -66,7 +67,7 @@ class CustomWeChatView(WeChatView):
                             'type': 'click',
                             'name': '发讨论',
                                     'key': event_keys['talk_discuss'],
-                        }
+                    }
                 ]
             },
             {
@@ -81,12 +82,12 @@ class CustomWeChatView(WeChatView):
                             'type': 'click',
                             'name': '设置',
                                     'key': event_keys['info_SETTING'],
-                        },
+                    },
                     {
                             'type': 'click',
                             'name': '测试',
                                     'key': event_keys['info_test'],
-                        }
+                    }
                 ]
             }
         ]

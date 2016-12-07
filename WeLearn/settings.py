@@ -181,10 +181,10 @@ def get_url(path, params=None):
     else:
         return full_path
 
-def get_redirect_url(url, scope='snsapi_base', state='view'):
+def get_redirect_url(path, params=None, scope='snsapi_base', state='view'):
 	params = urllib.parse.urlencode([
 		('appid', WECHAT_APPID),
-		('redirect_uri', url),
+		('redirect_uri', get_url(path, params)),
 		('response_type', 'code'),
 		('scope', scope),
 		('state', state)

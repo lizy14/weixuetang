@@ -8,6 +8,7 @@ import asyncio
 from celery import shared_task
 from wechat.tasks import send_template
 import logging
+from .settings import get_redirect_url
 
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
@@ -32,7 +33,9 @@ async def notification_notice_new(noticeStatus):
         'publisher': notice.publisher,
         'content': notice.content,
         'time': notice.publishtime.strftime('%Y-%m-%d'),
-    })
+    }, get_redirect_url('notice/detail', {
+        'notice_id': notice.id
+    }))
 
 
 async def notification_hw_new(homeworkStatus):
@@ -46,7 +49,9 @@ async def notification_hw_new(homeworkStatus):
         'course_name': hw.course.name,
         'ddl': hw.end_time.strftime('%Y-%m-%d'),
         'days_left': (hw.end_time - date.today()).days
-    })
+    }, get_redirect_url('hw/detail', {
+        'homework_id': hw.id
+    }))
 
 async def notification_hw_graded(homeworkStatus):
     _logger.debug("NOTIFICATION %s homework graded `%s`" % (
@@ -58,7 +63,9 @@ async def notification_hw_graded(homeworkStatus):
         'hw_name': hw.title,
         'course_name': hw.course.name,
         'score': homeworkStatus.grading
-    })
+    }, get_redirect_url('hw/detail', {
+        'homework_id': hw.id
+    }))
 
 async def notification_hw_ddl_modified(homeworkStatus, oldDdl):
     _logger.debug("NOTIFICATION %s homework ddl modified `%s`, %s -> %s" % (
@@ -73,7 +80,9 @@ async def notification_hw_ddl_modified(homeworkStatus, oldDdl):
         'course_name': hw.course.name,
         'ddl': hw.end_time.strftime('%Y-%m-%d'),
         'days_left': (hw.end_time - date.today()).days
-    })
+    }, get_redirect_url('hw/detail', {
+        'homework_id': hw.id
+    }))
 
 
 async def update_all():

@@ -24,16 +24,16 @@ def default_wrapper(data):
 
 
 @shared_task
-def t_send_template(openid, temp, data):
+def t_send_template(openid, temp, data, url):
     try:
         WeChatView._wechat.send_template_message(
-            openid, WeChatView.get_template_id(template_name[temp]), data)
+            openid, WeChatView.get_template_id(template_name[temp]), data, url)
     except Exception as e:
         __logger__.exception(e.__str__)
 
 
-def send_template(openid, temp, data, wrapper=None):
+def send_template(openid, temp, data, url='', wrapper=None):
     if not wrapper:
         wrapper = default_wrapper
     t_data = wrapper(data)
-    t_send_template.delay(openid, temp, t_data)
+    t_send_template.delay(openid, temp, t_data, url)
