@@ -9,10 +9,13 @@ from WeLearn.settings import wechat_conf
 from userpage.models import Student
 from .models import Template
 from wechat_sdk.messages import *
+import logging
 
 
 class WeChatHandler(object):
     """ Base handler class"""
+
+    __logger__ = logging.getLogger(name='WeChatHandler')
 
     def __init__(self, view, user):
         self.context = view
