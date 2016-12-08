@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="../../js/base.js"></script>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="moqunzhu">
+
+        <title>Preferences</title>
+        <!-- Custom styles -->
+        <link href="../../css/weui-custom-style.css" rel="stylesheet">
+
+        <!-- WeUI styles -->
+        <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
+
+        <!-- WeUI Javascript library -->
+        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+</head>
+
+<body>
+    <div id="page-container">
+
+    <!-- Header -->
+    <h1 class="news-title">设置</h1>
+
+    <div class="weui-cells__title">推送</div>
+    <div class="weui-cells weui-cells_checkbox">
+        <label class="weui-cell weui-check__label" for="s11">
+            <div class="weui-cell__hd">
+                <input type="checkbox" class="weui-check" name="checkbox1" id="s11" checked="checked">
+                <i class="weui-icon-checked"></i>
+            </div>
+            <div class="weui-cell__bd">
+                <p>公告新鲜事</p>
+            </div>
+        </label>
+        <label class="weui-cell weui-check__label" for="s12">
+            <div class="weui-cell__hd">
+                <input type="checkbox" name="checkbox1" class="weui-check" id="s12" checked="checked">
+                <i class="weui-icon-checked"></i>
+            </div>
+            <div class="weui-cell__bd">
+                <p>作业新鲜事</p>
+            </div>
+        </label>
+        <label class="weui-cell weui-check__label" for="s13">
+            <div class="weui-cell__hd">
+                <input type="checkbox" name="checkbox1" class="weui-check" id="s12" checked="checked">
+                <i class="weui-icon-checked"></i>
+            </div>
+            <div class="weui-cell__bd">
+                <p>文件新鲜事</p>
+            </div>
+        </label>
+        <label class="weui-cell weui-check__label" for="s13">
+            <div class="weui-cell__hd">
+                <input type="checkbox" name="checkbox1" class="weui-check" id="s12" checked="checked">
+                <i class="weui-icon-checked"></i>
+            </div>
+            <div class="weui-cell__bd">
+                <p>文件新鲜事</p>
+            </div>
+        </label>
+        <label class="weui-cell weui-check__label" for="s13">
+            <div class="weui-cell__hd">
+                <input type="checkbox" name="checkbox1" class="weui-check" id="s12" checked="checked">
+                <i class="weui-icon-checked"></i>
+            </div>
+            <div class="weui-cell__bd">
+                <p>讨论新鲜事</p>
+            </div>
+        </label>
+        <label class="weui-cell weui-check__label" for="s13">
+            <div class="weui-cell__hd">
+                <input type="checkbox" name="checkbox1" class="weui-check" id="s12" checked="checked">
+                <i class="weui-icon-checked"></i>
+            </div>
+            <div class="weui-cell__bd">
+                <p>上课通知</p>
+            </div>
+        </label>
+    </div> 
+
+    <div class="weui-cells__title">ddl提醒</div>
+    <div class="weui-cells weui-cells_radio">
+        <label class="weui-cell weui-check__label" for="x11">
+            <div class="weui-cell__bd">
+                <p>不提醒</p>
+            </div>
+            <div class="weui-cell__ft">
+                <input type="radio" class="weui-check" name="radio1" id="x11">
+                <span class="weui-icon-checked"></span>
+            </div>
+        </label>
+        <label class="weui-cell weui-check__label" for="x12">
+
+            <div class="weui-cell__bd">
+                <p>提前4小时</p>
+            </div>
+            <div class="weui-cell__ft">
+                <input type="radio" name="radio1" class="weui-check" id="x12" checked="checked">
+                <span class="weui-icon-checked"></span>
+            </div>
+        </label>
+        <label class="weui-cell weui-check__label" for="x13">
+
+            <div class="weui-cell__bd">
+                <p>提前1天</p>
+            </div>
+            <div class="weui-cell__ft">
+                <input type="radio" name="radio1" class="weui-check" id="x12" checked="checked">
+                <span class="weui-icon-checked"></span>
+            </div>
+        </label>
+    </div>         
+
+    <div class="weui-cells__title">订阅</div>
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell weui-cell_switch">
+            <div class="weui-cell__bd">文化素质教育讲座</div>
+            <div class="weui-cell__ft">
+                <input class="weui-switch" type="checkbox"/>
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_switch">
+            <div class="weui-cell__bd">教务通知</div>
+            <div class="weui-cell__ft">
+                <input class="weui-switch" type="checkbox"/>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    $.getJSON('/api/notice/detail/', urlParam, function(data){
+        expand(data.data);
+        data.data.sort(function(a, b){
+            return parseDate(a.end_time) > parseDate(b.end_time)
+        })
+        new Vue({
+            el: '#page-container',
+            data: {
+                'item': data.data
+            }
+        })
+    })
+
+    // pop confirmation dialog when click '解绑'
+    $(function(){
+        $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
+            $(this).parents('.detail-dialog').fadeOut(200);
+        });
+
+        $('#dettach-button').on('click', function(){
+            $('#dettach-dialog').fadeIn(200);
+        });
+    });
+    </script>
+
+
+
+
+
+</body>

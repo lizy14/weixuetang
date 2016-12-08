@@ -9,7 +9,6 @@ from datetime import datetime
 
 def wrap_date(d):
     return d.strftime('%Y-%m-%d')
-    return datetime.combine(d, datetime.min.time()).timestamp()
 
 
 def wrap_homework_status_status(hwSt):
@@ -18,12 +17,19 @@ def wrap_homework_status_status(hwSt):
 
 def token_required(function=None):
     def wrapper(obj, *args, **kwargs):
-        obj.check_input('code', 'state') # TODO: actually state not used
-        try:
+        obj.check_input('code', 'state')  # TODO: actually state not used
+        if obj.request.session.get('code', False) and obj.request.session.get('openid', False) and obj.request.session['code'] == obj.input['code']:
             student = Student.objects.get(
-                open_id=WeChatView.open_id_from_code(obj.input['code']))
-        except Student.DoesNotExist:
-            raise ValidateError('User not found!')
+                open_id=obj.request.session['openid'])
+        else:
+            try:
+                student = Student.objects.get(
+                    open_id=WeChatView.open_id_from_code(obj.input['code']))
+                obj.request.session['code'] = obj.input['code']
+                obj.request.session['openid'] = student.open_id
+                obj.request.session.set_expiry(0)
+            except:
+                raise ValidateError('Validation failed!')
         obj.student = student
         return function(obj, *args, **kwargs)
     return wrapper
@@ -89,10 +95,8 @@ class Detail(APIView):
                 'detail': hw.detail,
                 'attachment': hw.attachment,
                 'grade': hwSt.grading,
-                'comment': "{}\r\n——{}".format(
-                    hwSt.grading_comment,
-                    hwSt.graded_by
-                )
+                'graded_by': hwSt.graded_by,
+                'comment': hwSt.grading_comment,
             }
         self.check_input('homework_id')
         result = HomeworkStatus.objects.get(

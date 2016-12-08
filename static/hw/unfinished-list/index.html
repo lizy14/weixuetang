@@ -24,9 +24,14 @@
 </head>
 
 <body>
-    <div class="weui-panel__bd" id="hw-list-container">
-        <!-- Header -->
-        <h1 class="news-title">作业</h1>
+    <!-- Header -->
+    <h1 class="news-title">未交作业</h1>
+    <div class="weui-loadmore">
+        <i class="weui-loading"></i>
+        <span class="weui-loadmore__tips">正在加载</span>
+    </div>
+    <div class="weui-panel__bd" id="list-container" style="display: none;">
+
 
         <div class="news-subtitle">
             <div class="weui-cells__title">您现在有{{ items.length }}个需要交的作业</div>
@@ -37,7 +42,7 @@
             <div class="weui-panel weui-panel_access">
 
                 <!-- List Item -->
-                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
+                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.homework_id" v-for="item in items">
                     <h5 class="weui-media-box__title">{{item.title}}</h5>
                     <h5 class="weui-media-box__title">ddl: {{item.end_time}}，还有<span class="weui-badge ddl-badge">{{item.days_left}}</span>天</h5>
                     <p class="weui-media-box__desc" >{{item.detail}}</p>
@@ -50,7 +55,7 @@
 
 
             <div class="weui-panel__ft">
-                <a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
+                <a :href="'/hw/list/?code=' + urlParam.code + '&state=' + urlParam.state" class="weui-cell weui-cell_access weui-cell_link">
                     <div class="weui-cell__bd">查看本学期全部作业</div>
                     <span class="weui-cell__ft"></span>
                 </a>
@@ -62,15 +67,16 @@
 
         <!-- Detail Dialog -->
         <div id="dialog-container">
-            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.title">
+            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.homework_id">
                 <div class="weui-mask"></div>
                 <div class="weui-dialog">
                     <div class="weui-dialog__hd">
                         <strong class="weui-dialog__title">{{item.title}}</strong>
                     </div>
-                    <div class="weui-dialog__bd">{{item.detail}}</div>
+                    <div class="weui-dialog__bd" v-if="item.detail">{{item.detail}}</div>
+                    <div class="weui-dialog__bd" v-else>无描述</div>
                      <div class="weui-dialog__ft">
-                        <a :href="'/hw/detail/?id=' + item.id" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
+                        <a :href="'/hw/detail/?homework_id=' + item.homework_id + '&code=' + urlParam.code + '&state=' + urlParam.state" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
                     </div>
                 </div>
@@ -83,28 +89,32 @@
     $.getJSON('/api/hw/unfinished-list/', urlParam, function(data){
         expand(data.data);
         data.data.sort(function(a, b){
-            return parseDate(a.end_time) > parseDate(b.end_time)
-        })
+            return a.days_left - b.days_left;
+        });
         new Vue({
-            el: '#hw-list-container',
+            el: '#list-container',
             data: {
-                'items': data.data
+                'items': data.data,
+                'urlParam': urlParam
             }
         })
+        $(function(){
+            var $DetailDialog = $('.detail-dialog');
+
+            $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
+                $(this).parents('.detail-dialog').fadeOut(200);
+            });
+
+            $('.detail-box').on('click', function(){
+                id = '#dialog-' + $(this)[0].id;
+                $(id).fadeIn(200);
+            });
+        });
+        $('.weui-loadmore').hide();
+        $('#list-container').show();
     })
 
-    $(function(){
-        var $DetailDialog = $('.detail-dialog');
 
-        $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
-            $(this).parents('.detail-dialog').fadeOut(200);
-        });
-
-        $('.detail-box').on('click', function(){
-            id = '#dialog-' + $(this)[0].id;
-            $(id).fadeIn(200);
-        });
-    });
 
     </script>
 
