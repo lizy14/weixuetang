@@ -17,7 +17,10 @@ class UserBind(APIView):
             raise ValidateError('CaμsAPI fail')
 
     def get(self):
-        return Student.get_by_openid(self.request.session['openid']).xt_id
+        result = Student.get_by_openid(self.request.session['openid']).xt_id
+        if result is None:
+            raise LogicError('Unbind.')
+        return result
 
     def post(self):
         self.check_input('student_id', 'password')
