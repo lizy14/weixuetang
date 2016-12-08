@@ -77,6 +77,7 @@ class TemplateHandler(WeChatHandler):
         if self.msg.status == 'success':
             return
         else:
+            self.__logger__.critical(self.msg.status)
             raise OperationError(self.msg.status)
 
 
