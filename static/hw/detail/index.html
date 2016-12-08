@@ -81,9 +81,10 @@
             <div class="weui-panel weui-panel_access">
             <div class="weui-panel__bd">
                 <div class="weui-media-box weui-media-box_text">
-                    <h5 class="weui-media-box__title">分数: {{ item.grade }}</h5>
-                    <h5 class="weui-media-box__title">批改人: {{ item.grade_by }}</h5>
-                    <div class="weui-media-box__desc" id="detail-description">{{ item.comment }}
+                    <h5 class="weui-media-box__title" v-if="item.grade !== ''" >分数: {{ item.grade }}</h5>
+                    <h5 class="weui-media-box__title" v-if="item.grade_by !== ''">批改人: {{ item.grade_by }}</h5>
+                    <div class="weui-media-box__desc" id="detail-description" v-if="item.comment !== ''" >描述：{{ item.comment }}
+                    <div class="weui-media-box__desc" id="detail-description" v-else >无描述
                     </div>
                 </div>
             </div>

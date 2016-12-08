@@ -37,7 +37,7 @@
             <div class="weui-panel weui-panel_access">
 
                 <!-- List Item -->
-                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
+                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.homework_id" v-for="item in items">
                     <h5 class="weui-media-box__title">{{item.title}}</h5>
                     <h5 class="weui-media-box__title">ddl: {{item.end_time}}，还有<span class="weui-badge ddl-badge">{{item.days_left}}</span>天</h5>
                     <p class="weui-media-box__desc" >{{item.detail}}</p>
@@ -62,13 +62,14 @@
 
         <!-- Detail Dialog -->
         <div id="dialog-container">
-            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.title">
+            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.homework_id">
                 <div class="weui-mask"></div>
                 <div class="weui-dialog">
                     <div class="weui-dialog__hd">
                         <strong class="weui-dialog__title">{{item.title}}</strong>
                     </div>
-                    <div class="weui-dialog__bd">{{item.detail}}</div>
+                    <div class="weui-dialog__bd" v-if="item.detail !== ''">{{item.detail}}</div>
+                    <div class="weui-dialog__bd" v-else>无描述</div>
                      <div class="weui-dialog__ft">
                         <a :href="'/hw/detail/?homework_id=' + item.homework_id + '&code=' + urlParam.code + '&state=' + urlParam.state" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
