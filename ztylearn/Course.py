@@ -33,7 +33,7 @@ class Course:
         return [
             Work(
                 user       = self.user,
-                id         = random.randint(0,2333333),  # _['sequencenum'],  # TODO
+                id         = _['assignmentid'],
                 course_id  = self.id,
                 title      = _['title'],
                 detail     = _['detail'],

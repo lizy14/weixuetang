@@ -6,7 +6,7 @@ import json
 from datetime import date
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
-
+import requests
 
 def from_stamp(stamp):
     return date.fromtimestamp(stamp / 1000)
