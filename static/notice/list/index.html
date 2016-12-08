@@ -24,12 +24,15 @@
 </head>
 
 <body>
-    <div class="weui-panel__bd" id="hw-list-container">
-        <!-- Header -->
-        <h1 class="news-title">公告</h1>
+    <!-- Header -->
+    <h1 class="news-title">公告</h1>
+    <div class="weui-loadmore">
+        <i class="weui-loading"></i>
+        <span class="weui-loadmore__tips">正在加载</span>
+    </div>
 
-        <div class="weui-cells__title">每日格言</div>
-
+    <div class="weui-panel__bd" id="list-container" style="display:none">
+        <div id="fortune" class="weui-cells__title"> {{ fortune }} </div>
         <!-- notices -->
         <div class="news-container">
             <div class="weui-panel weui-panel_access">
@@ -56,9 +59,9 @@
                     <div class="weui-dialog__hd">
                         <strong class="weui-dialog__title">{{ item.title }}</strong>
                     </div>
-                    <div class="weui-dialog__bd">{{ item.detail }}</div>
-                     <div class="weui-dialog__ft">
-                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
+                    <div class="weui-dialog__bd"><span class="dialog-detail-box">{{ item.detail }}</span></div>
+                    <div class="weui-dialog__ft">
+                        <a :href="'/notice/detail/?notice_id=' + item.notice_id + '&code=' + urlParam.code + '&state=' + urlParam.state" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
                     </div>
                 </div>
@@ -68,21 +71,24 @@
 
 
     <script>
-    $.getJSON('/api/notice/list/', urlParam, function(data){
-        expand(data.data);
-        data.data.sort(function(a, b){
-            return parseDate(a.end_time) > parseDate(b.end_time)
-        })
+    $.getJSON('/api/u/fortune', function(data){
         new Vue({
-            el: '#hw-list-container',
+            el: '#fortune',
             data: {
-                'items': data.data,
+                'fortune':data.data
             }
         })
     })
-    $(function(){
-        var $DetailDialog = $('.detail-dialog');
 
+    $.getJSON('/api/notice/list/', urlParam, function(data){
+        prune(data.data);
+        new Vue({
+            el: '#list-container',
+            data: {
+                'items': data.data,
+                'urlParam': urlParam,
+            }
+        })
         $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
             $(this).parents('.detail-dialog').fadeOut(200);
         });
@@ -90,9 +96,13 @@
         $('.detail-box').on('click', function(){
             id = '#dialog-' + $(this)[0].id;
             $(id).fadeIn(200);
+            param = urlParam;
+            param.notice_id = this.id;
+            $.getJSON('/api/notice/mark-as-read/', param, function(data){
+            });
         });
-    });
-
+        $('.weui-loadmore').hide();
+        $('#list-container').show();
+    })
     </script>
-
 </body>
