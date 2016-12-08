@@ -15,29 +15,8 @@ def wrap_homework_status_status(hwSt):
     return 2 if hwSt.graded else 1 if hwSt.submitted else 0
 
 
-def token_required(function=None):
-    def wrapper(obj, *args, **kwargs):
-        obj.check_input('code', 'state')  # TODO: actually state not used
-        if obj.request.session.get('code', False) and obj.request.session.get('openid', False) and obj.request.session['code'] == obj.input['code']:
-            student = Student.objects.get(
-                open_id=obj.request.session['openid'])
-        else:
-            try:
-                student = Student.objects.get(
-                    open_id=WeChatView.open_id_from_code(obj.input['code']))
-                obj.request.session['code'] = obj.input['code']
-                obj.request.session['openid'] = student.open_id
-                obj.request.session.set_expiry(0)
-            except:
-                raise ValidateError('Validation failed!')
-        obj.student = student
-        return function(obj, *args, **kwargs)
-    return wrapper
-
-
 class UnfinishedList(APIView):
 
-    @token_required
     def get(self):
         def wrap(hw):
             return {
@@ -60,7 +39,6 @@ class UnfinishedList(APIView):
 
 class List(APIView):
 
-    @token_required
     def get(self):
         def wrap(hwSt):
             hw = hwSt.homework
@@ -81,7 +59,6 @@ class List(APIView):
 
 class Detail(APIView):
 
-    @token_required
     def get(self):
         def wrap(hwSt):
             hw = hwSt.homework

@@ -30,6 +30,7 @@ SECRET_KEY = CONFIGS['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIGS['DEBUG']
+IGNORE_CODE_CHECK = CONFIGS['IGNORE_CODE_CHECK']
 
 ALLOWED_HOSTS = ['*']
 

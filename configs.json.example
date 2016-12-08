@@ -11,5 +11,6 @@
   "DB_PASS": "",
   "DB_HOST": "127.0.0.1",
   "DB_PORT": "3306",
-  "SITE_DOMAIN": "http://localhost"
+  "SITE_DOMAIN": "http://localhost",
+  "IGNORE_CODE_CHECK": false
 }
