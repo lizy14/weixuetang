@@ -180,7 +180,7 @@ async def update_student_course_work(student, course, _homework, mute):
         homework.course = course
         homework.xt_id = _homework.id
 
-    ddl_modified = str(homework.end_time) != str(_homework.end_time)
+    ddl_modified = (not mute) and str(homework.end_time) != str(_homework.end_time)
     if ddl_modified:
         old_ddl = homework.end_time
 

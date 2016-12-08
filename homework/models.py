@@ -29,3 +29,4 @@ class HomeworkStatus(models.Model):
 class CourseStatus(models.Model):
     student = models.ForeignKey(Student, db_index=True)
     course = models.ForeignKey(Course)
+    ignored = models.BooleanField(default=False)

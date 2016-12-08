@@ -11,5 +11,12 @@ class Student(models.Model):
 		except cls.DoesNotExist:
 			raise LogicError('User not found.')
 
-class Subscription(models.Model):
+class Preference(models.Model):
 	student = models.ForeignKey(Student, db_index=True)
+	s_work = models.BooleanField(default=True)
+	s_notice = models.BooleanField(default=True)
+	s_academic = models.BooleanField(default=True)
+	s_lecture = models.BooleanField(default=True)
+	s_class = models.BooleanField(default=True)
+	s_grading = models.BooleanField(default=True)
+	ahead_time = models.IntegerField()
