@@ -93,11 +93,12 @@
 
 
     <script>
-    $.getJSON('/api/u/fortune', function(data){
+    $.getJSON('/api/u/fortune', urlParam, function(data){
         new Vue({
             el: '#fortune',
             data: {
-                'fortune':data.data
+                'fortune':data.data,
+                'urlParam': urlParam
             }
         })
     })

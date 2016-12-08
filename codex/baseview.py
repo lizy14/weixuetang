@@ -22,6 +22,32 @@ class BaseView(View):
     def http_method_not_allowed(self, *args, **kwargs):
         return super(BaseView, self).http_method_not_allowed(self.request, *args, **kwargs)
 
+from wechat.wrapper import WeChatView
+from userpage.models import Student
+from django.http import HttpResponseForbidden
+from WeLearn.settings import IGNORE_CODE_CHECK
+
+
+def certificated(function=None):
+    def wrapper(obj, *args, **kwargs):
+        if not IGNORE_CODE_CHECK:
+            obj.check_input('code', 'state')  # TODO: actually state not used
+            if obj.request.session.get('code', False) and obj.request.session.get('openid', False) and obj.input['code'] == obj.request.session['code']:
+                student = Student.objects.get(
+                    open_id=obj.request.session['openid'])
+            else:
+                try:
+                    student = Student.objects.get(
+                        open_id=WeChatView.open_id_from_code(obj.input['code']))
+                    obj.request.session['code'] = obj.input['code']
+                    obj.request.session['openid'] = student.open_id
+                    obj.request.session.set_expiry(0)
+                except:
+                    return HttpResponseForbidden()
+            obj.student = student
+        return function(obj, *args, **kwargs)
+    return wrapper
+
 
 class APIView(BaseView):
 
@@ -48,6 +74,7 @@ class APIView(BaseView):
         d.update(self.request.FILES)
         return d
 
+    @certificated
     def api_wrapper(self, func, *args, **kwargs):
         code = 0
         msg = ''
