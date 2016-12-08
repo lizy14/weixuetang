@@ -91,7 +91,7 @@
         </div>
     </div>
 
-    <a href="javascript:;" class="weui-btn weui-btn_primary" id="detail-return-button">返回作业新鲜事</a>
+    <a :href="'/hw/unfinished-list/?code=' + urlParam.code + '&state=' + urlParam.state " class="weui-btn weui-btn_primary" id="detail-return-button">返回作业新鲜事</a>
     </div>
 
     <script>
@@ -99,7 +99,8 @@
         new Vue({
             el: '#detail-container',
             data: {
-                'item': data.data
+                'item': data.data,
+                'urlParam': urlParam,
             }
         })
     })

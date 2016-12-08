@@ -83,8 +83,8 @@
     $.getJSON('/api/hw/unfinished-list/', urlParam, function(data){
         expand(data.data);
         data.data.sort(function(a, b){
-            return parseDate(a.end_time) > parseDate(b.end_time)
-        })
+            return a.days_left - b.days_left;
+        });
         new Vue({
             el: '#hw-list-container',
             data: {
