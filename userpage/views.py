@@ -28,7 +28,7 @@ class UserBind(APIView):
         self.validate_user()
         user.xt_id = self.input['student_id']
         user.save()
-        t_flush_student.delay(user.xt_id)
+        # t_flush_student.delay(user.xt_id)
 
 class UserUnBind(APIView):
 
