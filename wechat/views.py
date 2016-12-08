@@ -18,12 +18,10 @@ class CustomWeChatView(WeChatView):
     handlers = [eval(m[0]) for m in inspect.getmembers(
         handlers_module, inspect.isclass) if m[1].__module__ == handlers_module.__name__ and m[1].__name__.endswith('Handler')]
     event_keys = {
-        'news_all': 'NEWS_ALL',
         'news_assignments': 'NEWS_ASI',
         'news_broadcasts': 'NEWS_BRO',
         'news_lectures': 'NEWS_LEC',
-        'talk_teacher': 'TALK_TEA',
-        'talk_discuss': 'TALK_DIS',
+        'calendar': 'CALEN',
         'info_bind': 'INFO_BIN',
         'info_SETTING': 'INFO_SET',
         'info_test': 'INFO_TEST',
@@ -33,11 +31,6 @@ class CustomWeChatView(WeChatView):
             {
                 'name': '新鲜事',
                 'sub_button': [
-                        {
-                            'type': 'click',
-                            'name': '全部',
-                            'key': event_keys['news_all'],
-                        },
                     {
                             'type': 'view',
                             'name': '作业',
@@ -56,27 +49,17 @@ class CustomWeChatView(WeChatView):
                 ]
             },
             {
-                'name': '说两句',
-                'sub_button': [
-                        {
-                            'type': 'click',
-                            'name': '找老师',
-                                    'key': event_keys['talk_teacher'],
-                        },
-                    {
-                            'type': 'click',
-                            'name': '发讨论',
-                                    'key': event_keys['talk_discuss'],
-                    }
-                ]
+                'type': 'click',
+                'name': '日历',
+                'key': event_keys['calendar']
             },
             {
                 'name': '个人中心',
                 'sub_button': [
                         {
-                            'type': 'click',
-                            'name': '绑定信息',
-                                    'key': event_keys['info_bind'],
+                            'type': 'view',
+                            'name': '绑定/解绑',
+                            'url': get_redirect_url('u/bind'),
                         },
                     {
                             'type': 'click',
@@ -99,9 +82,9 @@ class CustomWeChatView(WeChatView):
             menu = cls.menu
         try:
             cls._wechat.create_menu(menu)
-        except:
+        except Exception as e:
             raise BaseError(-1,
-                            'CustomWeChatView:update_menu() error setting menu!')
+                            'CustomWeChatView:update_menu() error setting menu: {}'.format(str(e)))
 
     @classmethod
     def get_templates(cls):
