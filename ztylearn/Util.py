@@ -29,6 +29,21 @@ async def wrapped_json(path, payload={}): # path starts with '/'
     session.close()
     return resp_json
 
+def wrapped_json_sync(path, payload={}): # path starts with '/'
+    _logger.debug("API SYNC %s param `%s`" % (path, payload))
+    auth = {
+        'apikey': API_KEY,
+        'apisecret': API_SECRET
+    }
+    body = {**auth, **payload}  # merge two dicts
+    r = requests.post(
+        URL_PREFIX + path,
+        data=json.dumps(body),
+        headers={'content-type': 'application/json'}
+    )
+    resp_json = r.json()
+    return resp_json
+
 async def _register(username, password):
     result = await wrapped_json('/users/register', payload={
         'username': username,
@@ -43,9 +58,14 @@ async def _unregister(username):
     assert(result['message'] == 'Success')
 
 def register(username, password):
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(_register(username, password))
+    result = wrapped_json_sync('/users/register', payload={
+        'username': username,
+        'password': password
+    })
+    assert(result['message'] == 'Success')
 
 def unregister(username):
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(_unregister(username))
+    result = wrapped_json_sync('/students/{username}/cancel'.format_map({
+        'username': username
+    }))
+    assert(result['message'] == 'Success')
