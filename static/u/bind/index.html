@@ -1,134 +1,161 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
+    <head>
+        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="../../js/base.js"></script>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="moqunzhu">
 
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<link href="/css/base.css" rel="stylesheet" type="text/css" />
-	<link href="/css/validation.css" rel="stylesheet" type="text/css" />
-	<title>绑定学号 - 紫荆之声</title>
+        <title>Bind</title>
+        <!-- Custom styles -->
+        <link href="../../css/weui-custom-style.css" rel="stylesheet">
+
+        <!-- WeUI styles -->
+        <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
+
+        <!-- WeUI Javascript library -->
+        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
 </head>
 
 <body>
-	<div id="wrap">
-		<header></header>
+    <!-- 正在加载 -->
+    <div class="weui-loadmore">
+        <i class="weui-loading"></i>
+        <span class="weui-loadmore__tips">正在加载</span>
+    </div>
 
-		<div class="theme" id="theme"></div>
+    <!-- Header -->
+    <!-- 绑定 --> 
+    <div id="bind-container" style="display: none;">
+    <h1 class="news-title">绑定</h1>
 
-		<hr/>
-		<div id="mainbody"></div>
+    <div class="weui-cells__title">请输入学号与info密码</div>
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">学  号</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" id="inputUsername" placeholder=""/>
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">密  码</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="password" id="inputPassword" placeholder=""/>
+            </div>
+        </div>
+    </div>
+    <a href="javascript:;" class="weui-btn weui-btn_primary" id="confirm-button">确认</a>
+    </div>
 
-	</div>
-	<footer id="footer">
-		<hr />
-		<a href="http://www.xuetangx.com/" target="_blank">学堂在线</a>
-		<a href="http://www.tsinghua.edu.cn/" target="_blank">清华大学</a>
-		<a href="https://github.com/ThssSE" target="_blank">软件工程</a><br> &copy; 2016
-	</footer>
+    <div class="detail-dialog" style="display: none;" id="msg-dialog">
+        <div class="weui-mask"></div>
+        <div class="weui-dialog">
+            <div class="weui-dialog__hd"><strong class="weui-dialog__title">{{ msg.title }}</strong></div>
+            <div class="weui-dialog__bd">{{ msg.content }}</div>
+            <div class="weui-dialog__ft">
+                <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+            </div>
+        </div>
+    </div>
+    </div>
 
-	<script type="text/template" id="tpl-header">
-		<img class="header-img" src="/img/logo.jpg" />
-	</script>
 
-	<script type="text/template" id="tpl-theme">
-		用户认证
-	</script>
+     <!-- 解绑 --> 
+    <div id="unbind-container" style="display: none;">
+    <h1 class="news-title">解绑</h1>
+    <div class="weui-cells__title">点击按钮确认解绑帐号{{id}}</div>
+     <a href="javascript:;"  class="weui-btn weui-btn_warn" id="dettach-button">解绑</a>
+    </div>
 
-	<script type="text/template" id="tpl-mainbody">
-		{% if isLoading %}
-		<div id="successHolder">
-			<img src="/img/loading.gif" />
-		</div>
-		{% elif isValidated %}
-		<div id="successHolder">
-			<img src="/img/success.png" />
-			<p>认证成功！</p>
-			<p>您已经可以使用“紫荆之声”的全部功能了！</p>
-		</div>
-		{% else %}
-		<div id="validationHolder">
-			<form class="form-horizontal" role="form" method="post" id="validationForm" onsubmit="return false;">
-				<div class="form-group" id="usernameGroup">
-					<label for="inputUsername" class="col-xs-3 control-label">学号</label>
-					<div class="col-xs-9">
-						<input type="tel" class="form-control" id="inputUsername" placeholder="请输入您的学号" name="student_id" onblur="checkUsername();">
-						<span class="help-block" id="helpUsername"></span>
-					</div>
-				</div>
-				<div class="form-group" id="passwordGroup">
-					<label for="inputPassword" class="col-xs-3 control-label">密码</label>
-					<div class="col-xs-9">
-						<input type="password" class="form-control" id="inputPassword" placeholder="使用info密码进行登录" name="password" onblur="checkPassword();">
-						<span class="help-block" id="helpPassword"></span>
-					</div>
-				</div>
-				<div class="form-group" id="submitGroup">
-					<div class="col-xs-offset-3 col-xs-9">
-						<button onclick="submitBind();" class="btn btn-default" id="submitBtn">认证</button>
-						<p class="help-block" id="helpLoading" style="display: none"><img src="/img/loading.gif">正在认证，请稍候...</p>
-						<p class="help-block" id="helpSubmit"></p>
-					</div>
-				</div>
-			</form>
-		</div>
-		{% endif %}
-	</script>
+    <div class="detail-dialog" style="display: none;" id="dettach-dialog">
+        <div class="weui-mask"></div>
+        <div class="weui-dialog">
+            <div class="weui-dialog__hd">
+                <strong class="weui-dialog__title">确认解绑吗？</strong>
+            </div>
+             <div class="weui-dialog__ft">
+                <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">残忍解绑</a>
+                <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">取消</a>
+            </div>
+        </div>
+    </div>
 
-	<script src="/3rd/jquery.js"></script>
-	<script src="/3rd/swig.js"></script>
-	<script src="/js/weixin_lib.js"></script>
-	<script src="/js/base.js"></script>
-	<script src="/js/validation.js"></script>
+    <script>
+    $.getJSON('/api/u/bind', urlParam, function(data){
+        //data = {"code": 1, "data": 'lizy14', "msg": ""}
+        code = data.code;
+        $('.weui-loadmore').hide();
+        if (code == 1) {
+            $('#bind-container').show();
+        }
+        else if (code == 0) {
+            $('#unbind-container').show();
+            new Vue({
+                el: '#unbind-container',
+                data: {
+                    'id': data.data,
+                    'urlParam': urlParam,
+                }
+            })
+        }
+    })
 
-	<script>
-		var locals = {
-			isLoading: true,
-			isValidated: false,
-			isBinding: false
-		};
-		var render = function() {
-			$('header').html(swig.render($('#tpl-header').html(), {
-				locals: locals
-			}));
-			$('#theme').html(swig.render($('#tpl-theme').html(), {
-				locals: locals
-			}));
-			$('#mainbody').html(swig.render($('#tpl-mainbody').html(), {
-				locals: locals
-			}));
-		};
-		$(function() {
-			render();
-			api.get('/api/u/bind', {
-				openid: urlParam.openid
-			}, function(data) {
-				locals.isLoading = false;
-				locals.isValidated = !!data;
-				render();
-			}, dftFail);
-		});
-		var submitBind = function() {
-			//locals.isBinding = true;
-			//render();
-			submitValidation(urlParam.openid, function(data) {
-				locals.isBinding = false;
-				locals.isValidated = true;
-				render();
-			}, function(errno, errmsg) {
-				//locals.isBinding = false;
-				//locals.isValidated = false;
-				//render();
-				if (errno == 3) {
-					showError('usernameGroup', 'helpUsername', '');
-					showError('passwordGroup', 'helpPassword', '学号或密码错误！请输入登录info的学号和密码');
-				} else {
-					showError('submitGroup', 'helpSubmit', '出现了奇怪的错误，我们已经记录下来了，请稍后重试。');
-				}
-				disableAll(false);
-				showLoading(false);
-			});
-		};
-	</script>
+    // pop confirmation dialog when click '解绑'
+    $(function(){
+        $('#dettach-dialog').on('click', '.weui-dialog__btn_primary', function(){
+            $(this).parents('.detail-dialog').fadeOut(200);
+        });
+
+        $('#dettach-button').on('click', function(){
+            $('#dettach-dialog').fadeIn(200);
+        });
+    });
+
+    // submit 
+    $(function(){
+        $('#confirm-button').on('click', function() {
+            data = urlParam;
+            data['student_id'] = $('#inputUsername').val();
+            data['password'] = $('#inputPassword').val() ;
+            $.post("/api/u/bind", data, 
+                function(data,status){
+                //alert("Data: " + data.msg + "\nStatus: " + status);
+                if (data.code == 0) {
+                    msg = {title: '绑定成功'};
+                    new Vue({
+                        el: '#msg-dialog',
+                        data: {
+                            'msg': msg,
+                            'urlParam': urlParam,
+                        }
+                    });
+                }
+                else {
+                    msg = {title: '出错啦', content: data.msg};
+                    new Vue({
+                        el: '#msg-dialog',
+                        data: {
+                            'msg': msg,
+                            'urlParam': urlParam,
+                        }
+                    });
+                }
+                $('#msg-dialog').fadeIn(200);
+                $('#msg-dialog').on('click', '.weui-dialog__btn', function(){
+                    $(this).parents('.detail-dialog').fadeOut(200);
+                });
+            });
+        })
+        
+    });
+
+    </script>
+
+
+
 </body>
-
-</html>
