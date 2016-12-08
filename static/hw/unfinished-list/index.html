@@ -24,9 +24,14 @@
 </head>
 
 <body>
-    <div class="weui-panel__bd" id="hw-list-container">
-        <!-- Header -->
-        <h1 class="news-title">作业</h1>
+    <!-- Header -->
+    <h1 class="news-title">未交作业</h1>
+    <div class="weui-loadmore">
+        <i class="weui-loading"></i>
+        <span class="weui-loadmore__tips">正在加载</span>
+    </div>
+    <div class="weui-panel__bd" id="hw-list-container" style="display: none;">
+        
 
         <div class="news-subtitle">
             <div class="weui-cells__title">您现在有{{ items.length }}个需要交的作业</div>
@@ -105,6 +110,8 @@
                 $(id).fadeIn(200);
             });
         });
+        $('.weui-loadmore').hide();
+        $('#hw-list-container').show();
     })
 
 
