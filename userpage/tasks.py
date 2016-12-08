@@ -12,4 +12,4 @@ async def t_flush_student(xt_id):
     try:
         update_student(Student.objects.get(xt_id=xt_id))
     except Exception as e:
-        __logger__.exception(e.__str__)
+        __logger__.exception(str(e))
