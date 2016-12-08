@@ -30,7 +30,7 @@
     </div>
 
     <!-- Header -->
-    <!-- 绑定 --> 
+    <!-- 绑定 -->
     <div id="bind-container" style="display: none;">
     <h1 class="news-title">绑定</h1>
 
@@ -65,7 +65,7 @@
     </div>
 
 
-     <!-- 解绑 --> 
+     <!-- 解绑 -->
     <div id="unbind-container" style="display: none;">
     <h1 class="news-title">解绑</h1>
     <div class="weui-cells__title">点击按钮确认解绑帐号{{id}}</div>
@@ -87,13 +87,8 @@
 
     <script>
     $.getJSON('/api/u/bind', urlParam, function(data){
-        //data = {"code": 1, "data": 'lizy14', "msg": ""}
-        code = data.code;
         $('.weui-loadmore').hide();
-        if (code == 1) {
-            $('#bind-container').show();
-        }
-        else if (code == 0) {
+        if (data.code == 0) {
             $('#unbind-container').show();
             new Vue({
                 el: '#unbind-container',
@@ -102,60 +97,61 @@
                     'urlParam': urlParam,
                 }
             })
+			// pop confirmation dialog when click '解绑'
+			$(function(){
+				$('#dettach-dialog').on('click', '.weui-dialog__btn_primary', function(){
+					$(this).parents('.detail-dialog').fadeOut(200);
+				});
+
+				$('#dettach-button').on('click', function(){
+					$('#dettach-dialog').fadeIn(200);
+				});
+
+				$('#dettach-dialog').on('click', '.weui-dialog__btn_default', function() {
+					param = urlParam;
+					param.student_id = data.data;
+					$.post("/api/u/unbind", param, function(data,status){
+						location.reload();
+					})
+				})
+			});
+        }
+		else {
+            $('#bind-container').show();
+			$('#confirm-button').on('click', function() {
+	            data = urlParam;
+	            data['student_id'] = $('#inputUsername').val();
+	            data['password'] = $('#inputPassword').val() ;
+	            $.post("/api/u/bind", data,
+	                function(data,status){
+	                //alert("Data: " + data.msg + "\nStatus: " + status);
+	                if (data.code == 0) {
+	                    msg = {title: '绑定成功'};
+	                    new Vue({
+	                        el: '#msg-dialog',
+	                        data: {
+	                            'msg': msg,
+	                            'urlParam': urlParam,
+	                        }
+	                    });
+	                }
+	                else {
+	                    msg = {title: '出错啦', content: data.msg};
+	                    new Vue({
+	                        el: '#msg-dialog',
+	                        data: {
+	                            'msg': msg,
+	                            'urlParam': urlParam,
+	                        }
+	                    });
+	                }
+	                $('#msg-dialog').fadeIn(200);
+	                $('#msg-dialog').on('click', '.weui-dialog__btn', function(){
+	                    $(this).parents('.detail-dialog').fadeOut(200);
+	                });
+	            });
+	        })
         }
     })
-
-    // pop confirmation dialog when click '解绑'
-    $(function(){
-        $('#dettach-dialog').on('click', '.weui-dialog__btn_primary', function(){
-            $(this).parents('.detail-dialog').fadeOut(200);
-        });
-
-        $('#dettach-button').on('click', function(){
-            $('#dettach-dialog').fadeIn(200);
-        });
-    });
-
-    // submit 
-    $(function(){
-        $('#confirm-button').on('click', function() {
-            data = urlParam;
-            data['student_id'] = $('#inputUsername').val();
-            data['password'] = $('#inputPassword').val() ;
-            $.post("/api/u/bind", data, 
-                function(data,status){
-                //alert("Data: " + data.msg + "\nStatus: " + status);
-                if (data.code == 0) {
-                    msg = {title: '绑定成功'};
-                    new Vue({
-                        el: '#msg-dialog',
-                        data: {
-                            'msg': msg,
-                            'urlParam': urlParam,
-                        }
-                    });
-                }
-                else {
-                    msg = {title: '出错啦', content: data.msg};
-                    new Vue({
-                        el: '#msg-dialog',
-                        data: {
-                            'msg': msg,
-                            'urlParam': urlParam,
-                        }
-                    });
-                }
-                $('#msg-dialog').fadeIn(200);
-                $('#msg-dialog').on('click', '.weui-dialog__btn', function(){
-                    $(this).parents('.detail-dialog').fadeOut(200);
-                });
-            });
-        })
-        
-    });
-
     </script>
-
-
-
 </body>
