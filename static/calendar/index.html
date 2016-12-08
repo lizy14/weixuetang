@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="moqunzhu">
 
-        <title>公告</title>
+        <title>Detail</title>
         <!-- Custom styles -->
         <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
@@ -20,11 +20,11 @@
         <!-- WeUI Javascript library -->
         <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
-</head>
+    </head>
 
 <body>
     <!-- Header -->
-    <h1 class="news-title">公告详情</h1>
+    <h1 class="news-title">作业详情</h1>
     <div class="weui-loadmore">
         <i class="weui-loading"></i>
         <span class="weui-loadmore__tips">正在加载</span>
@@ -37,26 +37,62 @@
         <div class="weui-panel__bd">
 
             <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title"> {{item.title }} </h5>
-                <div class="weui-media-box__info">{{ item.course_name }}</div>
+                <h5 class="weui-media-box__title">{{item.title}}</h5>
+                <div class="weui-media-box__info">{{item.course_name}}</div>
             </div>
         </div>
         </div>
     </div>
 
     <!-- Description -->
+    <p class="weui-cells__title">作业信息</p>
     <div class="news-container">
         <div class="weui-panel weui-panel_access">
         <div class="weui-panel__bd">
 
             <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">发布时间: {{ item.publish_time }}</h5>
-                <h5 class="weui-media-box__title">发布人: {{ item.publisher }}</h5>
-                <div class="weui-media-box__desc" id="detail-description">
-                        {{ item.detail }}
+                <h5 class="weui-media-box__title">截止时间: {{item.end_time}}</h5>
+                <h5 class="weui-media-box__title">发布时间: {{item.start_time}}</h5>
+                <div class="weui-media-box__desc" id="detail-description">{{item.detail}}
                 </div>
+
+
+                <ul class="weui-media-box__info">
+                        <li class="weui-media-box__info__meta">
+                        <span v-if="item.attachment">附件:{{item.attachment}}</span></li>
+                    </ul>
             </div>
         </div>
+        </div>
+    </div>
+
+    <!-- Submission -->
+    <div class="news-container">
+        <div class="weui-panel weui-panel_access">
+        <div class="weui-panel__bd">
+            <div class="weui-media-box weui-media-box_text">
+                <h5 v-if="item.status === 0" class="weui-media-box__title">未提交</h5>
+                <h5 v-else class="weui-media-box__title">已提交</h5>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Grade -->
+    <div v-if="item.status === 2" >
+        <p class="weui-cells__title">批改信息</p>
+        <div class="news-container">
+            <div class="weui-panel weui-panel_access">
+            <div class="weui-panel__bd">
+                <div class="weui-media-box weui-media-box_text">
+                    <h5 class="weui-media-box__title" v-if="item.grade">分数: {{ item.grade }}</h5>
+                    <h5 class="weui-media-box__title" v-if="item.grade_by">批改人: {{ item.grade_by }}</h5>
+                    <div class="weui-media-box__desc" id="detail-description" v-if="item.comment" >批语：{{ item.comment }}</div>
+                    <div class="weui-media-box__desc" id="detail-description" v-else >无批语
+                    </div>
+                </div>
+            </div>
+            </div>
         </div>
     </div>
 
@@ -64,11 +100,7 @@
     </div>
 
     <script>
-    $.getJSON('/api/notice/detail/', urlParam, function(data){
-        // expand(data.data);
-        // data.data.sort(function(a, b){
-            // return parseDate(a.end_time) > parseDate(b.end_time)
-        // })
+        $.getJSON('/api/hw/detail/',urlParam, function(data){
         new Vue({
             el: '#detail-container',
             data: {
@@ -84,8 +116,4 @@
         $('#detail-container').show();
     })
     </script>
-
-
-
-
 </body>
