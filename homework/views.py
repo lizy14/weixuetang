@@ -9,7 +9,6 @@ from datetime import datetime
 
 def wrap_date(d):
     return d.strftime('%Y-%m-%d')
-    return datetime.combine(d, datetime.min.time()).timestamp()
 
 
 def wrap_homework_status_status(hwSt):
