@@ -35,8 +35,8 @@ class WeChatHandler(object):
     def is_click_of_event(self, eve):
         return self.msg.type == 'click' and self.msg.key == self.context.event_keys[eve]
 
-    def is_template_msg(self):
-        return isinstance(self.msg, EventMessage) and self.msg.type == 'templatesendjobfinish'
+    def is_event_of(self, *events):
+        return isinstance(self.msg, EventMessage) and self.msg.type in events
 
 
 class WeChatEmptyHandler(WeChatHandler):

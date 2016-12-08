@@ -15,6 +15,7 @@ from .models import Template
 # DO NOT DEFINE ANY OTHER CLASSES
 # WITH SUFFIX 'Handler'
 
+
 class CalculatorHandler(WeChatHandler):
 
     def check(self):
@@ -39,9 +40,10 @@ class BindStudentHandler(WeChatHandler):
         if self.user.xt_id is not None:
             return self.wechat.response_text(content=self.res_unbind.format(self.user.xt_id))
         else:
-        	return self.wechat.response_text(content=self.res_bind.format(settings.get_url('u/bind', {
+            return self.wechat.response_text(content=self.res_bind.format(settings.get_url('u/bind', {
                 'openid': self.user.open_id
             })))
+
 
 class UnBindStudentHandler(WeChatHandler):
     response = '解绑成功\n\n<a href="{}">点此重新绑定</a>'
@@ -56,6 +58,7 @@ class UnBindStudentHandler(WeChatHandler):
             'openid': self.user.open_id
         })))
 
+
 class TestHandler(WeChatHandler):
 
     def check(self):
@@ -64,16 +67,18 @@ class TestHandler(WeChatHandler):
     def handle(self):
         return self.wechat.response_text(content='Done')
 
+
 class TemplateHandler(WeChatHandler):
 
     def check(self):
-        return self.is_template_msg()
+        return self.is_event_of('templatesendjobfinish')
 
     def handle(self):
         if self.msg.status == 'success':
             return
         else:
             raise OperationError(self.msg.status)
+
 
 class MenuHandler(WeChatHandler):
 
@@ -82,3 +87,12 @@ class MenuHandler(WeChatHandler):
 
     def handle(self):
         pass
+
+
+class SubscribeHandler(WeChatHandler):
+
+    def check(self):
+        return self.is_event_of('subscribe')
+
+    def handle(self):
+        return self.wechat.response_text(content='Welcome~ : )')
