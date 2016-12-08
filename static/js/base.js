@@ -18,42 +18,6 @@ window.dftFail = function (errno, errmsg, e) {
     alert("加载失败: [" + errno + "] " + errmsg + " " + e + "\n请重试");
 };
 
-window.api = {
-    get: function (url, data, success, fail, complete) {
-        success = success || $.noop;
-        fail = fail || $.noop;
-        complete = complete || $.noop;
-        return $.get(url, data).done(function (response, status, xhr) {
-            if (response.code !== 0) {
-                return fail(response.code, response.msg);
-            } else {
-                return success(response.data);
-            }
-        }).fail(function (xhr, errmsg, e) {
-            return fail(-2, errmsg, e);
-        }).always(complete);
-    },
-    post: function (url, data, success, fail, complete) {
-        success = success || $.noop;
-        fail = fail || $.noop;
-        complete = complete || $.noop;
-        return $.ajax({
-            type: 'POST',
-            url: url,
-            data: JSON.stringify(data),
-            contentType: 'application/json'
-        }).done(function (response, status, xhr) {
-            if (response.code !== 0) {
-                return fail(response.code, response.msg);
-            } else {
-                return success(response.data);
-            }
-        }).fail(function (xhr, errmsg, e) {
-            return fail(-2, errmsg, e);
-        }).always(complete);
-    }
-};
-
 window.expand = function (items){
     items.forEach(function(i){
         i.days_left = Math.floor((parseDate(i.end_time + " 23:59:00 ") - today) / 86400 / 1000);
@@ -71,3 +35,12 @@ window.parseDate = function (str){
 };
 
 window.today =  new Date();
+
+
+
+// function krEncodeEntities(s){
+// 		return $("<div/>").text(s).html();
+// }
+// function krDencodeEntities(s){
+// 		return $("<div/>").html(s).text();
+// }
