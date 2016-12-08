@@ -4,11 +4,11 @@ from codex.baseerror import *
 
 from .models import *
 
-from homework.views import wrap_date, token_required
+from homework.views import wrap_date
 
 
 class List(APIView):
-    @token_required
+
     def get(self):
         def wrap(ntSt):
             nt = ntSt.notice
@@ -29,7 +29,7 @@ class List(APIView):
 
 
 class Detail(APIView):
-    @token_required
+
     def get(self):
         self.check_input('notice_id')
 
@@ -53,7 +53,7 @@ class Detail(APIView):
 
 
 class MarkAsRead(APIView):
-    @token_required
+
     def get(self):
         self.check_input('notice_id')
         ntSt = NoticeStatus.objects.get(
