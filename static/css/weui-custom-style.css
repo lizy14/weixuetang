@@ -52,9 +52,8 @@ body {
     display: block;
 }
 
-#detail-return-button {
-    margin-top: 10px;
-    margin-bottom: 10px;
+.weui-btn {
+    margin: 10px 0;
 }
 
 .notice-detail {
@@ -68,3 +67,4 @@ body {
     overflow: scroll;
     text-overflow: clip !important;
 }
+
