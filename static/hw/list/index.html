@@ -24,9 +24,14 @@
 </head>
 
 <body>
-    <div class="weui-panel__bd" id="hw-list-container">
-        <!-- Header -->
-        <h1 class="news-title">全部作业</h1>
+    <!-- Header -->
+    <h1 class="news-title">全部作业</h1>
+    <div class="weui-loadmore">
+        <i class="weui-loading"></i>
+        <span class="weui-loadmore__tips">正在加载</span>
+    </div>
+
+    <div class="weui-panel__bd" id="list-container" style="display:none">
 
         <div id="fortune" class="news-subtitle">
             <div class="weui-cells__title"> {{fortune}} </div>
@@ -36,18 +41,18 @@
         <div class="news-container">
             <div class="weui-panel weui-panel_access">
                 <!-- 3 homework status -->
-                
+
                 <!-- Unfinished homework -->
-                <div v-if="item.status === 0" class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
+                <div v-if="item.status === 0" class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.homework_id" v-for="item in items">
                     <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge">未交</span>{{ item.title }}</h5>
-                    <p class="weui-media-box__desc" >结束时间: {{item.end_time}}，还有xx天</p>
+                    <p class="weui-media-box__desc" >结束时间: {{item.end_time}}，还有{{ item.days_left }}天</p>
                     <ul class="weui-media-box__info">
                         <li class="weui-media-box__info__meta">{{item.course_name}}</li>
                     </ul>
                 </div>
 
                 <!-- Submitted homework -->
-                <div v-if="item.status === 1" class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
+                <div v-if="item.status === 1" class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.homework_id" v-for="item in items">
                     <h5 class="weui-media-box__title"><span class="green-badge weui-badge">已交</span>{{ item.title }}</h5>
                     <p class="weui-media-box__desc" >结束时间: {{item.end_time}}</p>
                     <ul class="weui-media-box__info">
@@ -56,7 +61,7 @@
                 </div>
 
                 <!-- Graded homework -->
-                <div v-if="item.status === 2" class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.title" v-for="item in items">
+                <div v-if="item.status === 2" class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.homework_id" v-for="item in items">
                     <h5 class="weui-media-box__title"><span class="green-badge weui-badge">已批</span>{{ item.title }}</h5>
                     <p class="weui-media-box__desc" >批阅时间: {{item.end_time}}</p>
                     <ul class="weui-media-box__info">
@@ -68,13 +73,14 @@
 
         <!-- Detail Dialog -->
         <div id="dialog-container">
-            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.title">
+            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.homework_id">
                 <div class="weui-mask"></div>
                 <div class="weui-dialog">
                     <div class="weui-dialog__hd">
-                        <strong class="weui-dialog__title">{{item.title}}</strong>
+                        <strong class="weui-dialog__title">{{ item.title }}</strong>
                     </div>
-                    <div class="weui-dialog__bd">{{item.detail}}</div>
+                    <div class="weui-dialog__bd" v-if="item.detail">{{item.detail}}</div>
+                    <div class="weui-dialog__bd" v-else>无描述</div>
                      <div class="weui-dialog__ft">
                         <a :href="'/hw/detail/?homework_id=' + item.homework_id + '&code=' + urlParam.code + '&state=' + urlParam.state" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
@@ -87,13 +93,21 @@
 
 
     <script>
+    $.getJSON('/api/u/fortune', function(data){
+        new Vue({
+            el: '#fortune',
+            data: {
+                'fortune':data.data
+            }
+        })
+    })
     $.getJSON('/api/hw/list/', urlParam, function(data){
         expand(data.data);
         data.data.sort(function(a, b){
             return parseDate(a.end_time) > parseDate(b.end_time)
         })
         new Vue({
-            el: '#hw-list-container',
+            el: '#list-container',
             data: {
                 'items': data.data,
                 'urlParam': urlParam
@@ -107,14 +121,9 @@
             id = '#dialog-' + $(this)[0].id;
             $(id).fadeIn(200);
         });
+        $('.weui-loadmore').hide();
+        $('#list-container').show();
     })
-    $.getJSON('/api/u/fortune', function(data){
-        new Vue({
-            el: '#fortune',
-            data: {
-                'fortune':data.data
-            }
-        })
-    })
+
     </script>
 </body>

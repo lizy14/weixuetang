@@ -24,9 +24,14 @@
 </head>
 
 <body>
-    <div class="weui-panel__bd" id="hw-list-container">
-        <!-- Header -->
-        <h1 class="news-title">公告</h1>
+    <!-- Header -->
+    <h1 class="news-title">公告</h1>
+    <div class="weui-loadmore">
+        <i class="weui-loading"></i>
+        <span class="weui-loadmore__tips">正在加载</span>
+    </div>
+
+    <div class="weui-panel__bd" id="list-container" style="display:none">
         <div id="fortune" class="weui-cells__title"> {{ fortune }} </div>
         <!-- notices -->
         <div class="news-container">
@@ -66,11 +71,19 @@
 
 
     <script>
+    $.getJSON('/api/u/fortune', function(data){
+        new Vue({
+            el: '#fortune',
+            data: {
+                'fortune':data.data
+            }
+        })
+    })
 
     $.getJSON('/api/notice/list/', urlParam, function(data){
         prune(data.data);
         new Vue({
-            el: '#hw-list-container',
+            el: '#list-container',
             data: {
                 'items': data.data,
                 'urlParam': urlParam,
@@ -88,14 +101,8 @@
             $.getJSON('/api/notice/mark-as-read/', param, function(data){
             });
         });
-    })
-    $.getJSON('/api/u/fortune', function(data){
-        new Vue({
-            el: '#fortune',
-            data: {
-                'fortune':data.data
-            }
-        })
+        $('.weui-loadmore').hide();
+        $('#list-container').show();
     })
     </script>
 </body>

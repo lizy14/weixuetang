@@ -30,8 +30,8 @@
         <i class="weui-loading"></i>
         <span class="weui-loadmore__tips">正在加载</span>
     </div>
-    <div class="weui-panel__bd" id="hw-list-container" style="display: none;">
-        
+    <div class="weui-panel__bd" id="list-container" style="display: none;">
+
 
         <div class="news-subtitle">
             <div class="weui-cells__title">您现在有{{ items.length }}个需要交的作业</div>
@@ -73,7 +73,7 @@
                     <div class="weui-dialog__hd">
                         <strong class="weui-dialog__title">{{item.title}}</strong>
                     </div>
-                    <div class="weui-dialog__bd" v-if="item.detail !== ''">{{item.detail}}</div>
+                    <div class="weui-dialog__bd" v-if="item.detail">{{item.detail}}</div>
                     <div class="weui-dialog__bd" v-else>无描述</div>
                      <div class="weui-dialog__ft">
                         <a :href="'/hw/detail/?homework_id=' + item.homework_id + '&code=' + urlParam.code + '&state=' + urlParam.state" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
@@ -92,7 +92,7 @@
             return a.days_left - b.days_left;
         });
         new Vue({
-            el: '#hw-list-container',
+            el: '#list-container',
             data: {
                 'items': data.data,
                 'urlParam': urlParam
@@ -111,7 +111,7 @@
             });
         });
         $('.weui-loadmore').hide();
-        $('#hw-list-container').show();
+        $('#list-container').show();
     })
 
 
