@@ -126,7 +126,10 @@
 	                function(data,status){
 	                //alert("Data: " + data.msg + "\nStatus: " + status);
 	                if (data.code == 0) {
-	                    msg = {title: '绑定成功'};
+	                    msg = {
+							title: '绑定成功',
+							content:''
+						};
 	                    new Vue({
 	                        el: '#msg-dialog',
 	                        data: {
@@ -134,6 +137,10 @@
 	                            'urlParam': urlParam,
 	                        }
 	                    });
+						$('#msg-dialog').fadeIn(200);
+						$('#msg-dialog').on('click', '.weui-dialog__btn', function(){
+							location.reload();
+						});
 	                }
 	                else {
 	                    msg = {title: '出错啦', content: data.msg};
@@ -144,11 +151,11 @@
 	                            'urlParam': urlParam,
 	                        }
 	                    });
+						$('#msg-dialog').fadeIn(200);
+						$('#msg-dialog').on('click', '.weui-dialog__btn', function(){
+							location.reload();
+						});
 	                }
-	                $('#msg-dialog').fadeIn(200);
-	                $('#msg-dialog').on('click', '.weui-dialog__btn', function(){
-	                    $(this).parents('.detail-dialog').fadeOut(200);
-	                });
 	            });
 	        })
         }
