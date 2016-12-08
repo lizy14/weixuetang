@@ -29,7 +29,7 @@ def t_send_template(openid, temp, data, url):
         WeChatView._wechat.send_template_message(
             openid, WeChatView.get_template_id(template_name[temp]), data, url)
     except Exception as e:
-        __logger__.exception(e.__str__)
+        __logger__.exception(str(e))
 
 
 def send_template(openid, temp, data, url='', wrapper=None):
