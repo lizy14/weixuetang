@@ -8,9 +8,9 @@ __logger__ = logging.getLogger(__name__)
 
 
 @shared_task
-def t_flush_student(xt_id):
+def t_flush_student(xt_id, mute=True):
     try:
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(update_student(Student.objects.get(xt_id=xt_id)))
+        loop.run_until_complete(update_student(Student.objects.get(xt_id=xt_id), mute))
     except Exception as e:
         __logger__.exception(str(e))

@@ -91,7 +91,7 @@ async def update_all():
     await asyncio.gather(*tasks)
 
 
-async def update_student(student):
+async def update_student(student, mute=False):
     xt_id = student.xt_id
     _user = LearnDAO.User(
         username=xt_id
@@ -99,13 +99,13 @@ async def update_student(student):
     _semester = LearnDAO.Semester(_user)
 
     tasks = [
-        update_student_course(student, _course)
+        update_student_course(student, _course, mute)
         for _course in await _semester.courses
     ]
     await asyncio.gather(*tasks)
 
 
-async def update_student_course(student, _course):
+async def update_student_course(student, _course, mute):
     xt_id = student.xt_id
     _logger.debug("Updating Student %s Course %s" % (xt_id, _course.id))
     course, created = Course.objects.get_or_create(
@@ -120,16 +120,16 @@ async def update_student_course(student, _course):
     )
 
     tasks = [
-        update_student_course_work(student, course, _homework)
+        update_student_course_work(student, course, _homework, mute)
         for _homework in await _course.works
     ]
     await asyncio.gather(*tasks)
 
     for _notice in await _course.messages:
-        await update_student_course_notice(student, course, _notice)
+        await update_student_course_notice(student, course, _notice, mute)
 
 
-async def update_student_course_notice(student, course, _notice):
+async def update_student_course_notice(student, course, _notice, mute):
 
     # Notice
     try:
@@ -157,7 +157,7 @@ async def update_student_course_notice(student, course, _notice):
             notice=notice
         )
     except NoticeStatus.DoesNotExist:
-        newly_created = True
+        newly_created = True if not mute else False
         noticeStatus = NoticeStatus()
         noticeStatus.student = student
         noticeStatus.notice = notice
@@ -168,7 +168,7 @@ async def update_student_course_notice(student, course, _notice):
         await notification_notice_new(noticeStatus)
 
 
-async def update_student_course_work(student, course, _homework):
+async def update_student_course_work(student, course, _homework, mute):
 
     try:
         homework = Homework.objects.get(
@@ -198,15 +198,15 @@ async def update_student_course_work(student, course, _homework):
             homework=homework
         )
     except HomeworkStatus.DoesNotExist:
-        newly_created = True
+        newly_created = True if not mute else False
         homeworkStatus = HomeworkStatus()
         homeworkStatus.student = student
         homeworkStatus.homework = homework
 
     graded = _homework.completion > 1
-    newly_graded = (not newly_created) and graded and not homeworkStatus.graded
+    newly_graded = (not mute) and (not newly_created) and graded and not homeworkStatus.graded
 
-    homeworkStatus.graded    = graded
+    homeworkStatus.graded    = graded if not mute else False
     homeworkStatus.grading   = _homework.grading
     homeworkStatus.grading_comment = _homework.grading_comment
     homeworkStatus.graded_by = _homework.grading_author
@@ -216,7 +216,7 @@ async def update_student_course_work(student, course, _homework):
     # generate push notifications
     if newly_created:
         await notification_hw_new(homeworkStatus)
-    if ddl_modified:
+    elif ddl_modified:
         await notification_hw_ddl_modified(homeworkStatus, old_ddl)
     if newly_graded:
         await notification_hw_graded(homeworkStatus)
