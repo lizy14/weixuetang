@@ -20,18 +20,21 @@ window.dftFail = function (errno, errmsg, e) {
 
 window.expand = function (items){
     items.forEach(function(i){
-        i.days_left = Math.floor((parseDate(i.end_time + " 23:59:00 ") - today) / 86400 / 1000);
+        i.days_left = Math.floor((parseDate(i.end_time) - today) / 86400 / 1000);
     });
 };
 
 window.prune = function (items) {
     items.forEach(function(i){
         i.detail.replace('&nbsp;', '');
-    })
-}
+    });
+};
 
 window.parseDate = function (str){
-    return new Date(str);
+    d = new Date(str);
+    d.setHours(23);
+    d.setMinutes(59);
+    return d;
 };
 
 window.today =  new Date();
