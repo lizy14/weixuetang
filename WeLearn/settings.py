@@ -216,6 +216,7 @@ CELERYBEAT_SCHEDULE = {
         'schedule': 60,  # in seconds, or timedelta(seconds=10)
     },
 }
+CELERYD_TASK_SOFT_TIME_LIMIT = 120
 
 # Site and URL
 SITE_DOMAIN = CONFIGS['SITE_DOMAIN'].rstrip('/')

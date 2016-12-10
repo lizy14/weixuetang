@@ -18,7 +18,7 @@ class Homework(models.Model):
 
 class HomeworkStatus(models.Model):
     student = models.ForeignKey(Student, db_index=True)
-    homework = models.ForeignKey(Homework)
+    homework = models.OneToOneField(Homework, related_name='status')
     submitted = models.BooleanField()
     graded = models.BooleanField()
     grading = models.TextField()
@@ -28,5 +28,5 @@ class HomeworkStatus(models.Model):
 
 class CourseStatus(models.Model):
     student = models.ForeignKey(Student, db_index=True)
-    course = models.ForeignKey(Course)
+    course = models.OneToOneField(Course, related_name='status')
     ignored = models.BooleanField(default=False)

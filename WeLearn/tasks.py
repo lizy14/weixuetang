@@ -2,13 +2,11 @@ from django.db import models
 from userpage.models import *
 from homework.models import *
 from notice.models import *
-from datetime import date
 import ztylearn as LearnDAO
 import asyncio
 from celery import shared_task
 from wechat.tasks import send_template
 import logging
-from .settings import get_redirect_url
 
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
@@ -27,15 +25,7 @@ async def notification_notice_new(noticeStatus):
         noticeStatus.notice.course.name)
     )
     notice = noticeStatus.notice
-    send_template(noticeStatus.student.open_id, 'new_notice', {
-        'course': notice.course.name,
-        'title': notice.title,
-        'publisher': notice.publisher,
-        'content': notice.content,
-        'time': notice.publishtime.strftime('%Y-%m-%d'),
-    }, get_redirect_url('notice/detail', {
-        'notice_id': notice.id
-    }))
+    send_template(noticeStatus.student.open_id, notice)
 
 
 async def notification_hw_new(homeworkStatus):
@@ -44,14 +34,7 @@ async def notification_hw_new(homeworkStatus):
         homeworkStatus.homework.title)
     )
     hw = homeworkStatus.homework
-    send_template(homeworkStatus.student.open_id, 'new_hw', {
-        'hw_name': hw.title,
-        'course_name': hw.course.name,
-        'ddl': hw.end_time.strftime('%Y-%m-%d'),
-        'days_left': (hw.end_time - date.today()).days
-    }, get_redirect_url('hw/detail', {
-        'homework_id': hw.id
-    }))
+    send_template(homeworkStatus.student.open_id, hw)
 
 async def notification_hw_graded(homeworkStatus):
     _logger.debug("NOTIFICATION %s homework graded `%s`" % (
@@ -59,13 +42,7 @@ async def notification_hw_graded(homeworkStatus):
         homeworkStatus.homework.title)
     )
     hw = homeworkStatus.homework
-    send_template(homeworkStatus.student.open_id, 'hw_checked', {
-        'hw_name': hw.title,
-        'course_name': hw.course.name,
-        'score': homeworkStatus.grading
-    }, get_redirect_url('hw/detail', {
-        'homework_id': hw.id
-    }))
+    send_template(homeworkStatus.student.open_id, hw, 'checked')
 
 async def notification_hw_ddl_modified(homeworkStatus, oldDdl):
     _logger.debug("NOTIFICATION %s homework ddl modified `%s`, %s -> %s" % (
@@ -75,14 +52,7 @@ async def notification_hw_ddl_modified(homeworkStatus, oldDdl):
         homeworkStatus.homework.end_time)
     )
     hw = homeworkStatus.homework
-    send_template(homeworkStatus.student.open_id, 'ddl_changed', {
-        'hw_name': hw.title,
-        'course_name': hw.course.name,
-        'ddl': hw.end_time.strftime('%Y-%m-%d'),
-        'days_left': (hw.end_time - date.today()).days
-    }, get_redirect_url('hw/detail', {
-        'homework_id': hw.id
-    }))
+    send_template(homeworkStatus.student.open_id, hw, 'ddl')
 
 
 async def update_all():

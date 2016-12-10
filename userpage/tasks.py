@@ -14,3 +14,5 @@ def t_flush_student(xt_id, mute=True):
         loop.run_until_complete(update_student(Student.objects.get(xt_id=xt_id), mute))
     except Exception as e:
         __logger__.exception(str(e))
+
+from wechat.tasks import send_template
