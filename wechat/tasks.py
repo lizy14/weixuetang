@@ -73,13 +73,18 @@ def t_send_template(openid, temp, data, url):
     except Exception as e:
         __logger__.exception(str(e))
 
-
-def send_template(openid, ins, spec='', wrapper=None):
+# NOTE: apply_async_function(task, args=~list or tuple~, kwargs=~dict~, **options)
+def send_template(openid, ins, spec='', apply_async_function=None, wrapper=None, **options):
     try:
         tup = globals()['wrap_' + ins.__class__.__name__ + spec](ins)
         if not wrapper:
             wrapper = default_wrapper
         t_data = wrapper(tup[1])
-        t_send_template.delay(openid, tup[0], t_data, tup[2])
+        if apply_async_function is None:
+            t_send_template.apply_async(
+                args=(openid, tup[0], t_data, tup[2]), **options)
+        else:
+            apply_async_function(t_send_template, (openid, tup[
+                                 0], t_data, tup[2]), {}, **options)
     except Exception as e:
         __logger__.exception(str(e))
