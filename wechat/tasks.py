@@ -15,6 +15,7 @@ template_name = {
 from WeLearn.settings import get_redirect_url
 from datetime import date
 
+
 def wrap_Notice(ins):
     return ('new_notice', {
         'course': ins.course.name,
@@ -26,6 +27,7 @@ def wrap_Notice(ins):
         'notice_id': ins.id
     }))
 
+
 def wrap_Homework(ins):
     return ('new_hw', {
         'hw_name': ins.title,
@@ -36,19 +38,22 @@ def wrap_Homework(ins):
         'homework_id': ins.id
     }))
 
+
 def wrap_Homeworkddl(ins):
     tup = wrap_Homework(ins)
     tup[0] = 'ddl_changed'
     return tup
 
-def wrap_Homeworkchecked(ins):
+
+def wrap_HomeworkStatus(ins):
     return ('hw_checked', {
-        'hw_name': ins.title,
-        'course_name': ins.course.name,
-        'score': ins.status.grading,
+        'hw_name': ins.homework.title,
+        'course_name': ins.homework.course.name,
+        'score': ins.grading,
     }, get_redirect_url('hw/detail', {
-        'homework_id': ins.id
+        'homework_id': ins.homework.id
     }))
+
 
 def default_wrapper(data):
     res = {}
@@ -71,11 +76,10 @@ def t_send_template(openid, temp, data, url):
 
 def send_template(openid, ins, spec='', wrapper=None):
     try:
-        tup = eval('wrap_' + ins.__class__.__name__ + spec + '(ins)')
+        tup = globals()['wrap_' + ins.__class__.__name__ + spec](ins)
+        if not wrapper:
+            wrapper = default_wrapper
+        t_data = wrapper(tup[1])
+        t_send_template.delay(openid, tup[0], t_data, tup[2])
     except Exception as e:
         __logger__.exception(str(e))
-        return
-    if not wrapper:
-        wrapper = default_wrapper
-    t_data = wrapper(tup[1])
-    t_send_template.delay(openid, tup[0], t_data, tup[2])

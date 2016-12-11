@@ -14,5 +14,4 @@ class Notice(models.Model):
 class NoticeStatus(models.Model):
     notice = models.ForeignKey(Notice)
     student = models.ForeignKey(Student)
-
     read = models.BooleanField()
