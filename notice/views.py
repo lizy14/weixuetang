@@ -25,6 +25,15 @@ class List(APIView):
         result = NoticeStatus.objects.filter(
             student__id=self.student.id
         )
+        try:
+            start = int(self.input['start'])
+            limit = int(self.input['limit'])
+            result = result[start : start + limit]
+        except ValueError:
+            pass
+        except KeyError:
+            pass
+
         return [wrap(ntSt) for ntSt in result]
 
 
