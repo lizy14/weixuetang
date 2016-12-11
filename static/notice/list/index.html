@@ -38,8 +38,13 @@
             <div class="weui-panel weui-panel_access">
 
                 <!-- List Item -->
-                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.notice_id" v-for="item in items">
-                    <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge" v-if="item.status==0">new</span>{{ item.title }}</h5>
+                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.notice_id" v-for="item in items" v-on:click="mark_as_read">
+                    <h5 class="weui-media-box__title">
+                        <span class="weui-badge ddl-badge" v-if="item.status==0">
+                            new
+                        </span>
+                        {{ item.title }}
+                    </h5>
                     <p class="notice-detail weui-media-box__desc" >{{ item.detail }}</p>
                     <ul class="weui-media-box__info">
                         <li class="weui-media-box__info__meta">发布时间: {{ item.publish_time }}</li>
@@ -81,26 +86,42 @@
         })
     })
 
+    items = [];
     $.getJSON('/api/notice/list/', urlParam, function(data){
         prune(data.data);
+        items = data.data;
         new Vue({
             el: '#list-container',
             data: {
                 'items': data.data,
                 'urlParam': urlParam,
+            },
+            methods: {
+                mark_as_read: function(event) {
+                    notice_id = event.currentTarget.id;
+                    node_id = '#dialog-' + notice_id;
+                    param = urlParam;
+                    $(node_id).fadeIn(200);
+                    param.notice_id = notice_id;
+                    item = this.items.filter(function(item){
+                        return item.notice_id.toString() === notice_id;
+                    })[0];
+                    console.log(param.notice_id);
+                    console.log(item);
+                    if(item.status === 0) {
+                        $.getJSON('/api/notice/mark-as-read/', param, function(data){
+                            if (data.code === 0) {
+                                item.status = 1;
+                            } else {
+                                alert("更新公告已读失败！请联系管理员。");
+                            }
+                        });
+                    }
+                }
             }
         })
         $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
             $(this).parents('.detail-dialog').fadeOut(200);
-        });
-
-        $('.detail-box').on('click', function(){
-            id = '#dialog-' + $(this)[0].id;
-            $(id).fadeIn(200);
-            param = urlParam;
-            param.notice_id = this.id;
-            $.getJSON('/api/notice/mark-as-read/', param, function(data){
-            });
         });
         $('.weui-loadmore').hide();
         $('#list-container').show();
