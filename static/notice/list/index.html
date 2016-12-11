@@ -31,11 +31,9 @@
         <div class="weui-cells__title"> {{ fortune }} </div>
 
         <div class="weui-panel__bd">
-
             <!-- notices -->
             <div v-infinite-scroll="load_more" infinite-scroll-disabled="no_more" class="news-container">
                 <div class="weui-panel weui-panel_access">
-
                     <!-- List Item -->
                     <div v-for="item in items" v-on:click="show_detail" v-bind:id="item.notice_id" class="detail-box weui-media-box weui-media-box_text">
                         <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge" v-if="item.status==0">new</span>{{ item.title }}</h5>
@@ -148,7 +146,6 @@
         $.getJSON('/api/u/fortune', urlParam, function(data) {
             vm.fortune = data.data
         })
-
 
     </script>
 </body>
