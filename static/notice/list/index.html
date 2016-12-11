@@ -24,86 +24,116 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <h1 class="news-title">公告</h1>
-    <div class="weui-loadmore">
-        <i class="weui-loading"></i>
-        <span class="weui-loadmore__tips">正在加载</span>
-    </div>
+    <div id="vue-container">
+        <!-- Header -->
+        <h1 class="news-title">公告</h1>
+        <div class="weui-cells__title"> {{ fortune }} </div>
 
-    <div class="weui-panel__bd" id="list-container" style="display:none">
-        <div id="fortune" class="weui-cells__title"> {{ fortune }} </div>
-        <!-- notices -->
-        <div class="news-container">
-            <div class="weui-panel weui-panel_access">
-
-                <!-- List Item -->
-                <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.notice_id" v-for="item in items">
-                    <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge" v-if="item.status==0">new</span>{{ item.title }}</h5>
-                    <p class="notice-detail weui-media-box__desc" >{{ item.detail }}</p>
-                    <ul class="weui-media-box__info">
-                        <li class="weui-media-box__info__meta">发布时间: {{ item.publish_time }}</li>
-                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.course_name }} </li>
-                    </ul>
-                </div>
-
-            </div>
+        <div class="weui-loadmore" v-if="loading">
+            <i class="weui-loading"></i>
+            <span class="weui-loadmore__tips">正在加载</span>
         </div>
 
+        <div class="weui-panel__bd">
 
-        <!-- Detail Dialog -->
-        <div id="dialog-container">
-            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.notice_id">
-                <div class="weui-mask"></div>
-                <div class="weui-dialog">
-                    <div class="weui-dialog__hd">
-                        <strong class="weui-dialog__title">{{ item.title }}</strong>
+            <!-- notices -->
+            <div class="news-container">
+                <div class="weui-panel weui-panel_access">
+
+                    <!-- List Item -->
+                    <div v-for="item in items" v-on:click="show_detail" v-bind:id="item.notice_id" class="detail-box weui-media-box weui-media-box_text">
+                        <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge" v-if="item.status==0">new</span>{{ item.title }}</h5>
+                        <p class="notice-detail weui-media-box__desc">{{ item.detail }}</p>
+                        <ul class="weui-media-box__info">
+                            <li class="weui-media-box__info__meta">发布时间: {{ item.publish_time }}</li>
+                            <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.course_name }} </li>
+                        </ul>
                     </div>
-                    <div class="weui-dialog__bd"><span class="dialog-detail-box">{{ item.detail }}</span></div>
-                    <div class="weui-dialog__ft">
-                        <a :href="'/notice/detail/?notice_id=' + item.notice_id + '&code=' + urlParam.code + '&state=' + urlParam.state" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
-                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
+
+                </div>
+            </div>
+
+
+            <!-- Detail Dialog -->
+            <div id="dialog-container">
+                <div v-if="detail_showing" class="detail-dialog">
+                    <div class="weui-mask"></div>
+                    <div class="weui-dialog">
+                        <div class="weui-dialog__hd">
+                            <strong class="weui-dialog__title">{{ detail_item.title }}</strong>
+                        </div>
+                        <div class="weui-dialog__bd">
+                            <div class="weui-dialog__info">{{ detail_item.course_name }}</div>
+                            <div class="weui-dialog__info">
+                                {{ detail_item.publish_time }}
+                                {{ detail_item.publisher }}
+                            </div>
+                        </div>
+
+                        <div class="weui-dialog__bd">
+                            <span class="dialog-detail-box">{{ detail_item.detail }}</span>
+                        </div>
+                        <div class="weui-dialog__ft">
+                            <a v-on:click="hide_detail" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <script>
-    $.getJSON('/api/u/fortune', urlParam, function(data){
-        new Vue({
-            el: '#fortune',
+        var vm = new Vue({
+            el: '#vue-container',
             data: {
-                'fortune':data.data,
-                'urlParam': urlParam
+                'items': [],
+                'fortune': "",
+                'loading': true,
+                'loading_more': false,
+                'no_more': false,
+                'detail_showing': false,
+                'detail_item': {}
+            },
+
+            methods: {
+                hide_detail: function() {
+                    this.detail_showing = false;
+                },
+                show_detail: function(ev) {
+                    var _vm = this;
+                    notice_id = ev.currentTarget.id;
+
+                    // mark-as-read
+                    var param = urlParam;
+                    param.notice_id = notice_id
+                    // locally
+                    var item = this.items.filter(function(item) {
+                        return item.notice_id.toString() === notice_id;
+                    })[0];
+                    item.status = 1
+                    // remotely
+                    $.getJSON('/api/notice/mark-as-read/', param);
+
+                    // fetch detail and pop up
+                    $.getJSON('/api/notice/detail/', param, function(data) {
+                        _vm.detail_showing = true;
+                        _vm.detail_item = data.data;
+                    })
+                },
             }
         })
-    })
 
-    $.getJSON('/api/notice/list/', urlParam, function(data){
-        prune(data.data);
-        new Vue({
-            el: '#list-container',
-            data: {
-                'items': data.data,
-                'urlParam': urlParam,
-            }
+        $.getJSON('/api/u/fortune', urlParam, function(data) {
+            vm.fortune = data.data
         })
-        $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
-            $(this).parents('.detail-dialog').fadeOut(200);
-        });
 
-        $('.detail-box').on('click', function(){
-            id = '#dialog-' + $(this)[0].id;
-            $(id).fadeIn(200);
-            param = urlParam;
-            param.notice_id = this.id;
-            $.getJSON('/api/notice/mark-as-read/', param, function(data){
-            });
-        });
-        $('.weui-loadmore').hide();
-        $('#list-container').show();
-    })
+        $.getJSON('/api/notice/list/', urlParam, function(data) {
+            vm.loading = false
+            prune(data.data);
+            vm.items = data.data
+        })
+
     </script>
 </body>
+
+</html>
