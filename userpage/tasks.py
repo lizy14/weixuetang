@@ -8,8 +8,22 @@ __logger__ = logging.getLogger(__name__)
 
 
 @shared_task
-async def t_flush_student(xt_id):
+def t_flush_student(xt_id, mute=True):
     try:
-        update_student(Student.objects.get(xt_id=xt_id))
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(update_student(
+            Student.objects.get(xt_id=xt_id), mute))
     except Exception as e:
         __logger__.exception(str(e))
+
+from wechat.tasks import send_template
+
+
+@shared_task
+def notify():
+    for usr in Student.objects.all():
+        notify_student(usr)
+
+
+def notify_student(arg):
+    pass

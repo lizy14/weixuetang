@@ -1,11 +1,15 @@
+# -*- coding: utf-8 -*-
+#
 from django.shortcuts import render
 from codex.baseview import APIView
 from codex.baseerror import *
-from .models import Student
+from .models import Student, Preference
+from homework.models import CourseStatus
 import urllib.request
 from .tasks import t_flush_student
 from ztylearn.Util import register
 from .fortunes import get_fortune
+from .utils import *
 
 
 class UserBind(APIView):
@@ -28,7 +32,8 @@ class UserBind(APIView):
         self.validate_user()
         user.xt_id = self.input['student_id']
         user.save()
-        #t_flush_student.delay(user.xt_id)
+        t_flush_student.delay(user.xt_id)
+
 
 class UserUnBind(APIView):
 
@@ -38,7 +43,42 @@ class UserUnBind(APIView):
         user.xt_id = None
         user.save()
 
+
 class Fortune(APIView):
 
     def get(self):
         return get_fortune()
+
+
+class UserPreference(APIView):
+
+    def get(self):
+        user = Student.get_by_openid(self.request.session['openid'])
+        pref = Preference.objects.get(student=user)
+        ignored = CourseStatus.objects.get(student=user, ignored=True)
+        ls = [i.xt_id for i in ignored]
+        return {
+            's_work': pref.s_work,
+            's_notice': pref.s_notice,
+            's_grading': pref.s_grading,
+            's_academic': pref.s_academic,
+            's_lecture': pref.s_lecture,
+            's_class': pref.s_class,
+            'ignore_courses': ls,
+            'ahead_time': pref.ahead_time
+        }
+
+    def post(self):
+        # NOTE: plz post all data whether modified or not
+        self.check_input('s_work', 's_notice', 's_grading', 's_academic',
+                         's_lecture', 's_class', 'ignore_courses', 'ahead_time')
+        user = Student.get_by_openid(self.request.session['openid'])
+        pref = Preference.objects.get(student=user)
+        update_fields(pref, self.input, 's_work', 's_notice', 's_grading',
+                      's_academic', 's_lecture', 's_class', 'ahead_time')
+        pref.save()
+        allcls = CourseStatus.objects.get(student=user)
+        for cls in allcls:
+            cls.ignored = True if cls.course.xt_id in self.input[
+                'ignore_courses'] else False
+            cls.save()
