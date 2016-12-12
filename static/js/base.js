@@ -61,6 +61,21 @@ window.getJSON = function(url, payload, callback){
     )
 }
 
+window.schedule = function (items, num_dates) {
+    new_items = new Array(num_dates);
+    items.forEach(function(i) {
+        index = parseDate(i.date).getDate() - 1;
+        if (new_items[index]) {
+            new_items[index].push(i);
+        }
+        else {
+            new_items[index] = new Array();
+            new_items[index].push(i);
+        }
+    });
+    return new_items;
+}
+
 
 // function krEncodeEntities(s){
 // 		return $("<div/>").text(s).html();
