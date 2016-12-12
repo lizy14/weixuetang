@@ -32,7 +32,8 @@ class UnfinishedList(APIView):
         result = HomeworkStatus.objects.filter(
             student__id=self.student.id,
             submitted=False,
-            homework__end_time__gte=datetime.today()
+            homework__end_time__gte=datetime.today(),
+            ignored=False
         )
         return [wrap(hwStatus.homework) for hwStatus in result]
 
@@ -52,7 +53,8 @@ class List(APIView):
             }
 
         result = HomeworkStatus.objects.filter(
-            student__id=self.student.id
+            student__id=self.student.id,
+            ignored=False
         )
         return [wrap(hwSt) for hwSt in result]
 
@@ -81,3 +83,14 @@ class Detail(APIView):
             homework__id=self.input['homework_id']
         )
         return wrap(result)
+
+class Mark(APIView):
+
+    def post(self):
+        self.check_input('ignore', 'homework_id')
+        ins = HomeworkStatus.objects.get(
+            student__id=self.student.id,
+            homework__id=self.input['homework_id']
+        )
+        ins.ignored = self.input['ignore']
+        ins.save()

@@ -24,6 +24,7 @@ class HomeworkStatus(models.Model):
     grading = models.TextField()
     grading_comment = models.TextField()
     graded_by = models.CharField(max_length=32)
+    ignored = models.BooleanField(default=False)
 
 
 class CourseStatus(models.Model):
