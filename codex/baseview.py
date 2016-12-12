@@ -55,8 +55,8 @@ def certificated(function=None):
 def bind_required(function=None):
     def wrapper(obj, *args, **kwargs):
         try:
-            assert(self.student is not None)
-            assert(self.student.xt_id is not None)
+            assert(obj.student is not None)
+            assert(obj.student.xt_id is not None)
         except:
             raise UnbindError()
 
