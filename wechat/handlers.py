@@ -60,6 +60,7 @@ class UnBindStudentHandler(WeChatHandler):
 
 from userpage.tasks import notify
 
+
 class TestHandler(WeChatHandler):
 
     def check(self):

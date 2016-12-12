@@ -41,11 +41,11 @@ WECHAT_AESKEY = CONFIGS['WECHAT_AESKEY']
 MSG_ENCRYPT = CONFIGS['MSG_ENCRYPT']
 
 wechat_conf = WechatConf(
-	token=WECHAT_TOKEN,
-	appid=WECHAT_APPID,
-	appsecret=WECHAT_SECRET,
-	encrypt_mode=MSG_ENCRYPT,
-	encoding_aes_key=WECHAT_AESKEY
+    token=WECHAT_TOKEN,
+    appid=WECHAT_APPID,
+    appsecret=WECHAT_SECRET,
+    encrypt_mode=MSG_ENCRYPT,
+    encoding_aes_key=WECHAT_AESKEY
 )
 
 # Application definition
@@ -57,13 +57,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     # 'django.contrib.messages',
     'django.contrib.staticfiles',
-	'django_mysql',
-	'django_extensions',
-	'djcelery',
-	'wechat',
-	'userpage',
-	'homework',
-	'notice',
+    'django_mysql',
+    'django_extensions',
+    'djcelery',
+    'wechat',
+    'userpage',
+    'homework',
+    'notice',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -113,7 +113,7 @@ WSGI_APPLICATION = 'WeLearn.wsgi.application'
 
 DATABASES = {
     'default': {
-		'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': CONFIGS['DB_NAME'],
         'USER': CONFIGS['DB_USER'],
         'PASSWORD': CONFIGS['DB_PASS'],
@@ -122,11 +122,12 @@ DATABASES = {
         'TEST': {
             'NAME': 'test_' + CONFIGS['DB_NAME'],
         },
-		'OPTIONS': {
+        'OPTIONS': {
             # Tell MySQLdb to connect with 'utf8mb4' character set
             'charset': 'utf8mb4',
         },
-        # Tell Django to build the test database with the 'utf8mb4' character set
+        # Tell Django to build the test database with the 'utf8mb4' character
+        # set
         'TEST': {
             'CHARSET': 'utf8mb4',
             'COLLATION': 'utf8mb4_unicode_ci',
@@ -175,6 +176,7 @@ STATIC_URL = '/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+
 def get_url(path, params=None):
     full_path = urllib.parse.urljoin(SITE_DOMAIN, path)
     if params:
@@ -182,17 +184,18 @@ def get_url(path, params=None):
     else:
         return full_path
 
+
 def get_redirect_url(path, params=None, scope='snsapi_base', state='view'):
-	params = urllib.parse.urlencode([
-		('appid', WECHAT_APPID),
-		('redirect_uri', get_url(path, params)),
-		('response_type', 'code'),
-		('scope', scope),
-		('state', state)
-	])
-	return 'https://open.weixin.qq.com/connect/oauth2/authorize?{}{}'.format(
-		params, '#wechat_redirect'
-	)
+    params = urllib.parse.urlencode([
+        ('appid', WECHAT_APPID),
+        ('redirect_uri', get_url(path, params)),
+        ('response_type', 'code'),
+        ('scope', scope),
+        ('state', state)
+    ])
+    return 'https://open.weixin.qq.com/connect/oauth2/authorize?{}{}'.format(
+        params, '#wechat_redirect'
+    )
 
 # Logging configurations
 logging.basicConfig(
@@ -217,10 +220,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'WeLearn.tasks.main',
         'schedule': 60,  # in seconds, or timedelta(seconds=10)
     },
-	'Mo Qunzhu 2': {
-		'task': 'userpage.tasks.notify',
-		'schedule': crontab(minute=1, hour=0)
-	},
+    'Mo Qunzhu 2': {
+        'task': 'userpage.tasks.notify',
+        'schedule': crontab(minute=1, hour=0)
+    },
 }
 CELERYD_TASK_SOFT_TIME_LIMIT = 120
 

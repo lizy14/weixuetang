@@ -35,7 +35,7 @@ def safe_apply_async(task, args=None, kwargs={}, **options):
         nonlocal task, args, kwargs, options
         if req['name'] == task.name and eval(req['args']) == list(args) and eval(req['kwargs']) == kwargs and (not (getattr(options, 'eta', False) and options['eta'] != parser.parse(req['eta']))):
             raise
-        return False # safe
+        return False  # safe
     try:
         visit_requests(check)
         task.apply_async(args, kwargs, **options)
@@ -48,19 +48,14 @@ def notify():
     for usr in Student.objects.filter(xt_id__isnull=False):
         notify_student(usr, 'homework')
 
-@shared_task
-def test():
-    pass
 
 def notify_student(usr, *args):
     [globals()['notify_student_' + arg](usr) for arg in args]
-    # time = timezone.now() + timedelta(seconds=10)
-    # test.apply_async(eta=time)
-    # safe_apply_async(test, eta=time)
 
 
 from homework.models import HomeworkStatus
 from wechat.tasks import send_template
+
 
 def notify_student_homework(usr):
     def cancel_check(req):
@@ -73,6 +68,7 @@ def notify_student_homework(usr):
         submitted=False
     )
     if usr.pref.s_work:
-        [send_template(usr.open_id, ins, '', safe_apply_async, eta=timezone.now().replace(hour=23, minute=59, second=59, microsecond=0)-timedelta(minutes=usr.pref.ahead_time)) for ins in res]
+        [send_template(usr.open_id, ins, '', safe_apply_async, eta=timezone.now().replace(
+            hour=23, minute=59, second=59, microsecond=0) - timedelta(minutes=usr.pref.ahead_time)) for ins in res]
     else:
         visit_requests(cancel_check)

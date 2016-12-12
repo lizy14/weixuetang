@@ -6,6 +6,7 @@ from django.db import models
 class Template(models.Model):
     t_id = models.CharField(max_length=50, unique=True)
     t_title = models.TextField()
+
     @classmethod
     def get_template_id(cls, name):
         try:

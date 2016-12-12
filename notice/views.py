@@ -5,18 +5,19 @@ from homework.views import wrap_date
 
 
 class List(APIView):
+
     @bind_required
     def get(self):
         def wrap(ntSt):
             nt = ntSt.notice
             return {
-                'notice_id'   : nt.id,
-                'publisher'   : nt.publisher,
+                'notice_id': nt.id,
+                'publisher': nt.publisher,
                 'publish_time': wrap_date(nt.publishtime),
-                'title'       : nt.title,
-                'course_name' : nt.course.name,
-                'detail'      : nt.content,
-                'status'      : 1 if ntSt.read else 0
+                'title': nt.title,
+                'course_name': nt.course.name,
+                'detail': nt.content,
+                'status': 1 if ntSt.read else 0
             }
 
         result = NoticeStatus.objects.filter(
@@ -25,7 +26,7 @@ class List(APIView):
         try:
             start = int(self.input['start'])
             limit = int(self.input['limit'])
-            result = result[start : start + limit]
+            result = result[start: start + limit]
         except ValueError:
             pass
         except KeyError:
@@ -35,6 +36,7 @@ class List(APIView):
 
 
 class Detail(APIView):
+
     @bind_required
     def get(self):
         self.check_input('notice_id')
@@ -42,13 +44,13 @@ class Detail(APIView):
         def wrap(ntSt):
             nt = ntSt.notice
             return {
-                'notice_id'   : nt.id,
-                'publisher'   : nt.publisher,
+                'notice_id': nt.id,
+                'publisher': nt.publisher,
                 'publish_time': wrap_date(nt.publishtime),
-                'title'       : nt.title,
-                'course_name' : nt.course.name,
-                'detail'      : nt.content,
-                'status'      : ntSt.read
+                'title': nt.title,
+                'course_name': nt.course.name,
+                'detail': nt.content,
+                'status': ntSt.read
             }
 
         result = NoticeStatus.objects.get(
@@ -59,6 +61,7 @@ class Detail(APIView):
 
 
 class MarkAsRead(APIView):
+
     @bind_required
     def get(self):
         self.check_input('notice_id')

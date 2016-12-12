@@ -4,6 +4,7 @@ from django.http import HttpResponseForbidden
 from WeLearn.settings import IGNORE_CODE_CHECK
 from .baseview import *
 
+
 def certificated(function=None):
     def wrapper(obj, *args, **kwargs):
         if not IGNORE_CODE_CHECK:
@@ -38,6 +39,7 @@ def bind_required(function=None):
 
         return function(obj, *args, **kwargs)
     return wrapper
+
 
 class APIView(BaseView):
 

@@ -84,6 +84,7 @@ class Detail(APIView):
         )
         return wrap(result)
 
+
 class Mark(APIView):
 
     def post(self):

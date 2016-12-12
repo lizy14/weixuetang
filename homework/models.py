@@ -1,6 +1,7 @@
 from django.db import models
 from userpage.models import *
 
+
 class Course(models.Model):
     xt_id = models.CharField(max_length=32)
     name = models.TextField()
