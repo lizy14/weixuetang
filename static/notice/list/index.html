@@ -103,10 +103,11 @@
                 load_more: function() {
                     var _vm = this;
                     _vm.loading_more = true;
-                    var param = urlParam;
-                    param.limit = 10;
-                    param.start = _vm.items.length;
-                    $.getJSON('/api/notice/list/', param, function(data) {
+                    param = {
+                        'limit': 10,
+                        'start': _vm.items.length
+                    };
+                    getJSON('/api/notice/list/', param, function(data) {
                         _vm.loading = false;
                         prune(data.data);
                         data.data.forEach(function(e){
@@ -121,21 +122,20 @@
                 },
                 show_detail: function(ev) {
                     var _vm = this;
-                    notice_id = ev.currentTarget.id;
-
+                    param = {
+                        'notice_id': ev.currentTarget.id
+                    };
                     // mark-as-read
-                    var param = urlParam;
-                    param.notice_id = notice_id
                     // locally
                     var item = this.items.filter(function(item) {
                         return item.notice_id.toString() === notice_id;
                     })[0];
                     item.status = 1
                     // remotely
-                    $.getJSON('/api/notice/mark-as-read/', param);
+                    getJSON('/api/notice/mark-as-read/', param);
 
                     // fetch detail and pop up
-                    $.getJSON('/api/notice/detail/', param, function(data) {
+                    getJSON('/api/notice/detail/', param, function(data) {
                         _vm.detail_showing = true;
                         _vm.detail_item = data.data;
                     })
@@ -143,7 +143,7 @@
             }
         })
 
-        $.getJSON('/api/u/fortune', urlParam, function(data) {
+        getJSON('/api/u/fortune', {}, function(data) {
             vm.fortune = data.data
         })
 
