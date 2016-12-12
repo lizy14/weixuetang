@@ -59,7 +59,7 @@ def bind_required(function=None):
             assert(self.student.xt_id is not None)
         except:
             raise UnbindError()
-            
+
         return function(obj, *args, **kwargs)
     return wrapper
 

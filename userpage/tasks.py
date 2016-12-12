@@ -53,10 +53,10 @@ def test():
     pass
 
 def notify_student(usr, *args):
-    # [globals()['notify_student_' + arg](usr) for arg in args]
-    time = timezone.now() + timedelta(seconds=10)
-    test.apply_async(eta=time)
-    safe_apply_async(test, eta=time)
+    [globals()['notify_student_' + arg](usr) for arg in args]
+    # time = timezone.now() + timedelta(seconds=10)
+    # test.apply_async(eta=time)
+    # safe_apply_async(test, eta=time)
 
 
 from homework.models import HomeworkStatus
