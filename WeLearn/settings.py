@@ -207,6 +207,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 import djcelery
 djcelery.setup_loader()
 
+from celery.schedules import crontab
+
 BROKER_URL = 'amqp://'
 
 CELERY_IMPORTS = ('WeLearn.tasks',)
@@ -215,6 +217,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'WeLearn.tasks.main',
         'schedule': 60,  # in seconds, or timedelta(seconds=10)
     },
+	'Mo Qunzhu 2': {
+		'task': 'userpage.tasks.notify',
+		'schedule': crontab(minute=1, hour=0)
+	},
 }
 CELERYD_TASK_SOFT_TIME_LIMIT = 120
 

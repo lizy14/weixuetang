@@ -45,7 +45,7 @@ def safe_apply_async(task, args=None, kwargs={}, **options):
 
 @shared_task
 def notify():
-    for usr in Student.objects.all():
+    for usr in Student.objects.filter(xt_id__isnull=False):
         notify_student(usr, 'homework')
 
 @shared_task
