@@ -122,8 +122,9 @@
                 },
                 show_detail: function(ev) {
                     var _vm = this;
+                    var notice_id = ev.currentTarget.id;
                     param = {
-                        'notice_id': ev.currentTarget.id
+                        'notice_id': notice_id
                     };
                     // mark-as-read
                     // locally
