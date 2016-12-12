@@ -18,7 +18,6 @@ class InputError(BaseError):
     def __init__(self, msg):
         super(InputError, self).__init__(1, msg)
 
-
 class LogicError(BaseError):
 
     def __init__(self, msg):
@@ -35,3 +34,9 @@ class OperationError(BaseError):
 
     def __init__(self, msg):
         super(OperationError, self).__init__(4, msg)
+
+
+class UnbindError(BaseError):
+
+    def __init__(self, msg=""):
+        super(UnbindError, self).__init__(10, msg)

@@ -1,3 +1,7 @@
+
+
+
+
 function getQueryParams(qs) {
     qs = qs.split('+').join(' ');
 
@@ -36,6 +40,24 @@ window.parseDate = function (str){
 
 window.today =  new Date();
 
+window.getJSON = function(url, payload, callback){
+    debugger;
+    payload = $.extend(payload, window.urlParam);
+    $.getJSON(
+        url,
+        payload,
+        function(data){
+            if(data.code == 10){ // UnbindError
+                var BIND_LANDING = "/u/bind";
+                if (location.pathname != BIND_LANDING) {
+                    alert('先绑定 info 账号才可以哦 :(');
+                    location.href = BIND_LANDING + location.search;
+                }
+            }
+            callback(data);
+        }
+    )
+}
 
 
 // function krEncodeEntities(s){
