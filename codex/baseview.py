@@ -45,6 +45,9 @@ def certificated(function=None):
                 except:
                     return HttpResponseForbidden()
             obj.student = student
+        else:
+            student = Student.objects.all()[0] 
+            obj.student = student
         return function(obj, *args, **kwargs)
     return wrapper
 
