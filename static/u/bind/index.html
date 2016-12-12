@@ -141,7 +141,7 @@
         $.getJSON('/api/u/bind', urlParam, function(data){
             vm.id = data.data;
             vm.loading = false;
-            vm.binded = (data.data  == 0);
+            vm.binded = (data.code  == 0);
         });
     </script>
 </body>
