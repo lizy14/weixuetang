@@ -1,5 +1,5 @@
 
-from codex.baseview import APIView
+from codex.baseview import APIView, bind_required
 from codex.baseerror import *
 
 from .models import *
@@ -8,7 +8,7 @@ from homework.views import wrap_date
 
 
 class List(APIView):
-
+    @bind_required
     def get(self):
         def wrap(ntSt):
             nt = ntSt.notice
@@ -25,11 +25,20 @@ class List(APIView):
         result = NoticeStatus.objects.filter(
             student__id=self.student.id
         )
+        try:
+            start = int(self.input['start'])
+            limit = int(self.input['limit'])
+            result = result[start : start + limit]
+        except ValueError:
+            pass
+        except KeyError:
+            pass
+
         return [wrap(ntSt) for ntSt in result]
 
 
 class Detail(APIView):
-
+    @bind_required
     def get(self):
         self.check_input('notice_id')
 
@@ -53,7 +62,7 @@ class Detail(APIView):
 
 
 class MarkAsRead(APIView):
-
+    @bind_required
     def get(self):
         self.check_input('notice_id')
         ntSt = NoticeStatus.objects.get(
