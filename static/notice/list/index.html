@@ -125,19 +125,20 @@
                     param = {
                         'notice_id': notice_id
                     };
-                    // mark-as-read
-                    // locally
-                    var item = this.items.filter(function(item) {
-                        return item.notice_id.toString() === notice_id;
-                    })[0];
-                    item.status = 1
-                    // remotely
-                    getJSON('/api/notice/mark-as-read/', param);
 
                     // fetch detail and pop up
                     getJSON('/api/notice/detail/', param, function(data) {
                         _vm.detail_showing = true;
                         _vm.detail_item = data.data;
+
+                        // mark-as-read
+                        // locally
+                        var item = this.items.filter(function(item) {
+                            return item.notice_id.toString() === notice_id;
+                        })[0];
+                        item.status = 1
+                        // remotely
+                        getJSON('/api/notice/mark-as-read/', param);
                     })
                 },
             }
