@@ -44,7 +44,6 @@ window.parseDate = function (str){
 window.today =  new Date();
 
 window.getJSON = function(url, payload, callback){
-    debugger;
     payload = $.extend(payload, window.urlParam);
     $.getJSON(
         url,

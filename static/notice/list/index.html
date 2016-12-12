@@ -108,7 +108,6 @@
                         'start': _vm.items.length
                     };
                     getJSON('/api/notice/list/', param, function(data) {
-                        _vm.loading = false;
                         prune(data.data);
                         data.data.forEach(function(e){
                             _vm.items.push(e);

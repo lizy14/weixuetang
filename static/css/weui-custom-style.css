@@ -48,7 +48,7 @@ body {
     font-weight: 400;
 }
 
-#detail-description {
+.detail-description, #detail-description {
     display: block;
 }
 
@@ -68,4 +68,3 @@ body {
     overflow: scroll;
     text-overflow: clip !important;
 }
-

@@ -53,7 +53,17 @@ class List(APIView):
 
         result = HomeworkStatus.objects.filter(
             student__id=self.student.id
-        )
+        ).order_by('-homework__start_time')
+
+        try:
+            start = int(self.input['start'])
+            limit = int(self.input['limit'])
+            result = result[start : start + limit]
+        except ValueError:
+            pass
+        except KeyError:
+            pass
+
         return [wrap(hwSt) for hwSt in result]
 
 
