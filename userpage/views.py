@@ -23,7 +23,7 @@ class UserBind(APIView):
     def get(self):
         result = Student.get_by_openid(self.request.session['openid']).xt_id
         if result is None:
-            raise LogicError('Unbind.')
+            raise UnbindError()
         return result
 
     def post(self):

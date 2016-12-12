@@ -58,13 +58,15 @@ class UnBindStudentHandler(WeChatHandler):
             'openid': self.user.open_id
         })))
 
+from userpage.tasks import notify_student
 
 class TestHandler(WeChatHandler):
 
     def check(self):
-        return self.is_click_of_event('info_test')
+        return self.is_click_of_event('info_test') or self.is_text('测试', 'test')
 
     def handle(self):
+        notify_student.delay()
         return self.wechat.response_text(content='Done')
 
 

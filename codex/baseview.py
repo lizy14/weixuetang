@@ -4,7 +4,7 @@ import json
 import logging
 from django.http import HttpResponse
 from django.views.generic import View
-from codex.baseerror import BaseError, InputError
+from codex.baseerror import BaseError, InputError, UnbindError
 
 
 class BaseView(View):
@@ -46,11 +46,22 @@ def certificated(function=None):
                     return HttpResponseForbidden()
             obj.student = student
         else:
-            student = Student.objects.all()[0] 
+            student = Student.objects.all()[0]
             obj.student = student
         return function(obj, *args, **kwargs)
     return wrapper
 
+
+def bind_required(function=None):
+    def wrapper(obj, *args, **kwargs):
+        try:
+            assert(obj.student is not None)
+            assert(obj.student.xt_id is not None)
+        except:
+            raise UnbindError()
+
+        return function(obj, *args, **kwargs)
+    return wrapper
 
 class APIView(BaseView):
 

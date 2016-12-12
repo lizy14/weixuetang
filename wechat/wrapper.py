@@ -48,7 +48,7 @@ class WeChatEmptyHandler(WeChatHandler):
         return True
 
     def handle(self):
-        return self.wechat.response_text(content='Server Error.. Please contact the administrator!')
+        return self.wechat.response_text(content='服务器给我们留了一个作业……')
 
 
 class WeChatView(BaseView):
