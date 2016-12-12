@@ -63,7 +63,7 @@
                 <!-- Graded homework -->
                 <div v-if="item.status === 2" class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.homework_id" v-for="item in items">
                     <h5 class="weui-media-box__title"><span class="green-badge weui-badge">已批</span>{{ item.title }}</h5>
-                    <p class="weui-media-box__desc" >批阅时间: {{item.end_time}}</p>
+                    <p class="weui-media-box__desc" >批阅时间: {{item.grade_time}}</p>
                     <ul class="weui-media-box__info">
                         <li class="weui-media-box__info__meta">{{item.course_name}}</li>
                     </ul>
@@ -77,12 +77,59 @@
                 <div class="weui-mask"></div>
                 <div class="weui-dialog">
                     <div class="weui-dialog__hd">
-                        <strong class="weui-dialog__title">{{ item.title }}</strong>
+                        <strong class="weui-dialog__title">{{item.title}}</strong>
                     </div>
-                    <div class="weui-dialog__bd" v-if="item.detail">{{item.detail}}</div>
-                    <div class="weui-dialog__bd" v-else>无描述</div>
+                    
+                        <div class="dialog-detail-box weui-dialog__bd">
+                            <div class="news-container">
+                            <div class="weui-panel weui-panel_access">
+                                <div class="weui-panel__bd">
+                                <div class="weui-media-box weui-media-box_text">
+                                    <h5 class="weui-media-box__title">截止时间: {{item.end_time}}</h5>
+                                    <h5 class="weui-media-box__title">发布时间: {{item.start_time}}</h5>
+                                    <div class="weui-media-box__desc" id="detail-description"  v-if="item.detail">{{item.detail}}
+                                    </div>
+                                    <div class="weui-dialog__desc" v-else>无描述</div>
+
+
+                                    <div class="weui-media-box__info">
+                                            <span v-if="item.attachment">附件:{{item.attachment}}</span>
+                                        </div>
+                                </div>
+                                </div>
+                            </div>
+                        
+
+                            <!-- Submission -->
+                            <div class="weui-panel weui-panel_access">
+                                <div class="weui-panel__bd">
+                                    <div class="weui-media-box weui-media-box_text">
+                                    <h5 v-if="item.status === 0" class="weui-media-box__title">未提交</h5>
+                                    <h5 v-else class="weui-media-box__title">已提交</h5>
+                                    </div>  
+                                </div>
+                            </div>
+
+                            <!-- Grade -->
+                            <div class="weui-panel weui-panel_access" v-if="item.status === 2">
+                                <div class="weui-panel__bd" >
+                                <div class="weui-media-box weui-media-box_text">
+                                    <p class="weui-media-box__title">批改信息</p>
+                                    <h5 class="weui-media-box__desc" v-if="item.grade">分数: {{ item.grade }}</h5>
+                                    <h5 class="weui-media-box__info" v-if="item.grade_by">批改人: {{ item.grade_by }}</h5>
+                                    <div class="weui-media-box__info" id="detail-description" v-if="item.comment" >批语：{{ item.comment }}</div>
+                                    <div class="weui-media-box__info" id="detail-description" v-else >无批语
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+
+                            </div>
+
+                        </div>
+                    
                      <div class="weui-dialog__ft">
-                        <a :href="'/hw/detail/?homework_id=' + item.homework_id + '&code=' + urlParam.code + '&state=' + urlParam.state" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
+                        <!-- <a :href="'/hw/detail/?homework_id=' + item.homework_id + '&code=' + urlParam.code + '&state=' + urlParam.state" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a> -->
                         <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
                     </div>
                 </div>

@@ -61,8 +61,9 @@ body {
 }
 
 .dialog-detail-box {
-    display: -webkit-box;
-    -webkit-line-clamp: 10 !important;
+    height: 300px;
+    display: -webkit-box !important;
+    #-webkit-line-clamp: 15 !important;
     -webkit-box-orient: vertical;
     overflow: scroll;
     text-overflow: clip !important;
