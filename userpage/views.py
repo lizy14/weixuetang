@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 from django.shortcuts import render
-from codex.baseview import APIView
+from codex.apiview import APIView
 from codex.baseerror import *
 from .models import Student, Preference
 from homework.models import CourseStatus
