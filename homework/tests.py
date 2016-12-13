@@ -34,3 +34,6 @@ class HomeworkTests(APITest):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()['code'], 0)
         [self.assertFalse(item.ignored) for item in HomeworkStatus.objects.filter(student=self.user)]
+
+    def test_courses(self):
+        pass

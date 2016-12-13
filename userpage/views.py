@@ -54,7 +54,7 @@ class UserPreference(APIView):
     def get(self):
         user = Student.get_by_openid(self.request.session['openid'])
         pref = Preference.objects.get(student=user)
-        ignored = CourseStatus.objects.get(student=user, ignored=True)
+        ignored = CourseStatus.objects.filter(student=user, ignored=True)
         ls = [i.xt_id for i in ignored]
         return {
             's_work': pref.s_work,
