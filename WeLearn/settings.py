@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     # 'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_nose',
     'django_mysql',
     'django_extensions',
     'djcelery',
@@ -64,6 +65,13 @@ INSTALLED_APPS = [
     'userpage',
     'homework',
     'notice',
+]
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    # '--with-coverage',
+    '--cover-package=codex,homework,notice,userpage,wechat,WeLearn,ztylearn',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -229,3 +237,7 @@ CELERYD_TASK_SOFT_TIME_LIMIT = 120
 
 # Site and URL
 SITE_DOMAIN = CONFIGS['SITE_DOMAIN'].rstrip('/')
+
+FIXTURE_DIRS = (
+   os.path.join(BASE_DIR, 'fixtures'),
+)

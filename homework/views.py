@@ -5,6 +5,8 @@ from codex.apiview import APIView
 from codex.baseerror import *
 from wechat.wrapper import WeChatView
 from datetime import datetime
+import logging
+__logger__ = logging.getLogger(name=__name__)
 
 
 def wrap_date(d):
@@ -60,7 +62,7 @@ class List(APIView):
         try:
             start = int(self.input['start'])
             limit = int(self.input['limit'])
-            result = result[start : start + limit]
+            result = result[start: start + limit]
         except ValueError:
             pass
         except KeyError:
@@ -103,5 +105,5 @@ class Mark(APIView):
             student__id=self.student.id,
             homework__id=self.input['homework_id']
         )
-        ins.ignored = self.input['ignore']
+        ins.ignored = int(self.input['ignore']) != 0
         ins.save()

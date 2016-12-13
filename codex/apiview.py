@@ -3,7 +3,9 @@ from userpage.models import Student
 from django.http import HttpResponseForbidden
 from WeLearn.settings import IGNORE_CODE_CHECK
 from .baseview import *
+import logging
 
+__logger__ = logging.getLogger(name=__name__)
 
 def certificated(function=None):
     def wrapper(obj, *args, **kwargs):
