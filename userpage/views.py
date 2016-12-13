@@ -95,3 +95,12 @@ class Courses(APIView):
             }
         ls = CourseStatus.objects.filter(student=self.student)
         return [wrap(item) for item in ls]
+
+    def post(self):
+        self.check_input('course_id', 'ignore')
+        item = CourseStatus.objects.get(
+            student=self.student,
+            course__id=self.input['course_id']
+        )
+        item.ignored = int(self.input['ignore']) != 0
+        item.save()
