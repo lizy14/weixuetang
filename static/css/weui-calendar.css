@@ -1,0 +1,65 @@
+.weui-grid {
+	width: 14.28%;
+	padding: 5px 1px;
+}
+
+.scroll-list {
+	overflow: scroll;
+}
+
+.days-bar {
+	white-space: nowrap;
+	background-color: #dedee2;
+	text-align: center;
+	font-size: 10px;
+	color: #999999;
+	width: 14.28%;
+	position: relative;
+    float: left;
+}
+
+.month-content {
+	margin-top: 10px;
+}
+
+.weui-grid {
+	height: 100px;
+}
+
+.weui-grid__label {
+	text-align: left;
+	margin: 0px 0;
+	font-size: 10px;
+}
+
+.course_badge {
+	background: #3cc51f;
+	margin: 0 0 2px 2px;
+	font-size: 10px;
+}
+
+.hw_badge {
+	background: #E64340;
+	margin: 0 0 2px 2px;
+	font-size: 10px;
+}
+
+.date_label {
+	color: #999999;
+	font-size: 20px;
+	height: 32px;
+	margin-bottom: 2px;
+	margin-left: 2px;
+}
+
+.today_label {
+	color: white;
+	background-color: #3cc51f;
+	border-radius: 25px;
+	display: inline-block;
+	padding: 0.00em .25em;
+	font-size: 16px;
+	min-width: 16px;
+	vertical-align: center;
+	text-align: center;
+}

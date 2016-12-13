@@ -10,12 +10,14 @@
         <meta name="description" content="">
         <meta name="author" content="moqunzhu">
 
-        <title>Detail</title>
-        <!-- Custom styles -->
-        <link href="../../css/weui-custom-style.css" rel="stylesheet">
-
+        <title>日历</title>
         <!-- WeUI styles -->
         <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
+
+        <!-- Custom styles -->
+        <link href="../../css/weui-calendar.css" rel="stylesheet">
+        <link href="../../css/weui-custom-style.css" rel="stylesheet">
+        
 
         <!-- WeUI Javascript library -->
         <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
@@ -23,97 +25,107 @@
     </head>
 
 <body>
-    <!-- Header -->
-    <h1 class="news-title">作业详情</h1>
-    <div class="weui-loadmore">
-        <i class="weui-loading"></i>
-        <span class="weui-loadmore__tips">正在加载</span>
-    </div>
-
-    <div id="detail-container" style="display:none">
-
-    <div class="news-container">
-        <div class="weui-panel weui-panel_access">
-        <div class="weui-panel__bd">
-
-            <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">{{item.title}}</h5>
-                <div class="weui-media-box__info">{{item.course_name}}</div>
+    <div id="vue-container">
+        <div class="" id="views-switcher"> </div>
+        <div class="calendar-container" id="month-view" v-if="view === 'month'">
+            <h1 class="news-title">{{ focus_day.getMonth() }}月<span style="font-size:16px;"> {{ focus_day.getYear()+1900 }}年</h1>
+            
+            <div class="weui-grids">
+                 <div class="days-bar">一</div>
+                 <div class="days-bar">二</div>
+                 <div class="days-bar">三</div>
+                 <div class="days-bar">四</div>
+                 <div class="days-bar">五</div>
+                 <div class="days-bar">六</div>
+                 <div class="days-bar">日</div>
             </div>
-        </div>
-        </div>
-    </div>
-
-    <!-- Description -->
-    <p class="weui-cells__title">作业信息</p>
-    <div class="news-container">
-        <div class="weui-panel weui-panel_access">
-        <div class="weui-panel__bd">
-
-            <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">截止时间: {{item.end_time}}</h5>
-                <h5 class="weui-media-box__title">发布时间: {{item.start_time}}</h5>
-                <div class="weui-media-box__desc" id="detail-description">{{item.detail}}
-                </div>
-
-
-                <ul class="weui-media-box__info">
-                        <li class="weui-media-box__info__meta">
-                        <span v-if="item.attachment">附件:{{item.attachment}}</span></li>
-                    </ul>
-            </div>
-        </div>
-        </div>
-    </div>
-
-    <!-- Submission -->
-    <div class="news-container">
-        <div class="weui-panel weui-panel_access">
-        <div class="weui-panel__bd">
-            <div class="weui-media-box weui-media-box_text">
-                <h5 v-if="item.status === 0" class="weui-media-box__title">未提交</h5>
-                <h5 v-else class="weui-media-box__title">已提交</h5>
-            </div>
-        </div>
-        </div>
-    </div>
-
-    <!-- Grade -->
-    <div v-if="item.status === 2" >
-        <p class="weui-cells__title">批改信息</p>
-        <div class="news-container">
-            <div class="weui-panel weui-panel_access">
-            <div class="weui-panel__bd">
-                <div class="weui-media-box weui-media-box_text">
-                    <h5 class="weui-media-box__title" v-if="item.grade">分数: {{ item.grade }}</h5>
-                    <h5 class="weui-media-box__title" v-if="item.grade_by">批改人: {{ item.grade_by }}</h5>
-                    <div class="weui-media-box__desc" id="detail-description" v-if="item.comment" >批语：{{ item.comment }}</div>
-                    <div class="weui-media-box__desc" id="detail-description" v-else >无批语
+            <div class="month-content weui-grids">
+                <div class="weui-grid" v-for="i in margin.before"></div>
+                <div class="weui-grid" v-for="date in num_dates">
+                    <div class="date_content_wrapper">
+                        <div class="date_label" v-if="date === current_day.getDate()"><span class="today_label">{{ date }}</span></div>
+                        <div class="date_label" v-else>{{ date }}</div>
+                        <div class="scroll-list">
+                            <p  class="weui-grid__label" v-for="item in course[date-1]">
+                                <span class="course_badge weui-badge weui-badge_dot"></span>
+                                <span>{{ item.course_name }}</span>
+                            </p>
+                            <p  class="weui-grid__label" v-for="item in hw[date-1]">
+                                <span class="hw_badge weui-badge weui-badge_dot"></span>
+                                <span>{{ item.hw_name }}</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            </div>
-        </div>
-    </div>
+                <div class="weui-grid" v-for="i in margin.after"></div>
 
-    <a href="javascript:;" class="weui-btn weui-btn_primary" id="detail-return-button">返回</a>
+
+
+            </div>
+
+
+             <!-- <div class="weui-loadmore" >
+                <i v-if="loading_more" class="weui-loading"></i>
+                <span v-if="items.length" v-on:click="load_more" class="weui-loadmore__tips">加载更多</span>
+                <span v-else class="weui-loadmore__tips">正在加载</span>
+            </div> -->
+
+        </div>
+
+
+
+        <div class="calendar-container" id="week-view"></div>
     </div>
 
     <script>
-        $.getJSON('/api/hw/detail/',urlParam, function(data){
-        new Vue({
-            el: '#detail-container',
+        var init_num_dates = new Date(today.getYear()+1900, today.getMonth()+1, 0).getDate();
+        var init_margin = {
+                    before: new Date(today.getYear()+1900, today.getMonth(), 1).getDay() - 1,
+                    after: 7 - new Date(today.getYear()+1900, today.getMonth()+1, 0).getDay()
+                    };
+        console.log(init_margin.before);
+
+        var vm = new Vue({
+            el: '#vue-container',
             data: {
-                'item': data.data,
+                'view': 'month',
+                'current_day': today,
+                'focus_day': today,
                 'urlParam': urlParam,
+                'num_dates': init_num_dates,
+                'margin': init_margin,
+            },
+            computed: {
+                hw: function() {
+                    var _vm = this;
+
+                    // fetch hw data; TODO: range of time
+                    raw_hw_data = {data: [{hw_name:"homework3", date:"2016-12-20"}]};
+                    
+                    return schedule(raw_hw_data.data, _vm.num_dates);
+                },
+                course: function() {
+                    var _vm = this;
+
+                    // fetch course data; TODO: range of time
+                    raw_course_data = {data: [{course_name:"软件工程（3）", date:"2016-12-12"}]};
+
+                    return schedule(raw_course_data.data, _vm.num_dates);
+                },
+            },
+            methods: {
+                update: function() {
+                    var _vm = this;
+                    year = today.getYear() + 1900;
+                    month = today.getMonth();
+                    _vm.num_dates = new Date(year, month+1, 0).getDate();
+                    _vm.margin.before = new Date(year, month, 1).getDay() - 1;
+                    _vm.margin.after = 7 - new Date(year, month+1, 0).getDay();
+                },
+                load_more: function() {}
             }
-        })
-        $('#detail-return-button').on('click', function(){
-            window.history.go(-1);
-            return false;
         });
-        $('.weui-loadmore').hide();
-        $('#detail-container').show();
-    })
+
     </script>
 </body>
+</html>
