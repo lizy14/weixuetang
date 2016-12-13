@@ -9,9 +9,9 @@ class Preference(models.Model):
     s_notice = models.BooleanField(default=True)
     s_academic = models.BooleanField(default=True)
     s_lecture = models.BooleanField(default=True)
-    s_class = models.BooleanField(default=True)
     s_grading = models.BooleanField(default=True)
-    ahead_time = models.IntegerField(default=60)
+    s_class_ahead_time = models.IntegerField(default=20)
+    s_ddl_ahead_time = models.IntegerField(default=60)
 
 
 class Student(models.Model):

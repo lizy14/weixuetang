@@ -10,7 +10,8 @@ from .tasks import t_flush_student
 from ztylearn.Util import register
 from .fortunes import get_fortune
 from .utils import *
-
+import logging
+__logger__ = logging.getLogger(name=__name__)
 
 class UserBind(APIView):
 
@@ -54,32 +55,24 @@ class UserPreference(APIView):
     def get(self):
         user = Student.get_by_openid(self.request.session['openid'])
         pref = Preference.objects.get(student=user)
-        ignored = CourseStatus.objects.filter(student=user, ignored=True)
-        ls = [i.xt_id for i in ignored]
         return {
             's_work': pref.s_work,
             's_notice': pref.s_notice,
             's_grading': pref.s_grading,
             's_academic': pref.s_academic,
             's_lecture': pref.s_lecture,
-            's_class': pref.s_class,
-            'ignore_courses': ls,
-            'ahead_time': pref.ahead_time
+            's_class_ahead_time': pref.s_class_ahead_time,
+            's_ddl_ahead_time': pref.s_ddl_ahead_time
         }
 
     def post(self):
         # NOTE: plz post all data whether modified or not
         self.check_input('s_work', 's_notice', 's_grading', 's_academic',
-                         's_lecture', 's_class', 'ignore_courses', 'ahead_time')
+                         's_lecture', 's_class_ahead_time', 's_ddl_ahead_time')
         pref = Preference.objects.get(student=self.student)
-        update_fields(pref, self.input, 's_work', 's_notice', 's_grading',
-                      's_academic', 's_lecture', 's_class', 'ahead_time')
+        update_fields(pref, self.input, 's_work', 's_notice', 's_grading', 's_academic',
+                      's_lecture', 's_class_ahead_time', 's_ddl_ahead_time')
         pref.save()
-        allcls = CourseStatus.objects.filter(student=self.student)
-        for cls in allcls:
-            cls.ignored = True if cls.course.xt_id in self.input[
-                'ignore_courses'] else False
-            cls.save()
 
 from homework.models import Course, CourseStatus
 
@@ -91,7 +84,7 @@ class Courses(APIView):
             return {
                 'course_id': cst.course.id,
                 'course_name': cst.course.name,
-                'ignored': int(cst.ignored)
+                'ignored': cst.ignored
             }
         ls = CourseStatus.objects.filter(student=self.student)
         return [wrap(item) for item in ls]

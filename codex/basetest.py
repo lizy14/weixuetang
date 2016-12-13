@@ -1,5 +1,5 @@
 from django.test import TestCase, RequestFactory
-
+import json
 
 class BaseTest(TestCase):
     fixtures = ['init.json']
@@ -8,14 +8,13 @@ class BaseTest(TestCase):
         super(BaseTest, self).__init__(*args)
         self.factory = RequestFactory()
 
-    def make_request(self, method, url, param={}):
-        return getattr(self.factory, method)(url, param)
+    def make_request(self, method, url, data={}):
+        return getattr(self.factory, method)(url, data)
 
-    def simulate(self, method, url, param={}):
-        return getattr(self.client, method)(url, param)
+    def simulate(self, method, url, data={}):
+        return getattr(self.client, method)(url, data)
 
 from userpage.models import Student
-
 
 class APITest(BaseTest):
 
@@ -25,20 +24,20 @@ class APITest(BaseTest):
     def setUp(self):
         self.user = Student.objects.all()[0]
 
-    def make_request(self, method, url, param={}):
-        param.update({
+    def make_request(self, method, url, data={}):
+        data.update({
             'code': 'wechat_code',
             'state': 'view'
         })
-        request = getattr(self.factory, method)(url, param)
+        request = super(APITest, self).make_request(method, url, data)
         request.session = {
             'code': 'wechat_code',
             'openid': self.user.open_id
         }
         return request
 
-    def simulate(self, method, url, param={}):
-        param.update({
+    def simulate(self, method, url, data={}):
+        data.update({
             'code': 'wechat_code',
             'state': 'view'
         })
@@ -48,4 +47,4 @@ class APITest(BaseTest):
             'openid': self.user.open_id
         })
         session.save()
-        return super(APITest, self).simulate(method, url, param)
+        return super(APITest, self).simulate(method, url, data)

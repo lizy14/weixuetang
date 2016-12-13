@@ -24,7 +24,7 @@ class HomeworkTests(APITest):
 
     def test_mark(self):
         resp = self.simulate('post', '/api/hw/mark/',
-                             {'ignore': 1, 'homework_id': '1'})
+                             {'ignore': 1, 'homework_id': 1})
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()['code'], 0)
         self.assertTrue(HomeworkStatus.objects.get(
