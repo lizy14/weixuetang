@@ -71,12 +71,11 @@ class UserPreference(APIView):
         # NOTE: plz post all data whether modified or not
         self.check_input('s_work', 's_notice', 's_grading', 's_academic',
                          's_lecture', 's_class', 'ignore_courses', 'ahead_time')
-        user = Student.get_by_openid(self.request.session['openid'])
-        pref = Preference.objects.get(student=user)
+        pref = Preference.objects.get(student=self.student)
         update_fields(pref, self.input, 's_work', 's_notice', 's_grading',
                       's_academic', 's_lecture', 's_class', 'ahead_time')
         pref.save()
-        allcls = CourseStatus.objects.get(student=user)
+        allcls = CourseStatus.objects.filter(student=self.student)
         for cls in allcls:
             cls.ignored = True if cls.course.xt_id in self.input[
                 'ignore_courses'] else False
