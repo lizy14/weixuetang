@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 from django.shortcuts import render
-from codex.apiview import APIView
+from codex.apiview import *
 from codex.baseerror import *
 from .models import Student, Preference
 from homework.models import CourseStatus
@@ -11,7 +11,7 @@ from ztylearn.Util import register
 from .fortunes import get_fortune
 
 
-class UserBind(APIView):
+class UserBind(BaseAPI):
 
     def validate_user(self):
         try:
@@ -42,7 +42,7 @@ class UserUnBind(APIView):
         self.student.save()
 
 
-class Fortune(APIView):
+class Fortune(BaseAPI):
 
     def get(self):
         return get_fortune()

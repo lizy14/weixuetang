@@ -3,49 +3,36 @@ from userpage.models import Student
 from django.http import HttpResponseForbidden
 from WeLearn.settings import IGNORE_CODE_CHECK
 from .baseview import *
-import logging
-
-__logger__ = logging.getLogger(name=__name__)
-
-def certificated(function=None):
-    def wrapper(obj, *args, **kwargs):
-        if not IGNORE_CODE_CHECK:
-            obj.check_input('code', 'state')  # TODO: actually state not used
-            if obj.request.session.get('code', False) and obj.request.session.get('openid', False) and obj.input['code'] == obj.request.session['code']:
-                student = Student.objects.get(
-                    open_id=obj.request.session['openid'])
-            else:
-                try:
-                    student = Student.objects.get(
-                        open_id=WeChatView.open_id_from_code(obj.input['code']))
-                    obj.request.session['code'] = obj.input['code']
-                    obj.request.session['openid'] = student.open_id
-                    obj.request.session.set_expiry(0)
-                except:
-                    return HttpResponseForbidden()
-            obj.student = student
-        else:
-            student = Student.objects.all()[0]
-            obj.student = student
-        return function(obj, *args, **kwargs)
-    return wrapper
 
 
-def bind_required(function=None):
-    def wrapper(obj, *args, **kwargs):
-        try:
-            assert(obj.student is not None)
-            assert(obj.student.xt_id is not None)
-        except:
-            raise UnbindError()
-
-        return function(obj, *args, **kwargs)
-    return wrapper
-
-
-class APIView(BaseView):
+class BaseAPI(BaseView):
 
     logger = logging.getLogger('API')
+
+    def certificated(function=None):
+        def wrapper(obj, *args, **kwargs):
+            if not IGNORE_CODE_CHECK:
+                # TODO: actually state not used
+                obj.check_input('code', 'state')
+                if obj.request.session.get('code', False) and obj.request.session.get('openid', False) and obj.input['code'] == obj.request.session['code']:
+                    student = Student.objects.get(
+                        open_id=obj.request.session['openid'])
+                else:
+                    try:
+                        student = Student.objects.get(
+                            open_id=WeChatView.open_id_from_code(obj.input['code']))
+                        obj.request.session['code'] = obj.input['code']
+                        obj.request.session['openid'] = student.open_id
+                        obj.request.session.set_expiry(0)
+                    except:
+                        return HttpResponseForbidden()
+                obj.student = student
+            else:
+                student = Student.objects.all()[0]
+                obj.student = student
+            return function(obj, *args, **kwargs)
+        wrapper._original = function
+        return wrapper
 
     def do_dispatch(self, *args, **kwargs):
         self.input = self.query or self.body
@@ -82,7 +69,7 @@ class APIView(BaseView):
             code = e.code
             msg = e.msg
             # self.logger.exception(
-                # 'Error occurred when requesting %s: %s', self.request.path, e)
+            # 'Error occurred when requesting %s: %s', self.request.path, e)
         except Exception as e:
             code = -1
             msg = str(e)
@@ -110,3 +97,28 @@ class APIView(BaseView):
         for k in keys:
             if k not in self.input:
                 raise InputError('Field "%s" required' % (k, ))
+
+import types
+import logging
+__logger__ = logging.getLogger(name=__name__)
+
+
+class BindMeta(type):
+
+    @staticmethod
+    def bind_required(function=None):
+        def wrapper(obj, *args, **kwargs):
+            if obj.student.xt_id is None:
+                raise UnbindError()
+            return function(obj, *args, **kwargs)
+        return wrapper
+
+    def __new__(cls, name, bases, attrs):
+        for k, v in attrs.items():
+            if isinstance(v, types.FunctionType) and k.lower() in ('post', 'get', 'put', 'patch', 'delete'):
+                attrs[k] = cls.bind_required(v)
+        return type.__new__(cls, name, bases, attrs)
+
+
+class APIView(BaseAPI, metaclass=BindMeta):
+    pass

@@ -1,4 +1,4 @@
-from codex.apiview import APIView, bind_required
+from codex.apiview import APIView
 from codex.baseerror import *
 from .models import *
 from homework.views import wrap_date
@@ -6,7 +6,6 @@ from homework.views import wrap_date
 
 class List(APIView):
 
-    @bind_required
     def get(self):
         def wrap(ntSt):
             nt = ntSt.notice
@@ -37,7 +36,6 @@ class List(APIView):
 
 class Detail(APIView):
 
-    @bind_required
     def get(self):
         self.check_input('notice_id')
 
@@ -62,7 +60,7 @@ class Detail(APIView):
 
 class MarkAsRead(APIView):
     # TODO: change method to post
-    @bind_required
+
     def get(self):
         self.check_input('notice_id')
         ntSt = NoticeStatus.objects.get(
