@@ -16,6 +16,8 @@ class HomeworkTests(APITest):
         resp = self.simulate('get', '/api/hw/unfinished-list/')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()['code'], 0)
+        [self.assertFalse(HomeworkStatus.objects.get(student=self.user, id=item['homework_id']).submitted)
+         for item in resp.json()['data']]
 
     def test_list(self):
         resp = self.simulate('get', '/api/hw/list/')

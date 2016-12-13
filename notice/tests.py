@@ -16,16 +16,19 @@ class NoticeTests(APITest):
         self.assertEqual(resp.json()['code'], 10)
 
     def test_list_ignored(self):
-        t_course = CourseStatus.objects.get(
-            student=self.user,
-            course__id=1
-        )
-        t_course.ignored = True
-        t_course.save()
+        test_id = Notice.objects.all()[0].course.id
+        self.simulate('post', '/api/u/courses/',
+                      {'course_id': test_id, 'ignore': 1})
         all_names = [item['course_name'] for item in self.simulate(
             'get', '/api/notice/list/').json()['data']]
-        self.assertNotIn(t_course.course.name, all_names,
+        self.assertNotIn(Course.objects.get(id=test_id).name, all_names,
                          'ignore course fails')
+        self.simulate('post', '/api/u/courses/',
+                      {'course_id': test_id, 'ignore': 0})
+        all_names = [item['course_name'] for item in self.simulate(
+            'get', '/api/notice/list/').json()['data']]
+        self.assertIn(Course.objects.get(id=test_id).name, all_names,
+                      'unignore course fails')
 
     def test_detail(self):
         resp = self.simulate('get', '/api/notice/detail/', {'notice_id': 1})

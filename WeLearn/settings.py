@@ -70,7 +70,7 @@ INSTALLED_APPS = [
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 NOSE_ARGS = [
-    # '--with-coverage',
+    '--with-coverage',
     '--cover-package=codex,homework,notice,userpage,wechat,WeLearn,ztylearn',
 ]
 
