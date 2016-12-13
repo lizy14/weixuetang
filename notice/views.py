@@ -18,9 +18,13 @@ class List(APIView):
                 'detail': nt.content,
                 'status': 1 if ntSt.read else 0
             }
-
+        query = [item.id for item in CourseStatus.objects.filter(
+            student=self.student,
+            ignored=False
+        )]
         result = NoticeStatus.objects.filter(
-            student__id=self.student.id
+            student__id=self.student.id,
+            notice__course__id__in=query
         )
         try:
             start = int(self.input['start'])
@@ -30,7 +34,6 @@ class List(APIView):
             pass
         except KeyError:
             pass
-
         return [wrap(ntSt) for ntSt in result]
 
 

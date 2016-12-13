@@ -15,6 +15,18 @@ class NoticeTests(APITest):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()['code'], 10)
 
+    def test_list_ignored(self):
+        t_course = CourseStatus.objects.get(
+            student=self.user,
+            course__id=1
+        )
+        t_course.ignored = True
+        t_course.save()
+        all_names = [item['course_name'] for item in self.simulate(
+            'get', '/api/notice/list/').json()['data']]
+        self.assertNotIn(t_course.course.name, all_names,
+                         'ignore course fails')
+
     def test_detail(self):
         resp = self.simulate('get', '/api/notice/detail/', {'notice_id': 1})
         self.assertEqual(resp.status_code, 200)
@@ -29,6 +41,7 @@ class NoticeTests(APITest):
         self.assertEqual(resp.json()['code'], 0)
         self.assertTrue(NoticeStatus.objects.get(
             student=self.user, notice__id=1).read)
+
 
 class UtilTests(BaseTest):
 
@@ -62,6 +75,6 @@ class UtilTests(BaseTest):
         self.assertEqual(res, {
             'time': '2016年11月28日（周一）19:00-21:00',
             'place': '清华大学三教3300',
-            'lecturer': '台湾报告文学家  蓝博洲', # TODO: multi-line lecturer
+            'lecturer': '台湾报告文学家  蓝博洲',  # TODO: multi-line lecturer
             'title': '两岸历史记忆的失落：“二二八”后七十年'
         })
