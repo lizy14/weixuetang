@@ -21,27 +21,26 @@ class UserBind(APIView):
             raise ValidateError('CaμsAPI fail')
 
     def get(self):
-        result = Student.get_by_openid(self.request.session['openid']).xt_id
+        result = self.student.xt_id
         if result is None:
             raise UnbindError()
         return result
 
     def post(self):
+        if self.student.xt_id is not None:
+            raise LogicError('Already bound.')
         self.check_input('student_id', 'password')
-        user = Student.get_by_openid(self.request.session['openid'])
         self.validate_user()
-        user.xt_id = self.input['student_id']
-        user.save()
-        t_flush_student.delay(user.xt_id)
+        self.student.xt_id = self.input['student_id']
+        self.student.save()
+        t_flush_student.delay(self.student.xt_id)
 
 
 class UserUnBind(APIView):
 
     def post(self):
-        self.check_input('student_id')
-        user = Student.get_by_openid(self.request.session['openid'])
-        user.xt_id = None
-        user.save()
+        self.student.xt_id = None
+        self.student.save()
 
 
 class Fortune(APIView):

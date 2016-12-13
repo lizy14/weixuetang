@@ -81,6 +81,8 @@ class APIView(BaseView):
         except BaseError as e:
             code = e.code
             msg = e.msg
+            # self.logger.exception(
+                # 'Error occurred when requesting %s: %s', self.request.path, e)
         except Exception as e:
             code = -1
             msg = str(e)
