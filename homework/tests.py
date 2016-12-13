@@ -30,8 +30,7 @@ class HomeworkTests(APITest):
         self.assertTrue(HomeworkStatus.objects.get(
             student=self.user, homework__id=1).ignored)
         resp = self.simulate('post', '/api/hw/mark/',
-                             {'ignore': 0, 'homework_id': '1'})
+                             {'ignore': 0, 'homework_id': 'all'})
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()['code'], 0)
-        self.assertFalse(HomeworkStatus.objects.get(
-            student=self.user, homework__id=1).ignored)
+        [self.assertFalse(item.ignored) for item in HomeworkStatus.objects.filter(student=self.user)]

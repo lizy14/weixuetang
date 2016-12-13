@@ -101,9 +101,18 @@ class Mark(APIView):
 
     def post(self):
         self.check_input('ignore', 'homework_id')
-        ins = HomeworkStatus.objects.get(
-            student__id=self.student.id,
-            homework__id=self.input['homework_id']
-        )
-        ins.ignored = int(self.input['ignore']) != 0
-        ins.save()
+        flag = int(self.input['ignore']) != 0
+        if self.input['homework_id'] == 'all':
+            ls = HomeworkStatus.objects.filter(
+                student__id=self.student.id
+            )
+            for item in ls:
+                item.ignored = flag
+                item.save()
+        else:
+            ins = HomeworkStatus.objects.get(
+                student__id=self.student.id,
+                homework__id=self.input['homework_id']
+            )
+            ins.ignored = flag
+            ins.save()
