@@ -1,6 +1,5 @@
 from codex.basetest import APITest
 from .models import *
-from .views import *
 import logging
 
 __logger__ = logging.getLogger(name=__name__)

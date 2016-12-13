@@ -61,7 +61,7 @@ class Detail(APIView):
 
 
 class MarkAsRead(APIView):
-
+    # TODO: change method to post
     @bind_required
     def get(self):
         self.check_input('notice_id')
