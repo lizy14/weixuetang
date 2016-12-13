@@ -1,3 +1,7 @@
+
+
+
+
 function getQueryParams(qs) {
     qs = qs.split('+').join(' ');
 
@@ -39,6 +43,38 @@ window.parseDate = function (str){
 
 window.today =  new Date();
 
+window.getJSON = function(url, payload, callback){
+    payload = $.extend(payload, window.urlParam);
+    $.getJSON(
+        url,
+        payload,
+        function(data){
+            if(data.code == 10){ // UnbindError
+                var BIND_LANDING = "/u/bind";
+                if (location.pathname != BIND_LANDING) {
+                    alert('先绑定 info 账号才可以哦 :(');
+                    location.href = BIND_LANDING + location.search;
+                }
+            }
+            callback(data);
+        }
+    )
+}
+
+window.schedule = function (items, num_dates) {
+    new_items = new Array(num_dates);
+    items.forEach(function(i) {
+        index = parseDate(i.date).getDate() - 1;
+        if (new_items[index]) {
+            new_items[index].push(i);
+        }
+        else {
+            new_items[index] = new Array();
+            new_items[index].push(i);
+        }
+    });
+    return new_items;
+}
 
 
 // function krEncodeEntities(s){

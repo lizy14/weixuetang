@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="moqunzhu">
 
-        <title>Detail</title>
+        <title>作业</title>
         <!-- Custom styles -->
         <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
@@ -96,7 +96,7 @@
         </div>
     </div>
 
-    <a href="javascript:;" class="weui-btn weui-btn_primary" id="detail-return-button">返回</a>
+    <a :href="'/hw/unfinished-list/?code=' + urlParam.code + '&state=' + urlParam.state" class="weui-btn weui-btn_primary" id="detail-return-button">返回作业新鲜事</a>
     </div>
 
     <script>
@@ -108,10 +108,6 @@
                 'urlParam': urlParam,
             }
         })
-        $('#detail-return-button').on('click', function(){
-            window.history.go(-1);
-            return false;
-        });
         $('.weui-loadmore').hide();
         $('#detail-container').show();
     })

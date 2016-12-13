@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+#
 from django.shortcuts import render
-from codex.baseview import APIView
+from codex.apiview import *
 from codex.baseerror import *
 from .models import Student, Preference
 from homework.models import CourseStatus
@@ -9,7 +11,7 @@ from ztylearn.Util import register
 from .fortunes import get_fortune
 
 
-class UserBind(APIView):
+class UserBind(BaseAPI):
 
     def validate_user(self):
         try:
@@ -17,50 +19,79 @@ class UserBind(APIView):
         except:
             raise ValidateError('CaμsAPI fail')
 
+    @BindMeta.bind_required
     def get(self):
-        result = Student.get_by_openid(self.request.session['openid']).xt_id
-        if result is None:
-            raise LogicError('Unbind.')
-        return result
+        return self.student.xt_id
 
     def post(self):
+        if self.student.xt_id is not None:
+            raise LogicError('Already bound.')
         self.check_input('student_id', 'password')
-        user = Student.get_by_openid(self.request.session['openid'])
         self.validate_user()
-        user.xt_id = self.input['student_id']
-        user.save()
-        t_flush_student.delay(user.xt_id)
+        self.student.xt_id = self.input['student_id']
+        self.student.save()
+        t_flush_student.delay(self.student.xt_id)
+
 
 class UserUnBind(APIView):
 
     def post(self):
-        self.check_input('student_id')
-        user = Student.get_by_openid(self.request.session['openid'])
-        user.xt_id = None
-        user.save()
+        self.student.xt_id = None
+        self.student.save()
 
-class Fortune(APIView):
+
+class Fortune(BaseAPI):
 
     def get(self):
         return get_fortune()
+
 
 class UserPreference(APIView):
 
     def get(self):
         user = Student.get_by_openid(self.request.session['openid'])
         pref = Preference.objects.get(student=user)
-        ignored = CourseStatus.objects.get(student=user, ignored=True)
-        ls = [i.xt_id for i in ignored]
         return {
             's_work': pref.s_work,
             's_notice': pref.s_notice,
             's_grading': pref.s_grading,
             's_academic': pref.s_academic,
             's_lecture': pref.s_lecture,
-            's_class': pref.s_class,
-            'ignore_courses': ls,
-            'ahead_time': pref.ahead_time
+            's_class_ahead_time': pref.s_class_ahead_time,
+            's_ddl_ahead_time': pref.s_ddl_ahead_time
         }
 
     def post(self):
-        pass # TODO
+        # NOTE: plz post all data whether modified or not
+        self.check_input('s_work', 's_notice', 's_grading', 's_academic',
+                         's_lecture', 's_class_ahead_time', 's_ddl_ahead_time')
+        pref = Preference.objects.get(student=self.student)
+        for arg in ('s_class_ahead_time', 's_ddl_ahead_time'):
+            setattr(pref, arg, self.input[arg])
+        for arg in ('s_work', 's_notice', 's_grading', 's_academic', 's_lecture'):
+            setattr(pref, arg, int(self.input[arg]) != 0)
+        pref.save()
+
+from homework.models import Course, CourseStatus
+
+
+class Courses(APIView):
+
+    def get(self):
+        def wrap(cst):
+            return {
+                'course_id': cst.course.id,
+                'course_name': cst.course.name,
+                'ignored': cst.ignored
+            }
+        ls = CourseStatus.objects.filter(student=self.student)
+        return [wrap(item) for item in ls]
+
+    def post(self):
+        self.check_input('course_id', 'ignore')
+        item = CourseStatus.objects.get(
+            student=self.student,
+            course__id=self.input['course_id']
+        )
+        item.ignored = int(self.input['ignore']) != 0
+        item.save()

@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from userpage.models import *
 from .models import *
-from codex.baseview import APIView
+from codex.apiview import APIView
 from codex.baseerror import *
 from wechat.wrapper import WeChatView
 from datetime import datetime
+import logging
+__logger__ = logging.getLogger(name=__name__)
 
 
 def wrap_date(d):
@@ -32,7 +34,8 @@ class UnfinishedList(APIView):
         result = HomeworkStatus.objects.filter(
             student__id=self.student.id,
             submitted=False,
-            homework__end_time__gte=datetime.today()
+            homework__end_time__gte=datetime.today(),
+            ignored=False
         )
         return [wrap(hwStatus.homework) for hwStatus in result]
 
@@ -52,8 +55,19 @@ class List(APIView):
             }
 
         result = HomeworkStatus.objects.filter(
-            student__id=self.student.id
-        )
+            student__id=self.student.id,
+            ignored=False
+        ).order_by('-homework__start_time')
+
+        try:
+            start = int(self.input['start'])
+            limit = int(self.input['limit'])
+            result = result[start: start + limit]
+        except ValueError:
+            pass
+        except KeyError:
+            pass
+
         return [wrap(hwSt) for hwSt in result]
 
 
@@ -81,3 +95,24 @@ class Detail(APIView):
             homework__id=self.input['homework_id']
         )
         return wrap(result)
+
+
+class Mark(APIView):
+
+    def post(self):
+        self.check_input('ignore', 'homework_id')
+        flag = int(self.input['ignore']) != 0
+        if self.input['homework_id'] == 'all':
+            ls = HomeworkStatus.objects.filter(
+                student__id=self.student.id
+            )
+            for item in ls:
+                item.ignored = flag
+                item.save()
+        else:
+            ins = HomeworkStatus.objects.get(
+                student__id=self.student.id,
+                homework__id=self.input['homework_id']
+            )
+            ins.ignored = flag
+            ins.save()

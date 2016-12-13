@@ -32,20 +32,20 @@ class CustomWeChatView(WeChatView):
                 'name': '新鲜事',
                 'sub_button': [
                     {
-                            'type': 'view',
-                            'name': '作业',
-                            'url': get_redirect_url('hw/unfinished-list'),
-                        },
+                        'type': 'view',
+                        'name': '作业',
+                        'url': get_redirect_url('hw/unfinished-list'),
+                    },
                     {
-                            'type': 'view',
-                            'name': '公告',
-                            'url': get_redirect_url('notice/list'),
-                        },
+                        'type': 'view',
+                        'name': '公告',
+                        'url': get_redirect_url('notice/list'),
+                    },
                     {
-                            'type': 'click',
-                            'name': '讲座',
-                            'key': event_keys['news_lectures'],
-                        }
+                        'type': 'click',
+                        'name': '讲座',
+                        'key': event_keys['news_lectures'],
+                    }
                 ]
             },
             {

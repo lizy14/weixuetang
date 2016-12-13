@@ -3,6 +3,7 @@
 
 <head>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-infinite-scroll@2.0.0"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="../../js/base.js"></script>
     <meta charset="utf-8">
@@ -11,7 +12,7 @@
     <meta name="description" content="">
     <meta name="author" content="moqunzhu">
 
-    <title>Homework</title>
+    <title>新鲜事</title>
     <!-- Custom styles -->
     <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
@@ -26,46 +27,46 @@
 <body>
     <!-- Header -->
     <h1 class="news-title">全部作业</h1>
-    <div class="weui-loadmore">
-        <i class="weui-loading"></i>
-        <span class="weui-loadmore__tips">正在加载</span>
-    </div>
 
-    <div class="weui-panel__bd" id="list-container" style="display:none">
+    <div class="weui-panel__bd" id="vue-container" v-infinite-scroll="load_more" infinite-scroll-disabled="no_more" >
 
-        <div id="fortune" class="news-subtitle">
+        <div class="news-subtitle">
             <div class="weui-cells__title"> {{fortune}} </div>
         </div>
 
         <!-- news list -->
         <div class="news-container">
             <div class="weui-panel weui-panel_access">
-                <!-- 3 homework status -->
+                <div v-on:click="show_detail" v-bind:id="item.homework_id" v-for="item in items" class="detail-box weui-media-box weui-media-box_text" >
+                    <!-- 3 homework status -->
+                    <!-- Unfinished homework -->
 
-                <!-- Unfinished homework -->
-                <div v-if="item.status === 0" class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.homework_id" v-for="item in items">
-                    <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge">未交</span>{{ item.title }}</h5>
-                    <p class="weui-media-box__desc" >结束时间: {{item.end_time}}，还有{{ item.days_left }}天</p>
+                    <div v-if="item.status === 0">
+                        <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge">未交</span>{{ item.title }}</h5>
+                        <p class="weui-media-box__desc">
+                            截止于
+                            <span v-if="item.days_left == 0">
+                                今天
+                            </span>
+                            <span v-else>
+
+                                <span v-if="item.days_left > 0">{{ item.days_left}} 天后</span>
+                                <span v-if="item.days_left < 0">{{-item.days_left}} 天前</span>
+                            </span>
+                        </p>
+                    </div>
+                    <!-- Submitted homework -->
+                    <div v-if="item.status === 1">
+                        <h5 class="weui-media-box__title"><span class="green-badge weui-badge">已交</span>{{ item.title }}</h5>
+                    </div>
+                    <!-- Graded homework -->
+                    <div v-if="item.status === 2">
+                        <h5 class="weui-media-box__title"><span class="green-badge weui-badge">已批</span>{{ item.title }}</h5>
+                    </div>
+
                     <ul class="weui-media-box__info">
                         <li class="weui-media-box__info__meta">{{item.course_name}}</li>
-                    </ul>
-                </div>
-
-                <!-- Submitted homework -->
-                <div v-if="item.status === 1" class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.homework_id" v-for="item in items">
-                    <h5 class="weui-media-box__title"><span class="green-badge weui-badge">已交</span>{{ item.title }}</h5>
-                    <p class="weui-media-box__desc" >结束时间: {{item.end_time}}</p>
-                    <ul class="weui-media-box__info">
-                        <li class="weui-media-box__info__meta">{{item.course_name}}</li>
-                    </ul>
-                </div>
-
-                <!-- Graded homework -->
-                <div v-if="item.status === 2" class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.homework_id" v-for="item in items">
-                    <h5 class="weui-media-box__title"><span class="green-badge weui-badge">已批</span>{{ item.title }}</h5>
-                    <p class="weui-media-box__desc" >批阅时间: {{item.end_time}}</p>
-                    <ul class="weui-media-box__info">
-                        <li class="weui-media-box__info__meta">{{item.course_name}}</li>
+                        <li class="weui-media-box__info__meta">{{item.start_time}}</li>
                     </ul>
                 </div>
             </div>
@@ -73,19 +74,76 @@
 
         <!-- Detail Dialog -->
         <div id="dialog-container">
-            <div class="detail-dialog" style="display: none;"  v-for="item in items" v-bind:id="'dialog-' + item.homework_id">
+            <div v-if="detail_showing" class="detail-dialog">
                 <div class="weui-mask"></div>
                 <div class="weui-dialog">
                     <div class="weui-dialog__hd">
-                        <strong class="weui-dialog__title">{{ item.title }}</strong>
+                        <strong class="weui-dialog__title">{{detail_item.title}}</strong>
                     </div>
-                    <div class="weui-dialog__bd" v-if="item.detail">{{item.detail}}</div>
-                    <div class="weui-dialog__bd" v-else>无描述</div>
-                     <div class="weui-dialog__ft">
-                        <a :href="'/hw/detail/?homework_id=' + item.homework_id + '&code=' + urlParam.code + '&state=' + urlParam.state" class="weui-dialog__btn weui-dialog__btn_default">完整详情</a>
-                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
+
+                    <div class="dialog-detail-box weui-dialog__bd">
+                        <div class="news-container">
+                            <div class="weui-panel weui-panel_access">
+                                <div class="weui-panel__bd">
+                                    <div class="weui-media-box weui-media-box_text">
+                                        <h5 class="weui-media-box__title">截止时间: {{detail_item.end_time}}</h5>
+                                        <h5 class="weui-media-box__title">发布时间: {{detail_item.start_time}}</h5>
+                                        <div class="weui-media-box__desc detail-description" v-if="detail_item.detail">{{detail_item.detail}}
+                                        </div>
+                                        <div class="weui-dialog__desc" v-else>无描述</div>
+
+
+                                        <div class="weui-media-box__info">
+                                            <span v-if="detail_item.attachment">附件:{{detail_item.attachment}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- Submission -->
+                            <div class="weui-panel weui-panel_access">
+                                <div class="weui-panel__bd">
+                                    <div class="weui-media-box weui-media-box_text">
+                                        <h5 v-if="detail_item.status === 0" class="weui-media-box__title">未提交</h5>
+                                        <h5 v-else class="weui-media-box__title">已提交</h5>
+                                    </div>
+                                </div>
+                            </div><!-- Submission -->
+
+                            <!-- Grade -->
+                            <div class="weui-panel weui-panel_access" v-if="detail_item.status === 2">
+                                <div class="weui-panel__bd">
+                                    <div class="weui-media-box weui-media-box_text">
+                                        <p class="weui-media-box__title">批改信息</p>
+                                        <h5 class="weui-media-box__desc" v-if="detail_item.grade">分数: {{ detail_item.grade }}</h5>
+                                        <h5 class="weui-media-box__info" v-if="detail_item.grade_by">批改人: {{ detail_item.grade_by }}</h5>
+                                        <div class="weui-media-box__info detail-description">
+                                            <span v-if="detail_item.comment">批语：{{ detail_item.comment }}</span>
+                                            <span v-else>无批语</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- Grade -->
+                        </div>
+                    </div>
+
+                    <div class="weui-dialog__ft">
+                        <a v-on:click="hide_detail" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
                     </div>
                 </div>
+            </div>
+        </div><!-- Detail Dialog -->
+
+        <div class="weui-loadmore" >
+            <div v-if="no_more">
+                <span v-if="items.length" class="weui-loadmore__tips">没有更多了</span>
+                <span v-else class="weui-loadmore__tips">没有作业 :)</span>
+            </div>
+            <div v-else>
+                <i v-if="loading_more" class="weui-loading"></i>
+                <span v-if="items.length" v-on:click="load_more" class="weui-loadmore__tips">加载更多</span>
+                <span v-else class="weui-loadmore__tips">正在加载</span>
             </div>
         </div>
 
@@ -93,38 +151,55 @@
 
 
     <script>
-    $.getJSON('/api/u/fortune', urlParam, function(data){
-        new Vue({
-            el: '#fortune',
+        var vm = new Vue({
+            el: '#vue-container',
             data: {
-                'fortune':data.data,
-                'urlParam': urlParam
+                'fortune': "",
+                'items': [],
+                'no_more': false,
+                'loading_more': false,
+                'detail_showing': false,
+                'detail_item': {},
+            },
+            methods: {
+                load_more: function(){
+                    var _vm = this;
+                    _vm.loading_more = true;
+                    param = {
+                        'limit': 10,
+                        'start': _vm.items.length
+                    };
+                    getJSON('/api/hw/list/', param, function(data) {
+                        expand(data.data);
+                        data.data.forEach(function(e){
+                            _vm.items.push(e);
+                        });
+                        _vm.loading_more = false;
+                        _vm.no_more = data.data.length < param.limit;
+                    })
+                },
+                hide_detail: function() {
+                    this.detail_showing = false;
+                },
+                show_detail: function(ev) {
+                    var _vm = this;
+                    var homework_id = ev.currentTarget.id;
+                    param = {
+                        'homework_id': homework_id
+                    };
+                    // fetch detail and pop up
+                    getJSON('/api/hw/detail/', param, function(data) {
+                        _vm.detail_showing = true;
+                        _vm.detail_item = data.data;
+                    })
+                },
             }
         })
-    })
-    $.getJSON('/api/hw/list/', urlParam, function(data){
-        expand(data.data);
-        data.data.sort(function(a, b){
-            return parseDate(a.end_time) > parseDate(b.end_time)
+        getJSON('/api/u/fortune', {}, function(data) {
+            vm.fortune = data.data
         })
-        new Vue({
-            el: '#list-container',
-            data: {
-                'items': data.data,
-                'urlParam': urlParam
-            }
-        })
-        $('#dialog-container').on('click', '.weui-dialog__btn_primary', function(){
-            $(this).parents('.detail-dialog').fadeOut(200);
-        });
-
-        $('.detail-box').on('click', function(){
-            id = '#dialog-' + $(this)[0].id;
-            $(id).fadeIn(200);
-        });
-        $('.weui-loadmore').hide();
-        $('#list-container').show();
-    })
 
     </script>
 </body>
+
+</html>

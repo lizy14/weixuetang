@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="moqunzhu">
 
-        <title>Bind</title>
+        <title>个人中心</title>
         <!-- Custom styles -->
         <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
@@ -23,142 +23,125 @@
 </head>
 
 <body>
-    <!-- 正在加载 -->
-    <div class="weui-loadmore">
-        <i class="weui-loading"></i>
-        <span class="weui-loadmore__tips">正在加载</span>
-    </div>
-
-    <!-- Header -->
-    <!-- 绑定 -->
-    <div id="bind-container" style="display: none;">
-    <h1 class="news-title">绑定</h1>
-
-    <div class="weui-cells__title">请输入学号与info密码</div>
-    <div class="weui-cells weui-cells_form">
-        <div class="weui-cell">
-            <div class="weui-cell__hd"><label class="weui-label">学  号</label></div>
-            <div class="weui-cell__bd">
-                <input class="weui-input" id="inputUsername" placeholder=""/>
-            </div>
+    <div id="vue-container">
+        <!-- 正在加载 -->
+        <div v-if="loading" class="weui-loadmore">
+            <i class="weui-loading"></i>
+            <span class="weui-loadmore__tips">正在加载</span>
         </div>
-        <div class="weui-cell">
-            <div class="weui-cell__hd"><label class="weui-label">密  码</label></div>
-            <div class="weui-cell__bd">
-                <input class="weui-input" type="password" id="inputPassword" placeholder=""/>
+
+        <!-- Header -->
+        <div v-else>
+            <!-- 绑定 -->
+            <div v-if="binded===false" id="bind-container">
+                <h1 class="news-title">绑定</h1>
+
+                <div class="weui-cells__title">请输入学号与info密码</div>
+                <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">学  号</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" id="inputUsername" placeholder=""/>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">密  码</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="password" id="inputPassword" placeholder=""/>
+                        </div>
+                    </div>
+                </div>
+                <a v-on:click="bind" class="weui-btn weui-btn_primary" id="confirm-button">确认</a>
             </div>
-        </div>
-    </div>
-    <a href="javascript:;" class="weui-btn weui-btn_primary" id="confirm-button">确认</a>
-    </div>
 
-    <div class="detail-dialog" style="display: none;" id="msg-dialog">
-        <div class="weui-mask"></div>
-        <div class="weui-dialog">
-            <div class="weui-dialog__hd"><strong class="weui-dialog__title">{{ msg.title }}</strong></div>
-            <div class="weui-dialog__bd">{{ msg.content }}</div>
-            <div class="weui-dialog__ft">
-                <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+            <div v-if="bind_popup_showing" class="detail-dialog" id="msg-dialog">
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__hd"><strong class="weui-dialog__title">{{ msg_title }}</strong></div>
+                    <div class="weui-dialog__bd">{{ msg_content }}</div>
+                    <div class="weui-dialog__ft">
+                        <a v-on:click="hide_bind_popup" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    </div>
 
-
-     <!-- 解绑 -->
-    <div id="unbind-container" style="display: none;">
-    <h1 class="news-title">解绑</h1>
-    <div class="weui-cells__title">点击按钮确认解绑帐号{{id}}</div>
-     <a href="javascript:;"  class="weui-btn weui-btn_warn" id="dettach-button">解绑</a>
-    </div>
-
-    <div class="detail-dialog" style="display: none;" id="dettach-dialog">
-        <div class="weui-mask"></div>
-        <div class="weui-dialog">
-            <div class="weui-dialog__hd">
-                <strong class="weui-dialog__title">确认解绑吗？</strong>
+             <!-- 解绑 -->
+            <div v-if="binded" id="unbind-container">
+                <h1 class="news-title">解绑</h1>
+                <div class="weui-cells__title">点击按钮确认解绑帐号{{id}}</div>
+                 <a v-on:click="show_unbind_popup"  class="weui-btn weui-btn_warn" id="dettach-button">解绑</a>
             </div>
-             <div class="weui-dialog__ft">
-                <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">残忍解绑</a>
-                <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">取消</a>
+
+            <div v-if="unbind_popup_showing" class="detail-dialog" id="dettach-dialog">
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__hd">
+                        <strong class="weui-dialog__title">确认解绑吗？</strong>
+                    </div>
+                     <div class="weui-dialog__ft">
+                        <a v-on:click="unbind" class="weui-dialog__btn weui-dialog__btn_default">残忍解绑</a>
+                        <a v-on:click="hide_unbind_popup" class="weui-dialog__btn weui-dialog__btn_primary">取消</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-    $.getJSON('/api/u/bind', urlParam, function(data){
-        $('.weui-loadmore').hide();
-        if (data.code == 0) {
-            $('#unbind-container').show();
-            new Vue({
-                el: '#unbind-container',
-                data: {
-                    'id': data.data,
-                    'urlParam': urlParam,
-                }
-            })
-			// pop confirmation dialog when click '解绑'
-			$(function(){
-				$('#dettach-dialog').on('click', '.weui-dialog__btn_primary', function(){
-					$(this).parents('.detail-dialog').fadeOut(200);
-				});
 
-				$('#dettach-button').on('click', function(){
-					$('#dettach-dialog').fadeIn(200);
-				});
+        var vm = new Vue({
+            el: '#vue-container',
+            data: {
+                'id': '',
+                'loading': true,
+                'bind_popup_showing': false,
+                'unbind_popup_showing': false,
+                'binded': false,
+                'msg_title': '',
+                'msg_content': '',
+            },
+            methods: {
+                hide_bind_popup: function() {
+                    this.bind_popup_showing = false;
 
-				$('#dettach-dialog').on('click', '.weui-dialog__btn_default', function() {
-					param = urlParam;
-					param.student_id = data.data;
-					$.post("/api/u/unbind", param, function(data,status){
-						location.reload();
-					})
-				})
-			});
-        }
-		else {
-            $('#bind-container').show();
-			$('#confirm-button').on('click', function() {
-	            data = urlParam;
-	            data['student_id'] = $('#inputUsername').val();
-	            data['password'] = $('#inputPassword').val() ;
-	            $.post("/api/u/bind", data,
-	                function(data,status){
-	                //alert("Data: " + data.msg + "\nStatus: " + status);
-	                if (data.code == 0) {
-	                    msg = {
-							title: '绑定成功',
-							content:''
-						};
-	                    new Vue({
-	                        el: '#msg-dialog',
-	                        data: {
-	                            'msg': msg,
-	                            'urlParam': urlParam,
-	                        }
-	                    });
-						$('#msg-dialog').fadeIn(200);
-						$('#msg-dialog').on('click', '.weui-dialog__btn', function(){
-							location.reload();
-						});
-	                }
-	                else {
-	                    msg = {title: '出错啦', content: data.msg};
-	                    new Vue({
-	                        el: '#msg-dialog',
-	                        data: {
-	                            'msg': msg,
-	                            'urlParam': urlParam,
-	                        }
-	                    });
-						$('#msg-dialog').fadeIn(200);
-						$('#msg-dialog').on('click', '.weui-dialog__btn', function(){
-							location.reload();
-						});
-	                }
-	            });
-	        })
-        }
-    })
+                },
+                hide_unbind_popup: function() {
+                    this.unbind_popup_showing = false;
+                },
+                show_unbind_popup: function() {
+                    this.unbind_popup_showing = true;
+                },
+                unbind: function() {
+                    param = urlParam;
+					param.student_id = vm.id;
+                    $.post("/api/u/unbind", param, function(data,status){
+						vm.binded = false;
+					});
+                    this.unbind_popup_showing = false;
+                },
+                bind: function() {
+                    param = urlParam;
+    	            param['student_id'] = $('#inputUsername').val();
+    	            param['password'] = $('#inputPassword').val();
+                    $.post("/api/u/bind", param, function(data,status){
+    	                if (data.code == 0) {
+                            vm.msg_title = '绑定成功';
+                            vm.msg_content = '';
+                            vm.binded = true;
+    	                }
+    	                else {
+                            vm.msg_title = '出错啦';
+                            vm.msg_content = data.msg;
+    	                }
+    	            });
+                    this.bind_popup_showing = true;
+                },
+            }
+        });
+        $.getJSON('/api/u/bind', urlParam, function(data){
+            vm.id = data.data;
+            vm.loading = false;
+            vm.binded = (data.code  == 0);
+        });
     </script>
 </body>

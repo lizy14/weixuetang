@@ -6,7 +6,7 @@ from django.template.loader import get_template
 import logging
 from wechat_sdk import WechatBasic
 from WeLearn.settings import wechat_conf
-from userpage.models import Student
+from userpage.models import *
 from .models import Template
 from wechat_sdk.messages import *
 import logging
@@ -48,7 +48,7 @@ class WeChatEmptyHandler(WeChatHandler):
         return True
 
     def handle(self):
-        return self.wechat.response_text(content='Server Error.. Please contact the administrator!')
+        return self.wechat.response_text(content='服务器给我们留了一个作业……')
 
 
 class WeChatView(BaseView):
@@ -103,8 +103,6 @@ class WeChatView(BaseView):
             return self.error_message_handler(self, None).handle()
         user, created = Student.objects.get_or_create(
             open_id=self.wechat.message.source)
-        if created:
-            self.logger.info('New user: {}'.format(user.open_id))
         try:
             for handler in self.handlers:
                 inst = handler(self, user)

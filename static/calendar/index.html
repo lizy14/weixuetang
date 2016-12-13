@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="../../js/base.js"></script>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="moqunzhu">
+
+        <title>日历</title>
+        <!-- WeUI styles -->
+        <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
+
+        <!-- Custom styles -->
+        <link href="../../css/weui-calendar.css" rel="stylesheet">
+        <link href="../../css/weui-custom-style.css" rel="stylesheet">
+        
+
+        <!-- WeUI Javascript library -->
+        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+    </head>
+
+<body>
+    <div id="vue-container">
+        <div class="" id="views-switcher"> </div>
+        <div class="calendar-container" id="month-view" v-if="view === 'month'">
+            <h1 class="news-title">{{ focus_day.getMonth() }}月<span style="font-size:16px;"> {{ focus_day.getYear()+1900 }}年</h1>
+            
+            <div class="weui-grids">
+                 <div class="days-bar">一</div>
+                 <div class="days-bar">二</div>
+                 <div class="days-bar">三</div>
+                 <div class="days-bar">四</div>
+                 <div class="days-bar">五</div>
+                 <div class="days-bar">六</div>
+                 <div class="days-bar">日</div>
+            </div>
+            <div class="month-content weui-grids">
+                <div class="weui-grid" v-for="i in margin.before"></div>
+                <div class="weui-grid" v-for="date in num_dates">
+                    <div class="date_content_wrapper">
+                        <div class="date_label" v-if="date === current_day.getDate()"><span class="today_label">{{ date }}</span></div>
+                        <div class="date_label" v-else>{{ date }}</div>
+                        <div class="scroll-list">
+                            <p  class="weui-grid__label" v-for="item in course[date-1]">
+                                <span class="course_badge weui-badge weui-badge_dot"></span>
+                                <span>{{ item.course_name }}</span>
+                            </p>
+                            <p  class="weui-grid__label" v-for="item in hw[date-1]">
+                                <span class="hw_badge weui-badge weui-badge_dot"></span>
+                                <span>{{ item.hw_name }}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-grid" v-for="i in margin.after"></div>
+
+
+
+            </div>
+
+
+             <!-- <div class="weui-loadmore" >
+                <i v-if="loading_more" class="weui-loading"></i>
+                <span v-if="items.length" v-on:click="load_more" class="weui-loadmore__tips">加载更多</span>
+                <span v-else class="weui-loadmore__tips">正在加载</span>
+            </div> -->
+
+        </div>
+
+
+
+        <div class="calendar-container" id="week-view"></div>
+    </div>
+
+    <script>
+        var init_num_dates = new Date(today.getYear()+1900, today.getMonth()+1, 0).getDate();
+        var init_margin = {
+                    before: new Date(today.getYear()+1900, today.getMonth(), 1).getDay() - 1,
+                    after: 7 - new Date(today.getYear()+1900, today.getMonth()+1, 0).getDay()
+                    };
+        console.log(init_margin.before);
+
+        var vm = new Vue({
+            el: '#vue-container',
+            data: {
+                'view': 'month',
+                'current_day': today,
+                'focus_day': today,
+                'urlParam': urlParam,
+                'num_dates': init_num_dates,
+                'margin': init_margin,
+            },
+            computed: {
+                hw: function() {
+                    var _vm = this;
+
+                    // fetch hw data; TODO: range of time
+                    raw_hw_data = {data: [{hw_name:"homework3", date:"2016-12-20"}]};
+                    
+                    return schedule(raw_hw_data.data, _vm.num_dates);
+                },
+                course: function() {
+                    var _vm = this;
+
+                    // fetch course data; TODO: range of time
+                    raw_course_data = {data: [{course_name:"软件工程（3）", date:"2016-12-12"}]};
+
+                    return schedule(raw_course_data.data, _vm.num_dates);
+                },
+            },
+            methods: {
+                update: function() {
+                    var _vm = this;
+                    year = today.getYear() + 1900;
+                    month = today.getMonth();
+                    _vm.num_dates = new Date(year, month+1, 0).getDate();
+                    _vm.margin.before = new Date(year, month, 1).getDay() - 1;
+                    _vm.margin.after = 7 - new Date(year, month+1, 0).getDay();
+                },
+                load_more: function() {}
+            }
+        });
+
+    </script>
+</body>
+</html>

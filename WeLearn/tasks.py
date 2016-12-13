@@ -2,13 +2,11 @@ from django.db import models
 from userpage.models import *
 from homework.models import *
 from notice.models import *
-from datetime import date
 import ztylearn as LearnDAO
 import asyncio
 from celery import shared_task
-from wechat.tasks import send_template
+# from wechat.tasks import send_template
 import logging
-from .settings import get_redirect_url
 
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
@@ -20,54 +18,34 @@ def main():
     loop.run_until_complete(update_all())
 
 
-async def notification_notice_new(noticeStatus):
+def notification_notice_new(noticeStatus):
     _logger.debug("NOTIFICATION %s new notice `%s` for course `%s`" % (
         noticeStatus.student.xt_id,
         noticeStatus.notice.title,
         noticeStatus.notice.course.name)
     )
     notice = noticeStatus.notice
-    send_template(noticeStatus.student.open_id, 'new_notice', {
-        'course': notice.course.name,
-        'title': notice.title,
-        'publisher': notice.publisher,
-        'content': notice.content,
-        'time': notice.publishtime.strftime('%Y-%m-%d'),
-    }, get_redirect_url('notice/detail', {
-        'notice_id': notice.id
-    }))
+    # send_template(noticeStatus.student.open_id, notice)
 
 
-async def notification_hw_new(homeworkStatus):
+def notification_hw_new(homeworkStatus):
     _logger.debug("NOTIFICATION %s new homework `%s`" % (
         homeworkStatus.student.xt_id,
         homeworkStatus.homework.title)
     )
     hw = homeworkStatus.homework
-    send_template(homeworkStatus.student.open_id, 'new_hw', {
-        'hw_name': hw.title,
-        'course_name': hw.course.name,
-        'ddl': hw.end_time.strftime('%Y-%m-%d'),
-        'days_left': (hw.end_time - date.today()).days
-    }, get_redirect_url('hw/detail', {
-        'homework_id': hw.id
-    }))
+    # send_template(homeworkStatus.student.open_id, hw)
 
-async def notification_hw_graded(homeworkStatus):
+
+def notification_hw_graded(homeworkStatus):
     _logger.debug("NOTIFICATION %s homework graded `%s`" % (
         homeworkStatus.student.xt_id,
         homeworkStatus.homework.title)
     )
-    hw = homeworkStatus.homework
-    send_template(homeworkStatus.student.open_id, 'hw_checked', {
-        'hw_name': hw.title,
-        'course_name': hw.course.name,
-        'score': homeworkStatus.grading
-    }, get_redirect_url('hw/detail', {
-        'homework_id': hw.id
-    }))
+    # send_template(homeworkStatus.student.open_id, homeworkStatus)
 
-async def notification_hw_ddl_modified(homeworkStatus, oldDdl):
+
+def notification_hw_ddl_modified(homeworkStatus, oldDdl):
     _logger.debug("NOTIFICATION %s homework ddl modified `%s`, %s -> %s" % (
         homeworkStatus.student.xt_id,
         homeworkStatus.homework.title,
@@ -75,18 +53,11 @@ async def notification_hw_ddl_modified(homeworkStatus, oldDdl):
         homeworkStatus.homework.end_time)
     )
     hw = homeworkStatus.homework
-    send_template(homeworkStatus.student.open_id, 'ddl_changed', {
-        'hw_name': hw.title,
-        'course_name': hw.course.name,
-        'ddl': hw.end_time.strftime('%Y-%m-%d'),
-        'days_left': (hw.end_time - date.today()).days
-    }, get_redirect_url('hw/detail', {
-        'homework_id': hw.id
-    }))
+    # send_template(homeworkStatus.student.open_id, hw, 'ddl')
 
 
 async def update_all():
-    students = Student.objects.all()  # TODO
+    students = Student.objects.filter(xt_id__isnull=False)
     tasks = [update_student(i) for i in students]
     await asyncio.gather(*tasks)
 
@@ -164,8 +135,8 @@ async def update_student_course_notice(student, course, _notice, mute):
         noticeStatus.read = False  # TODO
         noticeStatus.save()
 
-    if newly_created:
-        await notification_notice_new(noticeStatus)
+    if newly_created and student.pref.s_notice:
+        notification_notice_new(noticeStatus)
 
 
 async def update_student_course_work(student, course, _homework, mute):
@@ -180,14 +151,15 @@ async def update_student_course_work(student, course, _homework, mute):
         homework.course = course
         homework.xt_id = _homework.id
 
-    ddl_modified = (not mute) and str(homework.end_time) != str(_homework.end_time)
+    ddl_modified = (not mute) and str(
+        homework.end_time) != str(_homework.end_time)
     if ddl_modified:
         old_ddl = homework.end_time
 
     homework.title = _homework.title
     homework.start_time = _homework.start_time
-    homework.end_time   = _homework.end_time
-    homework.detail     = _homework.detail
+    homework.end_time = _homework.end_time
+    homework.detail = _homework.detail
     homework.attachment = _homework.attachment
     homework.save()
 
@@ -204,19 +176,20 @@ async def update_student_course_work(student, course, _homework, mute):
         homeworkStatus.homework = homework
 
     graded = _homework.completion > 1
-    newly_graded = (not mute) and (not newly_created) and graded and not homeworkStatus.graded
+    newly_graded = (not mute) and (
+        not newly_created) and graded and not homeworkStatus.graded
 
-    homeworkStatus.graded    = graded if not mute else False
-    homeworkStatus.grading   = _homework.grading
+    homeworkStatus.graded = graded if not mute else False
+    homeworkStatus.grading = _homework.grading
     homeworkStatus.grading_comment = _homework.grading_comment
     homeworkStatus.graded_by = _homework.grading_author
     homeworkStatus.submitted = _homework.completion > 0
     homeworkStatus.save()
 
     # generate push notifications
-    if newly_created:
-        await notification_hw_new(homeworkStatus)
-    elif ddl_modified:
-        await notification_hw_ddl_modified(homeworkStatus, old_ddl)
-    if newly_graded:
-        await notification_hw_graded(homeworkStatus)
+    if newly_created and student.pref.s_work:
+        notification_hw_new(homeworkStatus)
+    elif ddl_modified and student.pref.s_work:
+        notification_hw_ddl_modified(homeworkStatus, old_ddl)
+    if newly_graded and student.pref.s_work and student.pref.s_grading:
+        notification_hw_graded(homeworkStatus)
