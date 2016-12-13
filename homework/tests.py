@@ -8,7 +8,10 @@ __logger__ = logging.getLogger(name=__name__)
 class HomeworkTests(APITest):
 
     def test_detail(self):
-        resp = self.simulate('get', '/api/hw/list/')
+        resp = self.simulate('get', '/api/hw/detail/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotEqual(resp.json()['code'], 0)
+        resp = self.simulate('get', '/api/hw/detail/', {'homework_id': 1})
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()['code'], 0)
 

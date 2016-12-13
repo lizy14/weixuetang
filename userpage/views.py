@@ -19,11 +19,9 @@ class UserBind(BaseAPI):
         except:
             raise ValidateError('CaμsAPI fail')
 
+    @BindMeta.bind_required
     def get(self):
-        result = self.student.xt_id
-        if result is None:
-            raise UnbindError()
-        return result
+        return self.student.xt_id
 
     def post(self):
         if self.student.xt_id is not None:

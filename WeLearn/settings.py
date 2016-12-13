@@ -71,6 +71,9 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 NOSE_ARGS = [
     '--with-coverage',
+    '--cover-no-print', # comment this line if confronted with bug
+    '--cover-erase',
+    '--cover-html',
     '--cover-package=codex,homework,notice,userpage,wechat,WeLearn,ztylearn',
 ]
 

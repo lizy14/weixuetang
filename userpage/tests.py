@@ -4,7 +4,7 @@ __logger__ = logging.getLogger(name=__name__)
 from homework.models import CourseStatus
 import json
 from .models import *
-
+from .views import *
 
 class UserpageTests(APITest):
 
@@ -33,6 +33,15 @@ class UserpageTests(APITest):
         })
         self.assertEqual(resp.status_code, 200)
         self.assertNotEqual(resp.json()['code'], 0)  # wrong pass
+        from unittest.mock import patch
+        with patch.object(UserBind, 'validate_user', return_value=True):
+            resp = self.simulate('post', '/api/u/bind/', {
+                'student_id': 'lizy14',
+                'password': 'Mo Qunzhu'
+            })
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(resp.json()['code'], 0)  # correct pass
+            self.assertEqual(Student.objects.get(id=self.user.id).xt_id, 'lizy14')
 
     def test_unbind(self):
         resp = self.simulate('post', '/api/u/unbind/')
