@@ -9,9 +9,7 @@ import urllib.request
 from .tasks import t_flush_student
 from ztylearn.Util import register
 from .fortunes import get_fortune
-from .utils import *
-import logging
-__logger__ = logging.getLogger(name=__name__)
+
 
 class UserBind(APIView):
 
@@ -70,8 +68,10 @@ class UserPreference(APIView):
         self.check_input('s_work', 's_notice', 's_grading', 's_academic',
                          's_lecture', 's_class_ahead_time', 's_ddl_ahead_time')
         pref = Preference.objects.get(student=self.student)
-        update_fields(pref, self.input, 's_work', 's_notice', 's_grading', 's_academic',
-                      's_lecture', 's_class_ahead_time', 's_ddl_ahead_time')
+        for arg in ('s_class_ahead_time', 's_ddl_ahead_time'):
+            setattr(pref, arg, self.input[arg])
+        for arg in ('s_work', 's_notice', 's_grading', 's_academic', 's_lecture'):
+            setattr(pref, arg, int(self.input[arg]) != 0)
         pref.save()
 
 from homework.models import Course, CourseStatus

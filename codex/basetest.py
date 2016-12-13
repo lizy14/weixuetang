@@ -1,5 +1,5 @@
 from django.test import TestCase, RequestFactory
-import json
+
 
 class BaseTest(TestCase):
     fixtures = ['init.json']
@@ -15,6 +15,7 @@ class BaseTest(TestCase):
         return getattr(self.client, method)(url, data)
 
 from userpage.models import Student
+
 
 class APITest(BaseTest):
 
