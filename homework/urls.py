@@ -9,5 +9,4 @@ urlpatterns = [
     url(r'^list/?$', List.as_view()),
     url(r'^detail/?$', Detail.as_view()),
     url(r'^mark/?$', Mark.as_view()),
-    url(r'^courses/?$', Courses.as_view()),
 ]

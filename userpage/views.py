@@ -80,3 +80,18 @@ class UserPreference(APIView):
             cls.ignored = True if cls.course.xt_id in self.input[
                 'ignore_courses'] else False
             cls.save()
+
+from homework.models import Course, CourseStatus
+
+
+class Courses(APIView):
+
+    def get(self):
+        def wrap(cst):
+            return {
+                'course_id': cst.course.id,
+                'course_name': cst.course.name,
+                'ignored': int(cst.ignored)
+            }
+        ls = CourseStatus.objects.filter(student=self.student)
+        return [wrap(item) for item in ls]

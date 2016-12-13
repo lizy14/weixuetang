@@ -116,16 +116,3 @@ class Mark(APIView):
             )
             ins.ignored = flag
             ins.save()
-
-
-class Courses(APIView):
-
-    def get(self):
-        def wrap(cst):
-            return {
-                'course_id': cst.course.id,
-                'course_name': cst.course.name,
-                'ignored': cst.ignored
-            }
-        ls = CourseStatus.objects.filter(student=self.student)
-        return [wrap(item) for item in ls]
