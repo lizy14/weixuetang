@@ -26,9 +26,15 @@
 
 <body>
     <div id="vue-container">
-        <div class="" id="views-switcher"> </div>
+        
         <div class="calendar-container" id="month-view" v-if="view === 'month'">
-            <h1 class="news-title">{{ focus_day.getMonth() }}月<span style="font-size:16px;"> {{ focus_day.getYear()+1900 }}年</h1>
+            <div class="header-warper"> 
+                <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getYear()+1900 }}年</h1>
+                <div id="views-switcher">
+                    <span class="switcher weui-btn weui-btn_primary" id="month-switch">月</span>
+                    <span class="switcher weui-btn weui-btn_default" id="week-switch">周</span>
+                </div>
+            </div>
             
             <div class="weui-grids">
                  <div class="days-bar">一</div>
@@ -41,28 +47,65 @@
             </div>
             <div class="month-content weui-grids">
                 <div class="weui-grid" v-for="i in margin.before"></div>
-                <div class="weui-grid" v-for="date in num_dates">
+                <div class="weui-grid" v-for="date in num_dates" v-on:click="show_detail" v-bind:id="date">
                     <div class="date_content_wrapper">
                         <div class="date_label" v-if="date === current_day.getDate()"><span class="today_label">{{ date }}</span></div>
                         <div class="date_label" v-else>{{ date }}</div>
                         <div class="scroll-list">
-                            <p  class="weui-grid__label" v-for="item in course[date-1]">
-                                <span class="course_badge weui-badge weui-badge_dot"></span>
-                                <span>{{ item.course_name }}</span>
+                            <!-- course dot -->
+                            <p  class="weui-grid__label" >
+                                <span class="course_badge weui-badge weui-badge_dot" v-for="item in course[date-1]"></span>
                             </p>
-                            <p  class="weui-grid__label" v-for="item in hw[date-1]">
-                                <span class="hw_badge weui-badge weui-badge_dot"></span>
-                                <span>{{ item.hw_name }}</span>
+
+                            <!-- homework dot -->
+                            <p  class="weui-grid__label" >
+                                <span class="hw_badge weui-badge weui-badge_dot" v-for="item in hw[date-1]"></span>
                             </p>
                         </div>
                     </div>
                 </div>
                 <div class="weui-grid" v-for="i in margin.after"></div>
-
-
-
             </div>
 
+
+            <!-- Detail Dialog -->
+            <div id="dialog-container">
+                <div v-if="detail_showing" class="detail-dialog">
+                    <div class="weui-mask"></div>
+                    <div class="weui-dialog" style="text-align: left; padding-left:10px;">
+                        <div class="dialog-title">{{ selected_day.getDate() }}日<span style="font-size:16px;">{{ selected_day.getMonth()+1 }}月{{ selected_day.getYear()+1900 }}年</span></div>
+                        <div class="dialog-detail-box">
+                            <table>
+                                <tr class="time-row" v-for="time in 24">
+                                    <td class="time-mark">{{time-1}}:00</td>
+                                    <td class="time-content"></td>
+                                </tr>
+                                <tr class="time-row" >
+                                    <td class="time-mark">ddls:</td>
+                                    <td class="time-content">
+                                        <div class="block hw-block" v-for="c in selected_day_hw">
+                                            <div class="block-title">{{ c.hw_name }}</div>
+                                            <div class="block-info">{{c.course_name}}</div> 
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="block course-block" v-for="c in selected_day_course" :style="{top: c.top+'px', height: c.height+'px'}">
+                                <div class="block-title">{{ c.course_name }}</div>
+                                <div class="block-subtitle">{{c.start_time}} - {{c.end_time}}</div>
+                                <div class="block-info">{{c.location}}</div> 
+                            </div>
+
+                            
+                        </div>
+
+
+                        <div class="weui-dialog__ft" style="text-align: center;">
+                            <a v-on:click="hide_detail" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
              <!-- <div class="weui-loadmore" >
                 <i v-if="loading_more" class="weui-loading"></i>
@@ -74,7 +117,7 @@
 
 
 
-        <div class="calendar-container" id="week-view"></div>
+        <div class="calendar-container" id="week-view" style="display:none;"></div>
     </div>
 
     <script>
@@ -83,33 +126,45 @@
                     before: new Date(today.getYear()+1900, today.getMonth(), 1).getDay() - 1,
                     after: 7 - new Date(today.getYear()+1900, today.getMonth()+1, 0).getDay()
                     };
-        console.log(init_margin.before);
 
         var vm = new Vue({
             el: '#vue-container',
             data: {
-                'view': 'month',
+                'view': 'month',            // calendar view switcher
                 'current_day': today,
-                'focus_day': today,
+                'focus_day': today,         // today or the firstday of the month to display
                 'urlParam': urlParam,
-                'num_dates': init_num_dates,
-                'margin': init_margin,
+                'num_dates': init_num_dates,// number of days in the focused month
+                'margin': init_margin,      // for the alignment of dates and days
+                'detail_showing': false,
+                'selected_day': today,
+                'selected_day_course': [],  // course data for detail-dialog
+                'selected_day_hw': [],      // hw data for detail-dialog
             },
             computed: {
+                // the following data is to be shown in the calendar grids.
+                // since they should be fetched at the very begining, I put them in the
+                // "computed" component of vue.js. Maybe moving them into "methods" is a 
+                // better choice.
+                // (https://vuejs.org/v2/guide/computed.html#Computed-Caching-vs-Methods)
+                // mo qun zhu. orz
                 hw: function() {
                     var _vm = this;
 
-                    // fetch hw data; TODO: range of time
+                    // fetch hw data; TODO: use range of time as param
+
                     raw_hw_data = {data: [{hw_name:"homework3", date:"2016-12-20"}]};
-                    
                     return schedule(raw_hw_data.data, _vm.num_dates);
                 },
                 course: function() {
                     var _vm = this;
 
-                    // fetch course data; TODO: range of time
-                    raw_course_data = {data: [{course_name:"软件工程（3）", date:"2016-12-12"}]};
+                    // fetch course data; 
 
+                    raw_course_data = {data: [
+                        {course_name:"软件工程（3）", date:"2016-12-12"},
+                        {course_name:"软件理论基础（2）", date:"2016-12-12"},
+                        ]};
                     return schedule(raw_course_data.data, _vm.num_dates);
                 },
             },
@@ -122,7 +177,37 @@
                     _vm.margin.before = new Date(year, month, 1).getDay() - 1;
                     _vm.margin.after = 7 - new Date(year, month+1, 0).getDay();
                 },
-                load_more: function() {}
+                load_more: function() {},  // TODO
+                hide_detail: function() {
+                    this.detail_showing = false;
+                },
+                show_detail: function(ev) {
+                    var _vm = this;
+                    var date = ev.currentTarget.id;
+                    var month = _vm.focus_day.getMonth();
+                    var year = _vm.focus_day.getYear() + 1900;
+
+                    _vm.selected_day = new Date(year, month, date);
+                    _vm.detail_showing = true;
+
+                    // TODO: fetch data of the selected day
+
+                    // 编数据lalala
+                    course_data = [
+                        {course_name:"这个课的名字特别特别特别的长长长长长长长长长", location: "六教311", start_time:"9:50", end_time:"11:25"},
+                        {course_name:"计算机网络与体系结构（2）", location: "六教211", start_time:"13:00", end_time:"24:00"},
+                    ];
+                    hw_data = [
+                        {hw_name:"homework3", course_name:"软件理论基础（2）"},
+                        {hw_name:"第7次作业", course_name:"计算机网络系统"}
+                    ];
+                    
+                    produce_course_block(course_data);
+                    _vm.selected_day_course = course_data;
+
+                    _vm.selected_day_hw = hw_data;
+
+                },
             }
         });
 
