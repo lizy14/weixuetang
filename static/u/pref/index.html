@@ -159,7 +159,7 @@
         },
         methods: {
             'pick_s_ddl_ahead_time': function() {
-                var options = [-1, 5, 15, 30];
+                var options = [-1, 30, 60, 6*60, 12*60, 24*60, 2*24*60];
                 weui.picker(
                     renderPickerOptions(options), {
                     onChange: function(result) {},
@@ -171,7 +171,7 @@
                 });
             },
             'pick_s_class_ahead_time': function() {
-                var options = [-1, 30, 60, 6*60, 12*60, 24*60, 2*24*60];
+                var options = [-1, 5, 15, 30];
                 weui.picker(
                     renderPickerOptions(options), {
                     onChange: function(result) {},
