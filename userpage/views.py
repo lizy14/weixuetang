@@ -49,7 +49,7 @@ class Fortune(BaseAPI):
 class UserPreference(APIView):
 
     def get(self):
-        user = Student.get_by_openid(self.request.session['openid'])
+        user = self.student
         pref = Preference.objects.get(student=user)
         return {
             's_work': pref.s_work,
@@ -62,14 +62,19 @@ class UserPreference(APIView):
         }
 
     def post(self):
-        # NOTE: plz post all data whether modified or not
-        self.check_input('s_work', 's_notice', 's_grading', 's_academic',
-                         's_lecture', 's_class_ahead_time', 's_ddl_ahead_time')
+        # CHANGED: no longer requires all fields
         pref = Preference.objects.get(student=self.student)
         for arg in ('s_class_ahead_time', 's_ddl_ahead_time'):
-            setattr(pref, arg, self.input[arg])
+            try:
+                setattr(pref, arg, self.input[arg])
+            except KeyError:
+                pass
+
         for arg in ('s_work', 's_notice', 's_grading', 's_academic', 's_lecture'):
-            setattr(pref, arg, int(self.input[arg]) != 0)
+            try:
+                setattr(pref, arg, int(self.input[arg]) != 0)  # '0'/'1' -> Bool
+            except KeyError:
+                pass
         pref.save()
 
 from homework.models import Course, CourseStatus

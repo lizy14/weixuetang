@@ -156,6 +156,7 @@
             }
         }
     })
+
     getJSON('/api/u/pref', urlParam, function(resp) {
         pref = resp.data;
         vm.pref = pref;
@@ -164,7 +165,11 @@
                 vm.$watch('pref.' + _key, function() {
                     console.log(_key + ' set to ' + this.pref[_key]);
                     payload = {};
-                    payload[_key] = this.pref[_key];
+                    new_val = this.pref[_key];
+                    if(false == _key.endsWith('_ahead_time')){
+                        new_val += 0;  // true/false -> 1/0
+                    }
+                    payload[_key] = new_val;
                     postForm('/api/u/pref', payload);
                 })
             })(key);
