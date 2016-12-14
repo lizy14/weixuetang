@@ -121,7 +121,7 @@
         if(m < 60){
             return m + ' 分钟';
         }else if(m < 24 * 60){
-            return Math.floor(m/24) + ' 小时';
+            return Math.floor(m/60) + ' 小时';
         }else{
             return Math.floor(m/24/60) + ' 天';
         }
