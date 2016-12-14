@@ -118,13 +118,15 @@
         if(m < 0){
             return '关闭';
         }
-        if(m < 60){
-            return m + ' 分钟';
-        }else if(m < 24 * 60){
-            return Math.floor(m/60) + ' 小时';
-        }else{
-            return Math.floor(m/24/60) + ' 天';
-        }
+        return '提前 ' + (function(m){
+            if(m < 60){
+                return m + ' 分钟';
+            }else if(m < 24 * 60){
+                return Math.floor(m/60) + ' 小时';
+            }else{
+                return Math.floor(m/24/60) + ' 天';
+            }
+        })(m);
     }
 
     function renderPickerOptions(ms){
@@ -159,7 +161,7 @@
         },
         methods: {
             'pick_s_ddl_ahead_time': function() {
-                var options = [-1, 30, 60, 6*60, 12*60, 24*60, 2*24*60];
+                var options = [-1, 30, 60, 6*60, 12*60, (24+12)*60, (2*24+12)*60]; // “提前1天” -> 36 小时前 -> 前一天正午
                 weui.picker(
                     renderPickerOptions(options), {
                     onChange: function(result) {},
