@@ -14,9 +14,12 @@ template_name = {
 
 from WeLearn.settings import get_redirect_url
 from datetime import date
+from codex.baseerror import OperationError
 
 
-def wrap_Notice(ins):
+def wrap_Notice(ins, usr):
+    if not usr.pref.s_notice:
+        raise OperationError
     return ('new_notice', {
         'course': ins.course.name,
         'title': ins.title,
@@ -28,7 +31,9 @@ def wrap_Notice(ins):
     }))
 
 
-def wrap_Homework(ins):
+def wrap_Homework(ins, usr):
+    if not usr.pref.s_work:
+        raise OperationError
     return ('new_hw', {
         'hw_name': ins.title,
         'course_name': ins.course.name,
@@ -39,13 +44,15 @@ def wrap_Homework(ins):
     }))
 
 
-def wrap_Homeworkddl(ins):
+def wrap_Homeworkddl(ins, usr):
     tup = wrap_Homework(ins)
     tup[0] = 'ddl_changed'
     return tup
 
 
-def wrap_HomeworkStatus(ins):
+def wrap_HomeworkStatus(ins, usr):
+    if not usr.pref.s_work:
+        raise OperationError
     return ('hw_checked', {
         'hw_name': ins.homework.title,
         'course_name': ins.homework.course.name,
@@ -73,13 +80,23 @@ def t_send_template(openid, temp, data, url):
     except Exception as e:
         __logger__.exception(str(e))
 
+from userpage.models import Student
 
-def send_template(openid, ins, spec='', wrapper=None):
+# NOTE: apply_async_function(task, args=~list or tuple~, kwargs=~dict~, **options)
+def send_template(openid, ins, spec='', apply_async_function=None, wrapper=None, **options):
+    usr = Student.get_by_openid(openid)
     try:
-        tup = globals()['wrap_' + ins.__class__.__name__ + spec](ins)
+        tup = globals()['wrap_' + ins.__class__.__name__ + spec](ins, usr)
         if not wrapper:
             wrapper = default_wrapper
         t_data = wrapper(tup[1])
-        t_send_template.delay(openid, tup[0], t_data, tup[2])
+        if apply_async_function is None:
+            t_send_template.apply_async(
+                args=(openid, tup[0], t_data, tup[2]), **options)
+        else:
+            apply_async_function(t_send_template, (openid, tup[
+                                 0], t_data, tup[2]), {}, **options)
+    except OperationError:
+        return
     except Exception as e:
         __logger__.exception(str(e))

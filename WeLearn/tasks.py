@@ -5,7 +5,7 @@ from notice.models import *
 import ztylearn as LearnDAO
 import asyncio
 from celery import shared_task
-from wechat.tasks import send_template
+# from wechat.tasks import send_template
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -25,7 +25,7 @@ def notification_notice_new(noticeStatus):
         noticeStatus.notice.course.name)
     )
     notice = noticeStatus.notice
-    send_template(noticeStatus.student.open_id, notice)
+    # send_template(noticeStatus.student.open_id, notice)
 
 
 def notification_hw_new(homeworkStatus):
@@ -34,7 +34,7 @@ def notification_hw_new(homeworkStatus):
         homeworkStatus.homework.title)
     )
     hw = homeworkStatus.homework
-    send_template(homeworkStatus.student.open_id, hw)
+    # send_template(homeworkStatus.student.open_id, hw)
 
 
 def notification_hw_graded(homeworkStatus):
@@ -42,7 +42,7 @@ def notification_hw_graded(homeworkStatus):
         homeworkStatus.student.xt_id,
         homeworkStatus.homework.title)
     )
-    send_template(homeworkStatus.student.open_id, homeworkStatus)
+    # send_template(homeworkStatus.student.open_id, homeworkStatus)
 
 
 def notification_hw_ddl_modified(homeworkStatus, oldDdl):
@@ -53,7 +53,7 @@ def notification_hw_ddl_modified(homeworkStatus, oldDdl):
         homeworkStatus.homework.end_time)
     )
     hw = homeworkStatus.homework
-    send_template(homeworkStatus.student.open_id, hw, 'ddl')
+    # send_template(homeworkStatus.student.open_id, hw, 'ddl')
 
 
 async def update_all():
