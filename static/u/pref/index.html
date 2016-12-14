@@ -114,7 +114,7 @@
         </div>
     </div>
     <script>
-    var renderMinutes = function(m){
+    function renderMinutes(m){
         if(m < 0){
             return '关闭';
         }
@@ -127,7 +127,7 @@
         }
     }
 
-    var renderPickerOptions = function(ms){
+    function renderPickerOptions(ms){
         var result = [];
         ms.forEach(function(e){
             result.push({
@@ -136,6 +136,10 @@
             });
         });
         return result;
+    }
+
+    function deepcopy(original){
+        return JSON.parse(JSON.stringify(original)); // deep copy
     }
 
     var vm = new Vue({
@@ -162,7 +166,8 @@
                     onConfirm: function(result) {
                         vm.pref.s_ddl_ahead_time = result[0];
                     },
-                    id: 'pick_s_ddl_ahead_time',  // TODO default value
+                    id: 'pick_s_ddl_ahead_time',
+                    defaultValue: [deepcopy(vm.pref.s_ddl_ahead_time)]
                 });
             },
             'pick_s_class_ahead_time': function() {
@@ -171,9 +176,11 @@
                     renderPickerOptions(options), {
                     onChange: function(result) {},
                     onConfirm: function(result) {
+                        console.log(result)
                         vm.pref.s_class_ahead_time = result[0];
                     },
-                    id: 'pick_s_class_ahead_time'  // TODO default value
+                    id: 'pick_s_class_ahead_time',
+                    defaultValue: [deepcopy(vm.pref.s_class_ahead_time)]
                 });
             },
             'course_ignore_toggled': function(index){
