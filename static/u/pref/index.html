@@ -30,11 +30,7 @@
         <!-- Header -->
         <h1 class="news-title">设置</h1>
 
-        <div v-if="pref===null" class="weui-loadmore">
-            <i class="weui-loading"></i>
-            <span class="weui-loadmore__tips">正在加载</span>
-        </div>
-        <div v-else>
+        <div v-if="! loading">
             <div class="weui-cells__title">接收推送通知</div>
             <div class="weui-cells">
 
@@ -63,7 +59,7 @@
                     <div class="weui-cell__bd">
                         <p>作业即将截止</p>
                     </div>
-                    <div class="weui-cell__ft" >{{c_s_ddl_ahead_time}}</div>
+                    <div class="weui-cell__ft">{{c_s_ddl_ahead_time}}</div>
                 </a>
                 <a class="weui-cell weui-cell_access" v-on:click="pick_s_class_ahead_time">
                     <div class="weui-cell__bd">
@@ -74,7 +70,7 @@
             </div>
 
 
-            <div class="weui-cells__title">订阅</div>
+            <div class="weui-cells__title">订阅公共信息</div>
             <div class="weui-cells weui-cells_form">
                 <div class="weui-cell weui-cell_switch">
                     <div class="weui-cell__bd">文化素质教育讲座</div>
@@ -89,6 +85,32 @@
                     </div>
                 </div>
             </div>
+
+
+
+
+            <div v-if="courses.length" class="weui-cells__title">刷屏防护：只接收选中课程的消息</div>
+            <div class="weui-cells weui-cells_checkbox">
+                <label class="weui-cell weui-check__label" v-bind:for="course.course_id" v-for="course, index in courses">
+                    <div class="weui-cell__hd">
+                        <input
+                        type="checkbox" class="weui-check"
+                            v-model="course.ignored"
+                            v-bind:true-value="false"
+                            v-bind:false-value="true"
+                            v-bind:id="course.course_id"
+                            v-on:change="course_ignore_toggled(index)">
+                        <i class="weui-icon-checked"></i>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <p>{{course.course_name}}</p>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div v-else class="weui-loadmore">
+            <i class="weui-loading"></i>
+            <span class="weui-loadmore__tips">正在加载</span>
         </div>
     </div>
     <script>
@@ -119,9 +141,9 @@
     var vm = new Vue({
         el: '#vue-container',
         data: {
+            'loading': 2,
             'pref': null,
-            's_class_ahead_time': -1,
-            's_ddl_ahead_time': -1
+            'courses': [],
         },
         computed: {
             'c_s_class_ahead_time': function() {
@@ -153,19 +175,28 @@
                     },
                     id: 'pick_s_class_ahead_time'
                 });
+            },
+            'course_ignore_toggled': function(index){
+                var c = this.courses[index];
+                console.log("course #" + c.course_id + ' (' + c.course_name + ') ignore set to ' + c.ignored);
+                var payload = {
+                    course_id: c.course_id,
+                    ignore: c.ignored + 0 // true/false -> 1/0
+                }
+                postForm('/api/u/courses', payload);
             }
-        }
+        },
     })
 
-    getJSON('/api/u/pref', urlParam, function(resp) {
+    getJSON('/api/u/pref', {}, function(resp) {
         pref = resp.data;
         vm.pref = pref;
         for (key in pref) {
             (function(_key) {
                 vm.$watch('pref.' + _key, function() {
                     console.log(_key + ' set to ' + this.pref[_key]);
-                    payload = {};
-                    new_val = this.pref[_key];
+                    var payload = {};
+                    var new_val = this.pref[_key];
                     if(false == _key.endsWith('_ahead_time')){
                         new_val += 0;  // true/false -> 1/0
                     }
@@ -174,6 +205,13 @@
                 })
             })(key);
         }
+        vm.loading -= 1;
+    })
+
+    getJSON('/api/u/courses', {}, function(resp) {
+        var courses = resp.data;
+        vm.courses = courses;
+        vm.loading -= 1;
     })
     </script>
 
