@@ -56,7 +56,9 @@ window.getJSON = function(url, payload, callback){
                     location.href = BIND_LANDING + location.search;
                 }
             }
-            callback(data);
+            if(callback){
+                callback(data);
+            }
         }
     )
 }
@@ -76,6 +78,26 @@ window.schedule = function (items, num_dates) {
     return new_items;
 }
 
+
+window.postForm = function(url, payload, callback){
+    payload = $.extend(payload, window.urlParam);
+    $.post(
+        url,
+        payload,
+        function(data){
+            if(data.code == 10){ // UnbindError
+                var BIND_LANDING = "/u/bind";
+                if (location.pathname != BIND_LANDING) {
+                    alert('先绑定 info 账号才可以哦 :(');
+                    location.href = BIND_LANDING + location.search;
+                }
+            }
+            if(callback){
+                callback(data);
+            }
+        }
+    )
+}
 
 // function krEncodeEntities(s){
 // 		return $("<div/>").text(s).html();
