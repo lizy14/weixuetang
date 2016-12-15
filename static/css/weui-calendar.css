@@ -104,6 +104,12 @@
 	text-align: center;
 }
 
+.scheduler-dialog {
+	text-align: left;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
 .dialog-title {
 	text-align: left;
 	margin: 10px 2px 10px 10px;
@@ -123,7 +129,7 @@
 }
 
 .time-row {
-	height: 60px;
+	height: 59.7px;
 	vertical-align: top;
 	border-top: .3px solid #dddddd;
 }
@@ -145,7 +151,7 @@
 
 .course-block {
 	color: #3cc51f;
-	left: 59px;
+	left: 60px;
 	background-color: rgba(60,197,31,.2); 
 	border-left: 5px solid #3cc51f;
 
@@ -153,12 +159,13 @@
 
 .hw-block {
 	position: static;
-	margin-bottom: 5px;
-	margin-left: 18px;
+	margin-left: 18.5px;
+	margin-bottom: 2px;
 	background-color: rgba(230,67,64,.2);
-	color:  #e64340 !important;
+	color:  #e64340;
 	border-left: 5px solid #e64340;
-
+	-webkit-line-clamp: 2;
+	text-overflow: ellipsis;
 }
 
 .block-title {
@@ -184,4 +191,20 @@ table {
     border-collapse: collapse;
     background-color: #efeff4;
     margin: 2px 0px;
+}
+
+.current-time-line {
+	background-color: #e64340;
+	height: .5px;
+	width: 100%;
+	position: absolute;
+}
+
+.current-time-dot {
+	background-color: #e64340;
+	height: 12px;
+	width: 12px;
+	border-radius: 12px;
+	position: absolute;
+	left: 55px;
 }

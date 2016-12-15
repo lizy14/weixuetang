@@ -103,9 +103,9 @@ window.produce_course_block = function (data) {
     data.forEach(function(i){
         start = i.start_time.split(':');
         //alert(start[0] + ' ' + start[1]);
-        i['top'] = parseInt(start[0]) * 60 + parseInt(start[1]) + 3;
+        i['top'] = parseInt(start[0]-8) * 60 + parseInt(start[1]) + 3;
         end = i.end_time.split(':');
-        i['height'] = parseInt(end[0]) * 60 + parseInt(end[1]) - i['top'] - 17;
+        i['height'] = parseInt(end[0]-8) * 60 + parseInt(end[1]) - i['top'] - 17;
 
     });
 }

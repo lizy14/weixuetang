@@ -72,30 +72,35 @@
             <div id="dialog-container">
                 <div v-if="detail_showing" class="detail-dialog">
                     <div class="weui-mask"></div>
-                    <div class="weui-dialog" style="text-align: left; padding-left:10px;">
+                    <div class="scheduler-dialog weui-dialog">
                         <div class="dialog-title">{{ selected_day.getDate() }}日<span style="font-size:16px;">{{ selected_day.getMonth()+1 }}月{{ selected_day.getYear()+1900 }}年</span></div>
                         <div class="dialog-detail-box">
                             <table>
-                                <tr class="time-row" v-for="time in 24">
-                                    <td class="time-mark">{{time-1}}:00</td>
+                                <tr class="time-row" v-for="time in 16">
+                                    <td class="time-mark">{{time+7}}:00</td>
                                     <td class="time-content"></td>
                                 </tr>
                                 <tr class="time-row" >
                                     <td class="time-mark">ddls:</td>
                                     <td class="time-content">
-                                        <div class="block hw-block" v-for="c in selected_day_hw">
+                                        <div class="block hw-block" v-for="c, index in selected_day_hw" >
                                             <div class="block-title">{{ c.hw_name }}</div>
                                             <div class="block-info">{{c.course_name}}</div> 
                                         </div>
                                     </td>
                                 </tr>
                             </table>
+
                             <div class="block course-block" v-for="c in selected_day_course" :style="{top: c.top+'px', height: c.height+'px'}">
                                 <div class="block-title">{{ c.course_name }}</div>
                                 <div class="block-subtitle">{{c.start_time}} - {{c.end_time}}</div>
                                 <div class="block-info">{{c.location}}</div> 
                             </div>
 
+                            <div class="current-time" v-if="current_day.getDate() === selected_day.getDate()&& current_day.getMonth() === selected_day.getMonth() && current_day.getHours()>=8">
+                                <div class="current-time-line"  :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()+3 + 'px'}"></div>
+                                <div class="current-time-dot" :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()-3 + 'px'}"></div>
+                            </div>
                             
                         </div>
 
@@ -188,13 +193,15 @@
                     var year = _vm.focus_day.getYear() + 1900;
 
                     _vm.selected_day = new Date(year, month, date);
+                    console.log(_vm.selected_day);
+                    console.log(_vm.current_day);
                     _vm.detail_showing = true;
 
                     // TODO: fetch data of the selected day
 
                     // 编数据lalala
                     course_data = [
-                        {course_name:"这个课的名字特别特别特别的长长长长长长长长长", location: "六教311", start_time:"9:50", end_time:"11:25"},
+                        {course_name:"这个课的名字特别特别特别的长长长长长长长长长", location: "六教311", start_time:"9:50", end_time:"12:15"},
                         {course_name:"计算机网络与体系结构（2）", location: "六教211", start_time:"13:00", end_time:"24:00"},
                     ];
                     hw_data = [
