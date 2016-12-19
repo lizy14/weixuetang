@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="../../3rd/zepto.min.js"></script>
+    <script src="../../js/base.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="moqunzhu">
+
+    <title>组队</title>
+    <!-- Custom styles -->
+    <link href="../../css/weui-custom-style.css" rel="stylesheet">
+
+    <!-- WeUI styles -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
+
+    <!-- WeUI Javascript library -->
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+</head>
+
+<body>
+    <div id="vue-container">
+
+        <!-- Header -->
+        <h1 class="news-title">组队</h1>
+
+        <div>
+            <div class="weui-cells__title">课程</div>
+            <div class="weui-cells">
+                <div class="weui-cell weui-cell_select">
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="select1" v-model="course">
+                            <option v-for="course in courses" v-bind:value="course">{{course.course_name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div v-if="course.course_id">
+                <a class="weui-btn weui-btn_primary">
+                    发布求组队信息
+                </a>
+
+            </div>
+            <div v-if="posts">
+                <div  class="weui-cells__title">或浏览已有信息</div>
+
+                <div class="weui-panel__bd">
+                    <!-- notices -->
+                    <div class="news-container">
+                        <div class="weui-panel weui-panel_access">
+                            <!-- List Item -->
+                            <div v-for="item, index in posts" v-on:click="show_detail" v-bind:id="index" class="detail-box weui-media-box weui-media-box_text">
+                                <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge" v-if="item.status==0">new</span>{{ item.title }}</h5>
+                                <p class="weui-media-box__desc">{{ item.detail }}</p>
+                                <ul class="weui-media-box__info">
+                                    <li class="weui-media-box__info__meta">{{item.publisher}} 发布于 {{ item.publish_time }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-if="loading" class="weui-loadmore">
+            <i class="weui-loading"></i>
+            <span class="weui-loadmore__tips">正在加载</span>
+        </div>
+    </div>
+    <script>
+
+    function deepcopy(original){
+        return JSON.parse(JSON.stringify(original)); // deep copy
+    }
+
+    var vm = new Vue({
+        el: '#vue-container',
+        data: {
+            'loading': 1,
+            'courses': [],
+            'course': {},
+            'posts': null,
+        },
+        methods: {
+            'show_detail': function(ev){
+                var _vm = this;
+                var index = ev.currentTarget.id;
+                console.log(index + ' ' + _vm.posts[index].title);
+            }
+        },
+        watch: {
+            'course': function(){
+                c = this.course;
+                if(c.course_id){
+                    console.log('course changed to ' + c.course_id + ' (' + c.course_name + ')');
+                    this.posts = [{
+                        'publisher': '航院5字班小明',
+                        'publish_time': '2016-12-12',
+                        'title': 'haskell 大作业求抱大腿！！！',
+                        'detail': '谈钱谈香锅都太伤感情！'
+                    },{
+                        'publisher': '小红',
+                        'publish_time': '2016-12-8',
+                        'title': '大作业求组 TAT',
+                        'detail': '贵系大四学姐求拯救'
+                    }];
+                }else{
+                    console.log('no course specified');
+                }
+            },
+        },
+    })
+
+    getJSON('/api/u/courses', {}, function(resp) {
+        var courses = resp.data;
+        var prompt = {
+            course_name: '请选择一门课程',
+            // course_id is undefined
+        }
+        courses.unshift(prompt)
+        vm.courses = courses;
+        vm.course = prompt;
+        vm.loading -= 1;
+    })
+    </script>
+
+    <script src="../../3rd/weui.min.js"></script>
+</body>
+
+</html>
