@@ -13,6 +13,8 @@ def wrap_date(dt):
     return dt.strftime('%Y-%m-%d')
     return int(dt.timestamp())
 
+def parse_date(dt_str):
+    return datetime.strptime(dt_str, '%Y-%m-%d')
 
 def wrap_datetime(dt):
     return dt.strftime('%Y-%m-%d %H:%M')
@@ -43,6 +45,11 @@ class Personal(APIView):
                 起止时分 = 大节起止时分[第几节]
                 开始 = 日期 + timedelta(hours=起止时分[0], minutes=起止时分[1])
                 结束 = 日期 + timedelta(hours=起止时分[2], minutes=起止时分[3])
+
+                if(前端只要某个区间):
+                    if 开始 < 区间起点 or 结束 > 区间终点:
+                        continue
+
                 该课程的事件们.append({
                     'title': 课程名,
                     'location': 地点,
@@ -63,6 +70,14 @@ class Personal(APIView):
         第一周第一天 = datetime.fromtimestamp(
             get_week_info()['currentsemester']['begintime'] / 1000
         )
+
+        前端只要某个区间 = False
+        try:
+            区间起点 = parse_date(self.input['start'])
+            区间终点 = parse_date(self.input['end'])
+            前端只要某个区间 = True
+        except KeyError:
+            pass
 
         所有课程的事件们 = [处理一门课程(课程) for 课程 in 纯纯课程列表]
 
