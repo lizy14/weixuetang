@@ -69,3 +69,20 @@ def unregister(username):
         'username': username
     }))
     assert(result['message'] == 'Success')
+
+def get_curriculum(username):
+    response = wrapped_json_sync('/curriculum/{username}'.format_map({
+        'username': username
+    }))
+    assert(response['message'] == 'Success')
+    return response['classes']
+
+def get_events():
+    response = wrapped_json_sync('/events')
+    assert(response['message'] == 'Success')
+    return response['events']
+
+def get_week_info():
+    response = wrapped_json_sync('/current')
+    assert(response['message'] == 'Success')
+    return response['currentteachinginfo']
