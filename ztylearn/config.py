@@ -1,3 +1,4 @@
-API_SECRET = "API Secret Key"
-API_KEY = "API Key"
-URL_PREFIX = 'http://se.zhuangty.com:8000'  # without trailing '/'
+from WeLearn.settings import CONFIGS
+API_SECRET = CONFIGS['CAMUS_API_SECRET']
+API_KEY = CONFIGS['CAMUS_API_KEY']
+URL_PREFIX = CONFIGS['CAMUS_URL_PREFIX'].rstrip('/')

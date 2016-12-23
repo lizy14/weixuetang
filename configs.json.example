@@ -12,5 +12,8 @@
   "DB_HOST": "127.0.0.1",
   "DB_PORT": "3306",
   "SITE_DOMAIN": "http://localhost",
-  "IGNORE_CODE_CHECK": false
+  "IGNORE_CODE_CHECK": false,
+  "CAMUS_API_SECRET": "23AFC2B2C5A0",
+  "CAMUS_API_KEY": "21FF99646693",
+  "CAMUS_URL_PREFIX": "http://se.zhuangty.com:8000"
 }
