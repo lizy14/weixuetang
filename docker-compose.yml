@@ -15,13 +15,14 @@ services:
     restart: always
     command: celery -A WeLearn worker -l info
     depends_on:
+      - db
       - app
       - rabbitmq
     environment:
       - C_FORCE_ROOT=true
   app:
     <<: *app_base
-    command: gunicorn -w 3 -b 0.0.0.0 WeLearn.wsgi
+    command: bash -c "python manage.py makemigrations homework notice userpage wechat; python manage.py migrate; gunicorn -w 3 -b 0.0.0.0 WeLearn.wsgi"
     volumes:
       - /code/static
     depends_on:

@@ -8,6 +8,7 @@ WORKDIR /code
 RUN mkdir /code/requirements
 ADD requirements.txt /code/
 ADD requirements/* /code/requirements/
+RUN pip install -U pip
 RUN pip install -r requirements.txt
 
 ADD . /code/
