@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     # 'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_nose',
+    # 'django_nose',
     'django_mysql',
     'django_extensions',
     'djcelery',
@@ -67,15 +67,16 @@ INSTALLED_APPS = [
     'notice',
 ]
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
-NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-no-print', # comment this line if confronted with bug
-    '--cover-erase',
-    '--cover-html',
-    '--cover-package=codex,homework,notice,userpage,wechat,WeLearn,ztylearn',
-]
+if DEBUG:
+    INSTALLED_APPS += ['django_nose']
+    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+    NOSE_ARGS = [
+        '--with-coverage',
+        '--cover-no-print', # comment this line if confronted with bug
+        '--cover-erase',
+        '--cover-html',
+        '--cover-package=codex,homework,notice,userpage,wechat,WeLearn,ztylearn',
+    ]
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -223,7 +224,7 @@ djcelery.setup_loader()
 
 from celery.schedules import crontab
 
-BROKER_URL = 'amqp://'
+BROKER_URL = 'amqp://django:pass@rabbitmq:5672//'
 
 CELERY_IMPORTS = ('WeLearn.tasks',)
 CELERYBEAT_SCHEDULE = {

@@ -8,6 +8,3 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'WeLearn.settings')
 app = Celery('WeLearn')
 app.config_from_object('WeLearn:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
-
-# import django
-# django.setup()

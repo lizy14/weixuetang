@@ -1,0 +1,38 @@
+version: '2'
+services:
+  db:
+    image: mysql
+    hostname: db
+    env_file: secrets.env
+  rabbitmq:
+    image: rabbitmq
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=django
+      - RABBITMQ_DEFAULT_PASS=pass
+  worker: &app_base
+    build: .
+    restart: always
+    command: celery -A WeLearn worker -l info
+    depends_on:
+      - app
+      - rabbitmq
+    environment:
+      - C_FORCE_ROOT=true
+  app:
+    <<: *app_base
+    command: gunicorn -w 3 -b 0.0.0.0 WeLearn.wsgi
+    volumes:
+      - /code/static
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+  nginx:
+    build: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    volumes_from:
+      - app
