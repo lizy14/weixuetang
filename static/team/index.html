@@ -57,6 +57,7 @@
                 </div>
             </div>
 
+
             <!-- post list -->
             <div v-if="posts">
                 <div class="weui-cells__title">目前共有 {{posts.length}} 条消息</div>
@@ -86,18 +87,23 @@
                 </div>
             </div>
 
-            <!-- publish button -->
-            <div v-if="course.course_id">
-                <div v-if="posts"></div>
-                <div v-else>
-                    <div class="weui-cells__title">还没有人发布过求组队……</div>
-                </div>
-                <a v-on:click="create_post" class="weui-btn weui-btn_primary">
-                    我要发布
-                </a>
+
+            <div v-if="loading" class="weui-loadmore">
+                <i class="weui-loading"></i>
+                <span class="weui-loadmore__tips">正在加载</span>
             </div>
 
-
+            <!-- publish button -->
+            <div v-if="! loading">
+                <div v-if="course.course_id">
+                    <div v-if="posts">
+                        <div class="weui-cells__title">还没有人发布过求组队……</div>
+                    </div>
+                    <a v-on:click="create_post" class="weui-btn weui-btn_primary">
+                        我要发布
+                    </a>
+                </div>
+            </div>
 
             <!-- detail or edit popup -->
             <div v-if="detail_item">
@@ -153,10 +159,6 @@
 
         </div>
 
-        <div v-if="loading" class="weui-loadmore">
-            <i class="weui-loading"></i>
-            <span class="weui-loadmore__tips">正在加载</span>
-        </div>
     </div>
     <script>
         function deepcopy(original) {
@@ -192,29 +194,26 @@
             },
             watch: {
                 'course': function() {
-                    c = this.course;
+                    var _vm = this;
+                    c = _vm.course;
+                    _vm.posts = null;
                     if (c.course_id) {
                         console.log('course changed to ' + c.course_id + ' (' + c.course_name + ')');
-                        this.posts = [{
-                            'post_id': 233,
-                            'type': 2,
-                            'author_nickname': '航院5字班小明',
-                            'published': '2016-12-12',
-                            'last_update': '2016-12-19',
-                            'title': c.course_name + '大作业求抱大腿！！！',
-                            'detail': '谈钱谈香锅都太伤感情！',
-                            'i_am_the_author': false,
-                            'contact': "微信xxxxxx_xiaoming"
-                        }, {
-                            'post_id': 666,
-                            'type': 1,
-                            'author_nickname': '小红',
-                            'published': '2016-12-8',
-                            'title': '大作业求组 TAT',
-                            'detail': '贵系大四学姐求拯救',
-                            'i_am_the_author': true,
-                            'contact': "邮箱xxxxxx_xiaohong@mails.xxxx"
-                        }];
+                        _vm.loading += 1;
+                        getJSON(
+                            '/api/team/course',
+                            {
+                                'course_id': c.course_id
+                            },
+                            function(resp){
+                                _vm.loading -= 1;
+                                _vm.posts = resp.data;
+                            },
+                            function(err){
+                                alert("获取信息出错，请稍后重试");
+                                _vm.loading -= 1;
+                                _vm.course = _vm.courses[0];
+                            })
                     } else {
                         console.log('no course specified');
                     }
