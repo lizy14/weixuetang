@@ -5,12 +5,9 @@ from codex.apiview import *
 from codex.baseerror import *
 from .models import TeamPost
 from homework.models import Course
+from codex.utils import wrap_time as wrap_datetime
 # import logging
 # __logger__ = logging.getLogger(name=__name__)
-
-
-def wrap_datetime(dt):
-    return dt.strftime('%Y-%m-%d %H:%M')
 
 
 class List(APIView):

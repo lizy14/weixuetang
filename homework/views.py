@@ -3,14 +3,12 @@ from userpage.models import *
 from .models import *
 from codex.apiview import APIView
 from codex.baseerror import *
+from codex.utils import *
 from wechat.wrapper import WeChatView
 from datetime import datetime
 import logging
 __logger__ = logging.getLogger(name=__name__)
 
-
-def wrap_date(d):
-    return d.strftime('%Y-%m-%d')
 
 def parse_date(dt_str):
     return datetime.strptime(dt_str, '%Y-%m-%d')
@@ -25,8 +23,8 @@ class UnfinishedList(APIView):
         def wrap(hw):
             return {
                 'homework_id': hw.id,
-                'start_time': wrap_date(hw.start_time),
-                'end_time': wrap_date(hw.end_time),
+                'start_time': wrap_time(hw.start_time),
+                'end_time': wrap_time(hw.end_time),
                 'title': hw.title,
                 'course_name': hw.course.name,
                 'detail': hw.detail,
@@ -49,8 +47,8 @@ class List(APIView):
             hw = hwSt.homework
             return {
                 'homework_id': hw.id,
-                'start_time': wrap_date(hw.start_time),
-                'end_time': wrap_date(hw.end_time),
+                'start_time': wrap_time(hw.start_time),
+                'end_time': wrap_time(hw.end_time),
                 'title': hw.title,
                 'course_name': hw.course.name,
                 'status': wrap_homework_status_status(hwSt)
@@ -97,8 +95,8 @@ class Detail(APIView):
             hw = hwSt.homework
             return {
                 'homework_id': hw.id,
-                'start_time': wrap_date(hw.start_time),
-                'end_time': wrap_date(hw.end_time),
+                'start_time': wrap_time(hw.start_time),
+                'end_time': wrap_time(hw.end_time),
                 'title': hw.title,
                 'course_name': hw.course.name,
                 'status': wrap_homework_status_status(hwSt),

@@ -1,7 +1,7 @@
 from codex.apiview import APIView
 from codex.baseerror import *
 from .models import *
-from homework.views import wrap_date
+from codex.utils import wrap_time as wrap_date
 
 
 class List(APIView):
