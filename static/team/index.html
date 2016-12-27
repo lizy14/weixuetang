@@ -24,16 +24,14 @@
 
 
     <style>
-        span.i_am_the_author{
+        span.i_am_the_author {
             color: #586c94; /* .weui-cell_link */
         }
-        span.post_type{
-
-        }
-        span.pt_zhaoduiyou{
+        span.post_type {}
+        span.pt_zhaoduiyou {
             color: red;
         }
-        span.pt_qiudatui{
+        span.pt_qiudatui {
             color: blue;
         }
     </style>
@@ -61,7 +59,7 @@
 
             <!-- post list -->
             <div v-if="posts">
-                <div  class="weui-cells__title">目前共有 {{posts.length}} 条消息</div>
+                <div class="weui-cells__title">目前共有 {{posts.length}} 条消息</div>
 
                 <div class="weui-panel__bd">
                     <div class="news-container">
@@ -92,7 +90,7 @@
             <div v-if="course.course_id">
                 <div v-if="posts"></div>
                 <div v-else>
-                    <div  class="weui-cells__title">还没有人发布过求组队……</div>
+                    <div class="weui-cells__title">还没有人发布过求组队……</div>
                 </div>
                 <a v-on:click="create_post" class="weui-btn weui-btn_primary">
                     我要发布
@@ -108,8 +106,7 @@
                     <div class="weui-dialog__hd">
                         <div class="weui-dialog__title">
                             <span v-if="detail_item.type==1">招队友</span>
-                            <span v-if="detail_item.type==2">求大腿</span>
-                            详情
+                            <span v-if="detail_item.type==2">求大腿</span> 详情
                         </div>
                     </div>
 
@@ -143,13 +140,13 @@
                         </div>
                     </div>
 
-                     <div v-if="detail_item.i_am_the_author" class="weui-dialog__ft">
-                             <a v-on:click="submit" class="weui-dialog__btn weui-dialog__btn_primary">提交</a>
-                             <a v-on:click="close_detail" class="weui-dialog__btn weui-dialog__btn_default">返回</a>
-                     </div>
-                     <div v-else class="weui-dialog__ft">
-                         <a v-on:click="close_detail" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
-                     </div>
+                    <div v-if="detail_item.i_am_the_author" class="weui-dialog__ft">
+                        <a v-on:click="submit" class="weui-dialog__btn weui-dialog__btn_primary">提交</a>
+                        <a v-on:click="close_detail" class="weui-dialog__btn weui-dialog__btn_default">返回</a>
+                    </div>
+                    <div v-else class="weui-dialog__ft">
+                        <a v-on:click="close_detail" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
+                    </div>
                 </div>
 
             </div>
@@ -162,82 +159,81 @@
         </div>
     </div>
     <script>
-
-    function deepcopy(original){
-        return JSON.parse(JSON.stringify(original)); // deep copy
-    }
-
-    var vm = new Vue({
-        el: '#vue-container',
-        data: {
-            'loading': 1,
-            'courses': [],
-            'course': {},
-            'posts': null,
-            'detail_item': null,
-        },
-        methods: {
-            'show_detail': function(ev){
-                var index = ev.currentTarget.id;
-                this.detail_item = this.posts[index];
-            },
-            'close_detail': function(){
-                this.detail_item = null;
-            },
-            'create_post': function(){
-                this.detail_item = {
-                    'course_id': this.course.course_id,
-                    'creating': true
-                }
-            },
-            'submit': function(){
-
-            },
-        },
-        watch: {
-            'course': function(){
-                c = this.course;
-                if(c.course_id){
-                    console.log('course changed to ' + c.course_id + ' (' + c.course_name + ')');
-                    this.posts = [{
-                        'post_id': 233,
-                        'type': 2,
-                        'author_nickname': '航院5字班小明',
-                        'published': '2016-12-12',
-                        'last_update': '2016-12-19',
-                        'title': c.course_name + '大作业求抱大腿！！！',
-                        'detail': '谈钱谈香锅都太伤感情！',
-                        'i_am_the_author': false,
-                        'contact': "微信xxxxxx_xiaoming"
-                    },{
-                        'post_id': 666,
-                        'type': 1,
-                        'author_nickname': '小红',
-                        'published': '2016-12-8',
-                        'title': '大作业求组 TAT',
-                        'detail': '贵系大四学姐求拯救',
-                        'i_am_the_author': true,
-                        'contact': "邮箱xxxxxx_xiaohong@mails.xxxx"
-                    }];
-                }else{
-                    console.log('no course specified');
-                }
-            },
-        },
-    })
-
-    vm.loading = 1;
-    getJSON('/api/u/courses', {}, function(resp) {
-        var courses = resp.data;
-        var prompt = {
-            course_name: '请选择一门课程',
-            // course_id is undefined
+        function deepcopy(original) {
+            return JSON.parse(JSON.stringify(original)); // deep copy
         }
-        courses.unshift(prompt)
-        vm.courses = courses;
-        vm.course = prompt;
-        vm.loading -= 1;
-    })
+
+        var vm = new Vue({
+            el: '#vue-container',
+            data: {
+                'loading': 1,
+                'courses': [],
+                'course': {},
+                'posts': null,
+                'detail_item': null,
+            },
+            methods: {
+                'show_detail': function(ev) {
+                    var index = ev.currentTarget.id;
+                    this.detail_item = this.posts[index];
+                },
+                'close_detail': function() {
+                    this.detail_item = null;
+                },
+                'create_post': function() {
+                    this.detail_item = {
+                        'course_id': this.course.course_id,
+                        'creating': true
+                    }
+                },
+                'submit': function() {
+
+                },
+            },
+            watch: {
+                'course': function() {
+                    c = this.course;
+                    if (c.course_id) {
+                        console.log('course changed to ' + c.course_id + ' (' + c.course_name + ')');
+                        this.posts = [{
+                            'post_id': 233,
+                            'type': 2,
+                            'author_nickname': '航院5字班小明',
+                            'published': '2016-12-12',
+                            'last_update': '2016-12-19',
+                            'title': c.course_name + '大作业求抱大腿！！！',
+                            'detail': '谈钱谈香锅都太伤感情！',
+                            'i_am_the_author': false,
+                            'contact': "微信xxxxxx_xiaoming"
+                        }, {
+                            'post_id': 666,
+                            'type': 1,
+                            'author_nickname': '小红',
+                            'published': '2016-12-8',
+                            'title': '大作业求组 TAT',
+                            'detail': '贵系大四学姐求拯救',
+                            'i_am_the_author': true,
+                            'contact': "邮箱xxxxxx_xiaohong@mails.xxxx"
+                        }];
+                    } else {
+                        console.log('no course specified');
+                    }
+                },
+            },
+        })
+
+        vm.loading = 1;
+        getJSON('/api/u/courses', {}, function(resp) {
+            var courses = resp.data;
+            var prompt = {
+                course_name: '请选择一门课程',
+                // course_id is undefined
+            }
+            courses.unshift(prompt)
+            vm.courses = courses;
+            vm.course = prompt;
+            vm.loading -= 1;
+        })
     </script>
 
     <script src="../../3rd/weui.min.js"></script>
