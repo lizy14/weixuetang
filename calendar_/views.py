@@ -18,7 +18,6 @@ def parse_date(dt_str):
 
 def wrap_datetime(dt):
     return dt.strftime('%Y-%m-%d %H:%M')
-    return int(dt.timestamp())
 
 
 class Personal(APIView):

@@ -29,6 +29,8 @@ class Student(models.Model):
 
 
 @receiver(pre_save, sender=Student)
-def create_preference(sender, instance, **kwargs):
+def create_preference(sender, instance, raw, **kwargs):
+    if raw:
+        return
     if not instance.id:
         instance.pref = Preference.objects.create()
