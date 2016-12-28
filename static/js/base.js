@@ -77,7 +77,7 @@ window.schedule = function (items, num_dates, month) {
             index = d.getDate() - 1;
 
             i['start_time'] = {'hour': d.getHours(), 'min': d.getMinutes()};
-            e = parseDate(i.begin);
+            e = parseDate(i.end);
             i['end_time'] = {'hour': e.getHours(), 'min': e.getMinutes()}
         }
         else if (i.date) { // global events
