@@ -22,11 +22,7 @@ window.dftFail = function (errno, errmsg, e) {
     alert("加载失败: [" + errno + "] " + errmsg + " " + e + "\n请重试");
 };
 
-window.expand = function (items){
-    items.forEach(function(i){
-        i.days_left = Math.floor((parseDate(i.end_time) - today) / 86400 / 1000);
-    });
-};
+
 
 window.prune = function (items) {
     items.forEach(function(i){
@@ -35,11 +31,46 @@ window.prune = function (items) {
 };
 
 window.parseDate = function (str){
+    return new Date(str * 1000);
     d = new Date(str);
     d.setHours(23);
     d.setMinutes(59);
     return d;
 };
+
+window.datify = function (obj){
+    function datify_obj(obj){
+        for(key in obj){
+            if(key.endsWith('_time')){
+                obj[key] = parseDate(obj[key]);
+            }
+        }
+        return obj;
+    }
+    if (obj instanceof Array){
+        return obj.map(datify_obj);
+    }else if(typeof obj == 'object'){
+        return datify_obj(obj);
+    }
+}
+Date.prototype.readable = function(time) {
+    var mm = this.getMonth() + 1;
+    var dd = this.getDate();
+    var yy = this.getFullYear();
+    var h = this.getHours();
+    h = h >= 10 ? h : "0" + h
+    var m = this.getMinutes();
+    m = m >= 10 ? m : "0" + m
+
+    if (time) {
+        return yy + '-' + mm + '-' + dd + ' ' + h + ':' + m
+    } else {
+        return yy + '-' + mm + '-' + dd
+    }
+};
+Date.prototype.days_left = function(){
+    return Math.floor((this - today) / 86400 / 1000);
+}
 
 window.today =  new Date();
 
@@ -55,6 +86,9 @@ window.getJSON = function(url, payload, callback, err_callback){
                     alert('先绑定 info 账号才可以哦 :(');
                     location.href = BIND_LANDING + location.search;
                 }
+            }
+            if(data.code == 0){
+                data.data = datify(data.data);
             }
             if(callback){
                 callback(data);
@@ -97,6 +131,9 @@ window.postForm = function(url, payload, callback){
                     alert('先绑定 info 账号才可以哦 :(');
                     location.href = BIND_LANDING + location.search;
                 }
+            }
+            if(data.code == 0){
+                data.data = datify(data.data);
             }
             if(callback){
                 callback(data);
