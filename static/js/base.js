@@ -117,6 +117,7 @@ window.getJSON = function(url, payload, callback, err_callback){
     })
 }
 
+window.alerting_bind_required = false;
 window.postForm = function(url, payload, callback){
     payload = $.extend(payload, window.urlParam);
     $.post(
@@ -126,7 +127,10 @@ window.postForm = function(url, payload, callback){
             if(data.code == 10){ // UnbindError
                 var BIND_LANDING = "/u/bind";
                 if (location.pathname != BIND_LANDING) {
-                    alert('先绑定 info 账号才可以哦 :(');
+                    if(!window.alerting_bind_required){
+                        window.alerting_bind_required = true;
+                        alert('先绑定 info 账号才可以哦 :(');
+                    }
                     location.href = BIND_LANDING + location.search;
                 }
             }
