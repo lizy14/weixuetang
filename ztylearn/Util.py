@@ -8,10 +8,12 @@ logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
 import requests
 
+
 def from_stamp(stamp):
     return date.fromtimestamp(stamp / 1000)
 
-async def wrapped_json(path, payload={}): # path starts with '/'
+
+async def wrapped_json(path, payload={}):  # path starts with '/'
     _logger.debug("API %s param `%s`" % (path, payload))
     loop = asyncio.get_event_loop()
     session = aiohttp.ClientSession(loop=loop)
@@ -29,7 +31,8 @@ async def wrapped_json(path, payload={}): # path starts with '/'
     session.close()
     return resp_json
 
-def wrapped_json_sync(path, payload={}): # path starts with '/'
+
+def wrapped_json_sync(path, payload={}):  # path starts with '/'
     _logger.debug("API SYNC %s param `%s`" % (path, payload))
     auth = {
         'apikey': API_KEY,
@@ -57,6 +60,7 @@ async def _unregister(username):
     }))
     assert(result['message'] == 'Success')
 
+
 def register(username, password):
     result = wrapped_json_sync('/users/register', payload={
         'username': username,
@@ -64,11 +68,13 @@ def register(username, password):
     })
     assert(result['message'] == 'Success')
 
+
 def unregister(username):
     result = wrapped_json_sync('/students/{username}/cancel'.format_map({
         'username': username
     }))
     assert(result['message'] == 'Success')
+
 
 def get_curriculum(username):
     response = wrapped_json_sync('/curriculum/{username}'.format_map({
@@ -77,12 +83,57 @@ def get_curriculum(username):
     assert(response['message'] == 'Success')
     return response['classes']
 
+
 def get_events():
+    return [
+        {
+            "name": "16-17春 研究生正选",
+            "remainingdays": 1,
+            "status": "begin"
+        },
+        {
+            "name": "16-17春 二级选课",
+            "remainingdays": 1,
+            "status": "end"
+        },
+        {
+            "name": "16-17春 研究生预选 ",
+            "remainingdays": 1,
+            "status": "end"
+        },
+        {
+            "name": "研 个人培养计划维护 ",
+            "remainingdays": 2,
+            "status": "end"
+        }
+    ]
     response = wrapped_json_sync('/events')
     assert(response['message'] == 'Success')
     return response['events']
 
+
 def get_week_info():
+    return {
+        "updatetime": 1482930943958,
+        "currentsemester": {
+            "name": "2016-2017-秋季学期",
+            "id": "2016-2017-1",
+            "begintime": 1473609600000,
+            "endtime": 1487519999000
+        },
+        "currentteachingweek": {
+            "name": "16",
+            "id": "11065",
+            "begintime": 1482681600000,
+            "endtime": 1483286399000
+        },
+        "nextsemester": {
+            "name": "2016-2017-春季学期",
+            "id": "2016-2017-2",
+            "begintime": 1487520000000,
+            "endtime": 1498406399000
+        }
+    }
     response = wrapped_json_sync('/current')
     assert(response['message'] == 'Success')
     return response['currentteachinginfo']

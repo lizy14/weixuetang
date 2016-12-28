@@ -43,7 +43,7 @@ window.parseDate = function (str){
 
 window.today =  new Date();
 
-window.getJSON = function(url, payload, callback){
+window.getJSON = function(url, payload, callback, err_callback){
     payload = $.extend(payload, window.urlParam);
     $.getJSON(
         url,
@@ -60,7 +60,13 @@ window.getJSON = function(url, payload, callback){
                 callback(data);
             }
         }
-    )
+    ).fail(function(err){
+        if(err_callback){
+            err_callback(err);
+        }else{
+            alert(JSON.stringify(err));
+        }
+    })
 }
 
 window.postForm = function(url, payload, callback){
