@@ -32,12 +32,23 @@ class TeamTests(APITest):
         self.assertEqual(tp.author_nick, '')
         resp = self.simulate('post', '/api/team/edit/', {
             'course_id': 1,
-            'title': '',
-            'detail': '',
+            'title': '1',
+            'detail': '1',
             'type': 1,
-            'contact': '',
-            'author_nickname': ''
+            'contact': '1',
+            'author_nickname': '1'
         })
+        self.assertEqual(len(TeamPost.objects.all()), 3)
+        resp = self.simulate('post', '/api/team/edit/', {
+            'course_id': 1,
+            'title': '1',
+            'detail': '1',
+            'type': 1,
+            'contact': '1',
+            'author_nickname': '1'
+        })
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotEqual(resp.json()['code'], 0)
         self.assertEqual(len(TeamPost.objects.all()), 3)
     def test_delete(self):
         resp = self.simulate('post', '/api/team/delete', {

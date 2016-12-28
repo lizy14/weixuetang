@@ -4,6 +4,7 @@
         <script src="https://unpkg.com/vue/dist/vue.js"></script>
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script src="../../js/base.js"></script>
+
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,170 +18,200 @@
         <!-- Custom styles -->
         <link href="../../css/weui-calendar.css" rel="stylesheet">
         <link href="../../css/weui-custom-style.css" rel="stylesheet">
-        
+
 
         <!-- WeUI Javascript library -->
-        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+        <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
     </head>
 
 <body>
     <div id="vue-container">
-        
-        <div class="calendar-container" id="month-view" v-if="view === 'month'">
-            <div class="header-warper"> 
-                <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getYear()+1900 }}年</h1>
-                <div id="views-switcher">
-                    <span class="switcher weui-btn weui-btn_primary" id="month-switch">月</span>
-                    <span class="switcher weui-btn weui-btn_default" id="week-switch">周</span>
+        <div class="calendar-wrapper">
+            <div class="calendar-container" id="month-view" v-if="view === 'month'">
+                <div class="header-wrapper">
+                    <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</h1>
+                    <div id="views-switcher">
+                        <span class="switcher" id="month-switch" v-on:click="set_view('month')">月</span>
+                        <span class="switcher" id="week-switch" v-on:click="set_view('week')">周</span>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="weui-grids">
-                 <div class="days-bar">一</div>
-                 <div class="days-bar">二</div>
-                 <div class="days-bar">三</div>
-                 <div class="days-bar">四</div>
-                 <div class="days-bar">五</div>
-                 <div class="days-bar">六</div>
-                 <div class="days-bar">日</div>
-            </div>
-            <div class="month-content weui-grids">
-                <div class="weui-grid" v-for="i in margin.before"></div>
-                <div class="weui-grid" v-for="date in num_dates" v-on:click="show_detail" v-bind:id="date">
-                    <div class="date_content_wrapper">
-                        <div class="date_label" v-if="date === current_day.getDate()"><span class="today_label">{{ date }}</span></div>
-                        <div class="date_label" v-else>{{ date }}</div>
-                        <div class="scroll-list">
-                            <!-- course dot -->
-                            <p  class="weui-grid__label" >
-                                <span class="course_badge weui-badge weui-badge_dot" v-for="item in course[date-1]"></span>
-                            </p>
 
-                            <!-- homework dot -->
-                            <p  class="weui-grid__label" >
-                                <span class="hw_badge weui-badge weui-badge_dot" v-for="item in hw[date-1]"></span>
-                            </p>
+                <div class="weui-grids">
+                     <div class="days-bar">一</div>
+                     <div class="days-bar">二</div>
+                     <div class="days-bar">三</div>
+                     <div class="days-bar">四</div>
+                     <div class="days-bar">五</div>
+                     <div class="days-bar">六</div>
+                     <div class="days-bar">日</div>
+                </div>
+
+                <div class="weui-loadmore" v-if="!initialized">
+                    <i class="weui-loading"></i>
+                    <span class="weui-loadmore__tips">正在加载</span>
+                </div>
+                <div class="month-content weui-grids" v-if="initialized">
+                    <div class="weui-grid" v-for="i in margin.before"></div>
+                    <div class="weui-grid" v-for="date in num_dates" v-on:click="show_detail" v-bind:id="date">
+                        <div class="date_content_wrapper">
+                            <div class="date_label" v-if="focus_day.getMonth() === current_day.getMonth() && current_day.getYear() === selected_day.getYear() && date === current_day.getDate()"><span class="today_label">{{ date }}</span></div>
+                            <div class="date_label" v-else>{{ date }}</div>
+                            <div class="scroll-list">
+                                <!-- course dot -->
+                                <p  class="weui-grid__label" >
+                                    <span class="course_badge weui-badge weui-badge_dot" v-for="item in course[date-1]"></span>
+                                </p>
+
+                                <!-- homework dot -->
+                                <p  class="weui-grid__label" >
+                                    <span class="event_badge weui-badge weui-badge_dot" v-for="item in notice[date-1]"></span>
+                                </p>
+                                <p  class="weui-grid__label" >
+                                    <span class="hw_badge weui-badge weui-badge_dot" v-for="item in hw[date-1]"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-grid" v-for="i in margin.after"></div>
+                </div>
+                <div class="weui-flex">
+                    <div class="weui-flex__item" v-on:click="update(new Date(focus_day.getFullYear(), focus_day.getMonth()-1, 1))">
+                        <div class="footer-title" style="text-align:left;" >
+                            <strong>&lt;</strong> 上个月
+                        </div>
+                    </div>
+                    <div class="weui-flex__item" v-on:click="update(new Date(focus_day.getFullYear(), focus_day.getMonth()+1, 1))">
+                        <div class="footer-title" style="text-align:right;" >
+                            下个月 <strong>&gt;</strong>
                         </div>
                     </div>
                 </div>
-                <div class="weui-grid" v-for="i in margin.after"></div>
-            </div>
 
+                <!-- Detail Dialog -->
+                <transition id="dialog-container" name="fade">
+                    <div v-if="detail_showing" class="detail-dialog">
+                        <div class="weui-mask"></div>
+                        <div class="scheduler-dialog weui-dialog">
+                            <div class="dialog-title">{{ selected_day.getDate() }}日<span style="font-size:16px;">{{ selected_day.getMonth()+1 }}月{{ selected_day.getFullYear() }}年</span></div>
+                            <div class="dialog-detail-box">
+                                <table>
+                                    <tr class="time-row" v-for="time in 16">
+                                        <td class="time-mark">{{time+7}}:00</td>
+                                        <td class="time-content"></td>
+                                    </tr>
+                                    <tr class="time-row" >
+                                        <td class="time-mark">ddls:</td>
+                                        <td class="time-content">
+                                            <div class="block hw-block" v-for="c, index in selected_day_hw" >
+                                                <div class="block-title">{{ c.title }}</div>
+                                                <div class="block-info">{{c.course_name}}</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="time-row" >
+                                        <td class="time-mark">events:</td>
+                                        <td class="time-content">
+                                            <div class="block event-block" v-for="c, index in selected_day_notice" >
+                                                <div class="block-title">{{ c.title }}</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
 
-            <!-- Detail Dialog -->
-            <div id="dialog-container">
-                <div v-if="detail_showing" class="detail-dialog">
-                    <div class="weui-mask"></div>
-                    <div class="scheduler-dialog weui-dialog">
-                        <div class="dialog-title">{{ selected_day.getDate() }}日<span style="font-size:16px;">{{ selected_day.getMonth()+1 }}月{{ selected_day.getYear()+1900 }}年</span></div>
-                        <div class="dialog-detail-box">
-                            <table>
-                                <tr class="time-row" v-for="time in 16">
-                                    <td class="time-mark">{{time+7}}:00</td>
-                                    <td class="time-content"></td>
-                                </tr>
-                                <tr class="time-row" >
-                                    <td class="time-mark">ddls:</td>
-                                    <td class="time-content">
-                                        <div class="block hw-block" v-for="c, index in selected_day_hw" >
-                                            <div class="block-title">{{ c.hw_name }}</div>
-                                            <div class="block-info">{{c.course_name}}</div> 
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
+                                <div class="block course-block" v-for="c in selected_day_course" :style="{top: c.top+'px', height: c.height+'px'}">
+                                    <div class="block-title">{{ c.title }}</div>
+                                    <div class="block-subtitle">{{c.start_time.hour}}:{{c.start_time.min}} - {{c.end_time.hour}}:{{c.end_time.min}}</div>
+                                    <div class="block-info">{{c.location}}</div>
+                                </div>
 
-                            <div class="block course-block" v-for="c in selected_day_course" :style="{top: c.top+'px', height: c.height+'px'}">
-                                <div class="block-title">{{ c.course_name }}</div>
-                                <div class="block-subtitle">{{c.start_time}} - {{c.end_time}}</div>
-                                <div class="block-info">{{c.location}}</div> 
+                                <div class="current-time" v-if="current_day.getDate() === selected_day.getDate()&& current_day.getMonth() === selected_day.getMonth() && current_day.getYear() === selected_day.getYear() && current_day.getHours()>=8">
+                                    <div class="current-time-line"  :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()+3 + 'px'}"></div>
+                                    <div class="current-time-dot" :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()-3 + 'px'}"></div>
+                                </div>
                             </div>
-
-                            <div class="current-time" v-if="current_day.getDate() === selected_day.getDate()&& current_day.getMonth() === selected_day.getMonth() && current_day.getHours()>=8">
-                                <div class="current-time-line"  :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()+3 + 'px'}"></div>
-                                <div class="current-time-dot" :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()-3 + 'px'}"></div>
+                            <div class="weui-dialog__ft" style="text-align: center;">
+                                <a v-on:click="hide_detail" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
                             </div>
-                            
-                        </div>
-
-
-                        <div class="weui-dialog__ft" style="text-align: center;">
-                            <a v-on:click="hide_detail" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
                         </div>
                     </div>
-                </div>
-            </div>
+                </transition>
 
-             <!-- <div class="weui-loadmore" >
-                <i v-if="loading_more" class="weui-loading"></i>
-                <span v-if="items.length" v-on:click="load_more" class="weui-loadmore__tips">加载更多</span>
-                <span v-else class="weui-loadmore__tips">正在加载</span>
-            </div> -->
+            </div>
+            <div class="calendar-container" id="week-view" style="display:none;"></div>
 
         </div>
-
-
-
-        <div class="calendar-container" id="week-view" style="display:none;"></div>
     </div>
 
     <script>
-        var init_num_dates = new Date(today.getYear()+1900, today.getMonth()+1, 0).getDate();
-        var init_margin = {
-                    before: new Date(today.getYear()+1900, today.getMonth(), 1).getDay() - 1,
-                    after: 7 - new Date(today.getYear()+1900, today.getMonth()+1, 0).getDay()
-                    };
-
         var vm = new Vue({
             el: '#vue-container',
             data: {
+                'hw': [],
+                'course': [],
+                'notice': [],
+                'initialized': false,
                 'view': 'month',            // calendar view switcher
                 'current_day': today,
                 'focus_day': today,         // today or the firstday of the month to display
                 'urlParam': urlParam,
-                'num_dates': init_num_dates,// number of days in the focused month
-                'margin': init_margin,      // for the alignment of dates and days
+                'num_dates': 0,             // number of days in the focused month
+                'margin': {},               // for the alignment of dates and days
                 'detail_showing': false,
                 'selected_day': today,
                 'selected_day_course': [],  // course data for detail-dialog
                 'selected_day_hw': [],      // hw data for detail-dialog
-            },
-            computed: {
-                // the following data is to be shown in the calendar grids.
-                // since they should be fetched at the very begining, I put them in the
-                // "computed" component of vue.js. Maybe moving them into "methods" is a 
-                // better choice.
-                // (https://vuejs.org/v2/guide/computed.html#Computed-Caching-vs-Methods)
-                // mo qun zhu. orz
-                hw: function() {
-                    var _vm = this;
-
-                    // fetch hw data; TODO: use range of time as param
-
-                    raw_hw_data = {data: [{hw_name:"homework3", date:"2016-12-20"}]};
-                    return schedule(raw_hw_data.data, _vm.num_dates);
-                },
-                course: function() {
-                    var _vm = this;
-
-                    // fetch course data; 
-
-                    raw_course_data = {data: [
-                        {course_name:"软件工程（3）", date:"2016-12-12"},
-                        {course_name:"软件理论基础（2）", date:"2016-12-12"},
-                        ]};
-                    return schedule(raw_course_data.data, _vm.num_dates);
-                },
+                'selected_day_notice': []
             },
             methods: {
-                update: function() {
+                init: function() {
                     var _vm = this;
-                    year = today.getYear() + 1900;
-                    month = today.getMonth();
-                    _vm.num_dates = new Date(year, month+1, 0).getDate();
-                    _vm.margin.before = new Date(year, month, 1).getDay() - 1;
-                    _vm.margin.after = 7 - new Date(year, month+1, 0).getDay();
+                    _vm.initialized = false;
+                    focus_day = _vm.focus_day;
+                    var param = month_range(focus_day);
+                    _vm.num_dates = new Date(focus_day.getFullYear(), focus_day.getMonth()+1, 0).getDate();
+                    _vm.margin = calculate_margin(focus_day);
+
+                    foo = 3;
+                    // Get academic calendar
+                    getJSON('/api/cal/personal', param, function(data) {
+                        raw_data = data;
+                        if (raw_data.code == 0) {
+                             _vm.course  = schedule(raw_data.data, _vm.num_dates, focus_day.getMonth());
+                        }
+                        else {
+                            // TODO
+                        }
+                        foo -= 1;
+                        if (foo == 0) _vm.initialized = true;
+                    });
+                    // Get important notice
+                    getJSON('/api/cal/global', function(data) {
+                        raw_data = data;
+                        if (raw_data.code == 0) {
+                             _vm.notice  = schedule(raw_data.data, _vm.num_dates, focus_day.getMonth());
+                        }
+                        else {
+                            // TODO
+                        }
+                        foo -= 1;
+                        if (foo == 0) _vm.initialized = true;
+                    });
+                    // Get Homework ddls
+                    getJSON('/api/hw/list', param, function(data) {
+                        raw_data = data;
+                        if (raw_data.code == 0) {
+                             _vm.hw  = schedule(raw_data.data, _vm.num_dates, focus_day.getMonth());
+                        }
+                        foo -= 1;
+                        if (foo == 0) _vm.initialized = true;
+                    });
+
+                },
+                update: function(focus_day) {
+                    var _vm = this;
+                    _vm.focus_day = focus_day;
+                    _vm.init();
                 },
                 load_more: function() {},  // TODO
                 hide_detail: function() {
@@ -190,33 +221,33 @@
                     var _vm = this;
                     var date = ev.currentTarget.id;
                     var month = _vm.focus_day.getMonth();
-                    var year = _vm.focus_day.getYear() + 1900;
+                    var year = _vm.focus_day.getFullYear();
 
                     _vm.selected_day = new Date(year, month, date);
-                    console.log(_vm.selected_day);
-                    console.log(_vm.current_day);
-                    _vm.detail_showing = true;
 
-                    // TODO: fetch data of the selected day
+                    course_data = _vm.course[date-1];
+                    hw_data = _vm.hw[date-1];
+                    notice_data = _vm.notice[date-1];
 
-                    // 编数据lalala
-                    course_data = [
-                        {course_name:"这个课的名字特别特别特别的长长长长长长长长长", location: "六教311", start_time:"9:50", end_time:"12:15"},
-                        {course_name:"计算机网络与体系结构（2）", location: "六教211", start_time:"13:00", end_time:"24:00"},
-                    ];
-                    hw_data = [
-                        {hw_name:"homework3", course_name:"软件理论基础（2）"},
-                        {hw_name:"第7次作业", course_name:"计算机网络系统"}
-                    ];
-                    
                     produce_course_block(course_data);
                     _vm.selected_day_course = course_data;
-
                     _vm.selected_day_hw = hw_data;
+                    _vm.selected_day_notice = notice_data;
+                    _vm.detail_showing = true;
 
+                },
+                set_view: function(view) {
+                    var _vm = this;
+                    if (view === 'month') {
+                        _vm.view = view;
+                    }
+                    else if (view == 'week') {
+                        alert('尚未实现，敬请期待！');
+                    }
                 },
             }
         });
+        vm.init();
 
     </script>
 </body>

@@ -3,6 +3,7 @@ from .models import *
 from codex.apiview import APIView
 from codex.baseerror import *
 from wechat.wrapper import WeChatView
+import json
 
 from datetime import *
 
@@ -13,8 +14,14 @@ def wrap_date(dt):
     # return dt.strftime('%Y-%m-%d')
     return int(dt.timestamp())
 
+
+def parse_zty_stamp(st):
+    return datetime.fromtimestamp(st / 1000)
+
+
 def parse_date(dt_str):
     return datetime.strptime(dt_str, '%Y-%m-%d')
+
 
 def wrap_datetime(dt):
     # return dt.strftime('%Y-%m-%d %H:%M')
@@ -58,7 +65,15 @@ class Personal(APIView):
                 })
             return 该课程的事件们
 
-        纯纯课程列表 = get_curriculum(self.student.xt_id)
+
+        cache, created = PersonalCalendar.objects.get_or_create(student=self.student)
+        if created:
+            纯纯课程列表 = get_curriculum(self.student.xt_id)
+            cache.classes = json.dumps(纯纯课程列表)
+            cache.save()
+        else:
+            纯纯课程列表 = json.loads(cache.classes)
+
         大节起止时分 = {
             1: [8, 0, 9, 35],
             2: [9, 50, 12, 15],
@@ -67,8 +82,8 @@ class Personal(APIView):
             5: [17, 5, 18, 40],
             6: [19, 20, 21, 45]
         }
-        第一周第一天 = datetime.fromtimestamp(
-            get_week_info()['currentsemester']['begintime'] / 1000
+        第一周第一天 = parse_zty_stamp(
+            get_week_info()['currentsemester']['begintime']
         )
 
         前端只要某个区间 = False
@@ -90,7 +105,6 @@ class Personal(APIView):
 class Global(APIView):
 
     def get(self):
-
 
         def ignore_event(ev):
             name = ev['name']
@@ -126,11 +140,13 @@ class Semester(APIView):
 
     def get(self):
         week_info = get_week_info()
-        开学日期 = datetime.fromtimestamp(
-            week_info['currentsemester']['begintime'] / 1000
+
+        开学日期 = parse_zty_stamp(
+            week_info['currentsemester']['begintime']
         )
         学期名 = week_info['currentsemester']['name']
         校历第几周 = week_info['currentteachingweek']['name']
+
         return {
             'semester_name': 学期名,
             'semester_bagin': wrap_date(开学日期),

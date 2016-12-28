@@ -11,4 +11,5 @@ ADD requirements/* /code/requirements/
 RUN pip install -U pip
 RUN pip install -r requirements.txt
 
-ADD . /code/
+COPY . /code/
+RUN chmod +x /code/entrypoint.sh

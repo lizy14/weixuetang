@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
 
     <!-- WeUI Javascript library -->
-    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
 
     <style>
@@ -77,8 +77,8 @@
                                     <li class="weui-media-box__info__meta">
                                         <span v-if="item.i_am_the_author" class="i_am_the_author">我（{{item.author_nickname}}）</span>
                                         <span v-else>{{item.author_nickname}}</span>
-                                        <span v-if="item.last_update">更新于 {{ item.last_update }}</span>
-                                        <span v-else>发布于 {{ item.published }}</span>
+                                        <span v-if="item.last_update_time">更新于 {{ item.last_update_time.readable(1) }}</span>
+                                        <span v-else>发布于 {{ item.published_time.readable(1) }}</span>
                                     </li>
                                 </ul>
                             </div>
@@ -194,9 +194,9 @@
                                 <div class="weui-media-box__desc">
                                     {{course.course_name}}</div>
                                 <div class="weui-media-box__desc">
-                                    发布时间: {{detail_item.published}}</div>
-                                <div v-if="detail_item.last_update" class="weui-media-box__desc">
-                                    最近更新: {{detail_item.last_update}}</div>
+                                    发布时间: {{detail_item.published_time.readable(1)}}</div>
+                                <div v-if="detail_item.last_update_time" class="weui-media-box__desc">
+                                    最近更新: {{detail_item.last_update_time.readable(1)}}</div>
                             </div>
                         </div>
                     </div>
@@ -209,6 +209,10 @@
                         <div v-else  class="weui-dialog__ft">
                             <a v-on:click="submit" class="weui-dialog__btn weui-dialog__btn_primary">保存</a>
                             <a v-on:click="close_detail" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                        </div>
+                        <div v-if="posting" class="weui-loadmore">
+                            <i class="weui-loading"></i>
+                            <span class="weui-loadmore__tips">正在提交</span>
                         </div>
 
                     </div>
@@ -235,6 +239,7 @@
                 'course': {},
                 'posts': null,
                 'detail_item': null,
+                'posting': false
             },
             methods: {
                 'change_course': function(){
@@ -277,6 +282,10 @@
                 },
                 'submit': function() {
                     var _vm = this;
+                    if(_vm.posting){
+                        return;
+                    }
+
                     var post = _vm.detail_item;
                     function check_fields(post){
                         if(post.type === null){
@@ -308,10 +317,15 @@
                     }else{
                         payload.post_id = post.post_id;
                     }
+                    _vm.posting  = true;
                     window.postForm('/api/team/edit', payload, function(){
                         vm.change_course();
-                        alert(_vm.detail_item.creating? "发布成功" : "修改成功");
                         _vm.detail_item = null;
+                        _vm.posting = false;
+                        alert(_vm.detail_item.creating? "发布成功" : "修改成功");
+                    }, function(err){
+                        _vm.posting = false;
+                        alert(err);
                     })
                 },
             },

@@ -23,10 +23,10 @@ class List(APIView):
                 'contact': d.contact,
                 'author_nickname': d.author_nick,
                 'i_am_the_author': d.author == self.student,
-                'published': wrap_datetime(d.published)
+                'published_time': wrap_datetime(d.published)
             }
             if d.last_update:
-                dat['last_update'] = wrap_datetime(d.last_update)
+                dat['last_update_time'] = wrap_datetime(d.last_update)
             return dat
         self.check_input('course_id')
         ls = TeamPost.objects.filter(course__id=self.input['course_id'])
@@ -36,7 +36,13 @@ class List(APIView):
 class Edit(APIView):
 
     def post(self):
+        def identical(a, b, *fields):
+            for k in fields:
+                if str(getattr(a, k)) != str(getattr(b, k)):
+                    return False
+            return True
         create = False
+        course = None
         try:
             self.check_input('course_id')
             course = Course.objects.get(pk=self.input['course_id'])
@@ -56,6 +62,9 @@ class Edit(APIView):
             'contact': self.input['contact'],
             'author_nick': self.input['author_nickname']
         })
+        for it in TeamPost.objects.filter(author=self.student, course=course):
+            if identical(it, tp, 'title', 'type', 'detail', 'contact', 'author_nick'):
+                raise LogicError('Already exists.')
         tp.save()
 
 

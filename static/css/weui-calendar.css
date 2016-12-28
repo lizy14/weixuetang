@@ -23,39 +23,33 @@
 }
 
 #views-switcher {
-	margin-right: 10px;
-	margin-bottom: 0px;
-	padding-bottom: 0px;
 	display: inline-block;
-	float: bottom;
-	float: right;
-	position: relative;
+	position:absolute;
+	right: 10px;
+	top: 50px;
 }
 
 .switcher {
-	width: 10%;
-	height: 20%;
-	margin-top: 0px;
-	font-size: 10px;
-	display: inline-block;
-}
-
-.switcher::after {
-	border: none;
-	margin-bottom: 0px;
-	display: inline-block;
+	padding: 1px 8px;
+	font-size: 14px;
+	text-align: center;
+	vertical-align: center;
 }
 
 #month-switch {
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
-	margin-right: 0;
+	border-top-left-radius: 20px;
+	border-bottom-left-radius: 20px;
+	background-color: #3cc51f;
+	color: #fff;
+	margin-right: 1px;
 }
 
 #week-switch {
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
-	margin-left: 0;
+	border-top-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+	background-color: #fff;
+	color: #3cc51f;
+	margin-right: 1px;
 }
 
 .month-content {
@@ -73,13 +67,22 @@
 }
 
 .course_badge {
+	font-size: 8px; 
 	background: #3cc51f;
 	padding: .5em;
 	margin: 0 0 2px 2px;
 }
 
 .hw_badge {
+	font-size: 8px; 
 	background: #E64340;
+	padding: .5em;
+	margin: 0 0 2px 2px;
+}
+
+.event_badge {
+	font-size: 8px; 
+	background: #ffbe00;
 	padding: .5em;
 	margin: 0 0 2px 2px;
 }
@@ -159,11 +162,22 @@
 
 .hw-block {
 	position: static;
-	margin-left: 18.5px;
+	margin-left: 8.5px;
 	margin-bottom: 2px;
 	background-color: rgba(230,67,64,.2);
 	color:  #e64340;
 	border-left: 5px solid #e64340;
+	-webkit-line-clamp: 2;
+	text-overflow: ellipsis;
+}
+
+.event-block {
+	position: static;
+	margin-left: 8.5px;
+	margin-bottom: 2px;
+	background-color: rgba(255,190,0,.2);
+	color:  #ffbe00;
+	border-left: 5px solid #ffbe00;
 	-webkit-line-clamp: 2;
 	text-overflow: ellipsis;
 }
@@ -206,5 +220,12 @@ table {
 	width: 12px;
 	border-radius: 12px;
 	position: absolute;
-	left: 55px;
+	left: 57px;
+}
+
+.footer-title {
+	margin: 10px 5px;
+	font-weight:400;
+    font-size:15px;
+    color:#3cc51f;
 }

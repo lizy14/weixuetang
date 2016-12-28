@@ -23,5 +23,6 @@ rm userpage/migrations/ -rf
 rm homework/migrations/ -rf
 rm wechat/migrations/ -rf
 rm notice/migrations/ -rf
-pm makemigrations userpage homework wechat notice
+rm calendar_/migrations/ -rf
+pm makemigrations userpage homework wechat notice calendar_
 pm migrate

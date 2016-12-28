@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="moqunzhu">
 
-        <title>个人中心</title>
+        <title>个人中心 - 绑定</title>
         <!-- Custom styles -->
         <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
@@ -18,7 +18,7 @@
         <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
 
         <!-- WeUI Javascript library -->
-        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+        <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
 </head>
 
@@ -117,7 +117,7 @@
                 unbind: function() {
                     param = urlParam;
 					param.student_id = vm.id;
-                    $.post("/api/u/unbind", param, function(data,status){
+                    postForm("/api/u/unbind", param, function(data,status){
 						vm.binded = false;
 					});
                     this.unbind_popup_showing = false;
@@ -127,10 +127,10 @@
                     param = urlParam;
     	            param['student_id'] = $('#inputUsername').val();
     	            param['password'] = $('#inputPassword').val();
-                    $.post("/api/u/bind", param, function(data,status){
+                    postForm("/api/u/bind", param, function(data,status){
                         this.bind_popup_showing = true;
                         vm.disabled = false;
-                        if (data.code == 0) {
+    	                if (data.code == 0) {
                             vm.msg_title = '绑定成功';
                             vm.msg_content = '';
                             vm.binded = true;
@@ -143,7 +143,7 @@
                 },
             }
         });
-        $.getJSON('/api/u/bind', urlParam, function(data){
+        getJSON('/api/u/bind', urlParam, function(data){
             vm.id = data.data;
             vm.loading = false;
             vm.binded = (data.code  == 0);

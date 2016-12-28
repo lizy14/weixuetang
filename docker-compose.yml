@@ -14,7 +14,8 @@ services:
   worker: &app_base
     build: .
     restart: always
-    command: celery -A WeLearn worker -l info
+    entrypoint: ./entrypoint.sh
+    command: celery -A WeLearn worker -B -l info
     depends_on:
       - db
       - app
@@ -23,7 +24,8 @@ services:
       - C_FORCE_ROOT=true
   app:
     <<: *app_base
-    command: bash -c "python manage.py makemigrations homework notice userpage wechat; python manage.py migrate; python manage.py synctemplate; gunicorn -w 3 -b 0.0.0.0 WeLearn.wsgi"
+    entrypoint: ./entrypoint.sh
+    command: bash -c "python manage.py makemigrations team userpage wechat homework notice calendar_; python manage.py migrate; python manage.py synctemplate; python manage.py syncmenu; gunicorn -w 3 -b 0.0.0.0 WeLearn.wsgi"
     volumes:
       - /code/static
     depends_on:
@@ -34,6 +36,7 @@ services:
     build: nginx
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - app
     volumes_from:

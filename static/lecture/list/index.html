@@ -12,7 +12,7 @@
     <meta name="description" content="">
     <meta name="author" content="moqunzhu">
 
-    <title>课程公告列表</title>
+    <title>新鲜事</title>
     <!-- Custom styles -->
     <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
@@ -27,20 +27,20 @@
 <body>
     <div id="vue-container">
         <!-- Header -->
-        <h1 class="news-title">公告</h1>
+        <h1 class="news-title">讲座</h1>
         <div class="weui-cells__title"> {{ fortune }} </div>
 
         <div class="weui-panel__bd">
-            <!-- notices -->
+            <!-- lectures -->
             <div v-infinite-scroll="load_more" infinite-scroll-disabled="no_more" class="news-container">
                 <div class="weui-panel weui-panel_access">
                     <!-- List Item -->
-                    <div v-for="item in items" v-on:click="show_detail" v-bind:id="item.notice_id" class="detail-box weui-media-box weui-media-box_text">
-                        <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge" v-if="item.status==0">new</span>{{ item.title }}</h5>
-                        <p class="notice-detail weui-media-box__desc">{{ item.detail }}</p>
+                    <div v-for="item in items" v-on:click="show_detail" v-bind:id="item.lecture_id" class="detail-box weui-media-box weui-media-box_text">
+                        <h5 class="weui-media-box__title">{{ item.title }} ({{item.lecturer}})</h5>
+                        <p class="lecture-detail weui-media-box__desc">{{ item.detail }}</p>
                         <ul class="weui-media-box__info">
-                            <li class="weui-media-box__info__meta">发布时间: {{ item.publish_time.readable() }}</li>
-                            <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.course_name }} </li>
+                            <li class="weui-media-box__info__meta"> {{ item.time }}</li>
+                            <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.place }} </li>
                         </ul>
                     </div>
 
@@ -49,7 +49,7 @@
 
 
             <!-- Detail Dialog -->
-            <transition id="dialog-container" name="fade">
+            <div id="dialog-container">
                 <div v-if="detail_showing" class="detail-dialog">
                     <div class="weui-mask"></div>
                     <div class="weui-dialog">
@@ -57,10 +57,11 @@
                             <strong class="weui-dialog__title">{{ detail_item.title }}</strong>
                         </div>
                         <div class="weui-dialog__bd">
-                            <div class="weui-dialog__info">{{ detail_item.course_name }}</div>
                             <div class="weui-dialog__info">
-                                {{ detail_item.publish_time.readable() }}
-                                {{ detail_item.publisher }}
+                                演讲人：{{ detail_item.lecturer }}
+                            </div>
+                            <div class="weui-dialog__info">
+                                {{ detail_item.time }} {{ detail_item.place }}
                             </div>
                         </div>
 
@@ -72,12 +73,12 @@
                         </div>
                     </div>
                 </div>
-            </transition>
+            </div>
         </div>
         <div class="weui-loadmore" >
             <div v-if="no_more">
                 <span v-if="items.length" class="weui-loadmore__tips">没有更多了</span>
-                <span v-else class="weui-loadmore__tips">没有公告 :)</span>
+                <span v-else class="weui-loadmore__tips">没有讲座 :)</span>
             </div>
             <div v-else>
                 <i v-if="loading_more" class="weui-loading"></i>
@@ -107,7 +108,7 @@
                         'limit': 10,
                         'start': _vm.items.length
                     };
-                    getJSON('/api/notice/list/', param, function(data) {
+                    getJSON('/api/lecture/list/', param, function(data) {
                         prune(data.data);
                         data.data.forEach(function(e){
                             _vm.items.push(e);
@@ -121,24 +122,15 @@
                 },
                 show_detail: function(ev) {
                     var _vm = this;
-                    var notice_id = ev.currentTarget.id;
+                    var lecture_id = ev.currentTarget.id;
                     param = {
-                        'notice_id': notice_id
+                        'lecture_id': lecture_id
                     };
 
                     // fetch detail and pop up
-                    getJSON('/api/notice/detail/', param, function(data) {
+                    getJSON('/api/lecture/detail/', param, function(data) {
                         _vm.detail_showing = true;
                         _vm.detail_item = data.data;
-
-                        // mark-as-read
-                        // locally
-                        var item = _vm.items.filter(function(item) {
-                            return item.notice_id.toString() === notice_id;
-                        })[0];
-                        item.status = 1
-                        // remotely
-                        getJSON('/api/notice/mark-as-read/', param);
                     })
                 },
             }
@@ -147,6 +139,20 @@
         getJSON('/api/u/fortune', {}, function(data) {
             vm.fortune = data.data
         })
+
+        vm.fortune = "fortune";
+        vm.no_more = true;
+        vm.loading_more = false;
+        vm.detail_showing = true;
+        vm.detail_item = {
+            'lecture_id': '3',
+            'time': '2016-3-3',
+            'place': '三教',
+            'lecturer': '朋神',
+            'title': '期末加油',
+            'detail': '这是一个很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的内容'
+        };
+        vm.items = [vm.detail_item, vm.detail_item, vm.detail_item, vm.detail_item, vm.detail_item, vm.detail_item];
 
     </script>
 </body>

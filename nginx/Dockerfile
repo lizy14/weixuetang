@@ -1,3 +1,3 @@
 FROM nginx
 
-COPY django /etc/nginx/nginx.conf
+COPY app.conf /etc/nginx/nginx.conf
