@@ -68,7 +68,7 @@ window.schedule = function (items, num_dates, month) {
     for (var i = 0; i < num_dates; i++) {
         new_items[i] = new Array();
     }
-
+    if (!items) return new_items;
     items.forEach(function(i) {
         if (i.begin) { // curriculum
             d = parseDate(i.begin);
@@ -97,9 +97,15 @@ window.schedule = function (items, num_dates, month) {
 }
 
 window.calculate_margin = function(day) {
+    fst_day = new Date(day.getFullYear(), day.getMonth(), 1).getDay();
+    if (fst_day == 0) before = 6;
+    else before = fst_day - 1;
+    lst_day = new Date(day.getFullYear(), day.getMonth()+1, 0).getDay()
+    if (lst_day == 0) after = 0;
+    else after = 7 - lst_day;
     return {
-        before: new Date(day.getYear()+1900, day.getMonth(), 1).getDay() - 1,
-        after: 7 - new Date(day.getYear()+1900, day.getMonth()+1, 0).getDay()
+        before:  before,
+        after: after
     }
 }
 
@@ -124,6 +130,7 @@ window.postForm = function(url, payload, callback){
 }
 
 window.produce_course_block = function (data) {
+    if (!data) return [];
     data.forEach(function(i){
         start = i.start_time;
         //alert(start[0] + ' ' + start[1]);
@@ -134,8 +141,8 @@ window.produce_course_block = function (data) {
 }
 
 window.month_range = function(date) {
-    year = today.getYear() + 1900;
-    month = today.getMonth();
+    year = date.getFullYear();
+    month = date.getMonth();
     s = new Date(year, month, 1, 8).toISOString().substring(0,10);
     e = new Date(year, month+1, 0, 8).toISOString().substring(0,10);
     return {'start': s, 'end': e}
@@ -143,8 +150,8 @@ window.month_range = function(date) {
 
 window.week_range = function(data) {
     // TODO
-    year = today.getYear() + 1900;
-    day = today.getMonth();
+    year = date.getYear() + 1900;
+    day = date.getMonth();
     s = new Date(year, month, 1, 8).toISOString().substring(0,10);
     e = new Date(year, month+1, 0, 8).toISOString().substring(0,10);
     return {'start': s, 'end': e}

@@ -228,3 +228,10 @@ table {
 	position: absolute;
 	left: 57px;
 }
+
+.footer-title {
+	margin: 10px 5px;
+	font-weight:400;
+    font-size:15px;
+    color:#3cc51f;
+}
