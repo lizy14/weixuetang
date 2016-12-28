@@ -21,7 +21,7 @@ class List(APIView):
                 'type': d.type,
                 'detail': d.detail,
                 'contact': d.contact,
-                'author_nick': d.author_nick,
+                'author_nickname': d.author_nick,
                 'i_am_the_author': d.author == self.student,
                 'published': wrap_datetime(d.published)
             }
