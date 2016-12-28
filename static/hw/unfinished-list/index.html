@@ -146,7 +146,7 @@
                 init: function() {
                     var _vm = this;
                     getJSON('/api/hw/unfinished-list/', urlParam, function(data){
-                        expand(data.data);
+                        // expand(data.data);
                         data.data.sort(function(a, b){
                             return a.days_left - b.days_left;
                         });
