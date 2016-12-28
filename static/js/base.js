@@ -63,10 +63,26 @@ window.getJSON = function(url, payload, callback){
     )
 }
 
-window.schedule = function (items, num_dates) {
+window.schedule = function (items, num_dates, month) {
     new_items = new Array(num_dates);
     items.forEach(function(i) {
-        index = parseDate(i.date).getDate() - 1;
+        if (i.begin) {
+            d = parseDate(i.begin);
+            if (d.getMonth() != month) return;
+            index = d.getDate() - 1;
+        }
+        else if (i.date) {
+            d = parseDate(i.date);
+            if (d.getMonth() != month) return;
+            index = d.getDate() - 1;
+        }
+        else if (i.end_time) {
+            d = parseDate(i.end_time);
+            if (d.getMonth() != month) return;
+            index = d.getDate() - 1;
+        }
+        else return;
+
         if (new_items[index]) {
             new_items[index].push(i);
         }
@@ -78,6 +94,12 @@ window.schedule = function (items, num_dates) {
     return new_items;
 }
 
+window.calculate_margin = function(day) {
+    return {
+        before: new Date(day.getYear()+1900, day.getMonth(), 1).getDay() - 1,
+        after: 7 - new Date(day.getYear()+1900, day.getMonth()+1, 0).getDay()
+    }
+}
 
 window.postForm = function(url, payload, callback){
     payload = $.extend(payload, window.urlParam);
@@ -108,6 +130,23 @@ window.produce_course_block = function (data) {
         i['height'] = parseInt(end[0]-8) * 60 + parseInt(end[1]) - i['top'] - 17;
 
     });
+}
+
+window.month_range = function(date) {
+    year = today.getYear() + 1900;
+    month = today.getMonth();
+    s = new Date(year, month, 1, 8).toISOString().substring(0,10);
+    e = new Date(year, month+1, 0, 8).toISOString().substring(0,10);
+    return {'start': s, 'end': e}
+}
+
+window.week_range = function(data) {
+    // TODO
+    year = today.getYear() + 1900;
+    day = today.getMonth();
+    s = new Date(year, month, 1, 8).toISOString().substring(0,10);
+    e = new Date(year, month+1, 0, 8).toISOString().substring(0,10);
+    return {'start': s, 'end': e}
 }
 
 // function krEncodeEntities(s){
