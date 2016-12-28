@@ -186,7 +186,7 @@
                         if (foo == 0) _vm.initialized = true;
                     });
                     // Get important notice
-                    getJSON('/api/cal/global', function(data) {
+                    getJSON('/api/cal/global', {}, function(data) {
                         raw_data = data;
                         if (raw_data.code == 0) {
                              _vm.notice  = schedule(raw_data.data, _vm.num_dates, focus_day.getMonth());
