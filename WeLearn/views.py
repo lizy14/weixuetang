@@ -8,10 +8,7 @@ import mimetypes
 import os
 
 
-__author__ = "Epsirom"
-
-
-class StaticFileView(BaseView):
+class StaticFileView(BaseView): # pragma: no cover
 
     logger = logging.getLogger('Static')
 

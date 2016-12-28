@@ -116,13 +116,10 @@ class Global(APIView):
 
         def wrap_event(ev):
             status = ev['status']
-            try:
-                status = {
-                    'begin': '开始',
-                    'end': '结束'
-                }[status]
-            except KeyError:
-                pass
+            status = {
+                'begin': '开始',
+                'end': '结束'
+            }[status]
             today = datetime.combine(
                 datetime.today().date(), datetime.min.time())
 

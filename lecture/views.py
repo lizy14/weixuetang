@@ -19,7 +19,7 @@ class List(APIView):
                 'title': item.title,
             }
         result = Lecture.objects.all()
-        try:
+        try: # pragma: no cover
             start = int(self.input['start'])
             limit = int(self.input['limit'])
             result = result[start: start + limit]
