@@ -172,7 +172,7 @@ CELERY_IMPORTS = ('WeLearn.tasks',)
 CELERYBEAT_SCHEDULE = {
     'Mo Qunzhu': {
         'task': 'WeLearn.tasks.main',
-        'schedule': 60,  # in seconds, or timedelta(seconds=10)
+        'schedule': 600,  # in seconds, or timedelta(seconds=10)
     },
     'Mo Qunzhu 2': {
         'task': 'userpage.tasks.notify',
