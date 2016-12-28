@@ -41,7 +41,7 @@ window.parseDate = function (str){
 window.datify = function (obj){
     function datify_obj(obj){
         for(key in obj){
-            if(key.endsWith('_time') && !keys.startsWith('s_')){
+            if(key.endsWith('_time') && !key.startsWith('s_')){
                 obj[key] = parseDate(obj[key]);
             }
         }
