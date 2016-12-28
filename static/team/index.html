@@ -34,6 +34,9 @@
         span.pt_qiudatui {
             color: blue;
         }
+        .btn_dangerous{
+            color: red;
+        }
     </style>
 </head>
 
@@ -60,7 +63,10 @@
 
             <!-- post list -->
             <div v-if="posts">
-                <div class="weui-cells__title">目前共有 {{posts.length}} 条消息</div>
+                <div class="weui-cells__title">
+                    <span v-if="posts.length">目前共有 {{posts.length}} 条消息</span>
+                    <span v-else>还没有人发布过信息</span>
+                </div>
 
                 <div class="weui-panel__bd">
                     <div class="news-container">
@@ -96,9 +102,6 @@
             <!-- publish button -->
             <div v-if="! loading">
                 <div v-if="course.course_id">
-                    <div v-if="posts">
-                        <div class="weui-cells__title">还没有人发布过求组队……</div>
-                    </div>
                     <a v-on:click="create_post" class="weui-btn weui-btn_primary">
                         我要发布
                     </a>
@@ -208,6 +211,7 @@
                         </div>
                         <div v-else  class="weui-dialog__ft">
                             <a v-on:click="submit" class="weui-dialog__btn weui-dialog__btn_primary">保存</a>
+                            <a v-on:click="delete_post" class="weui-dialog__btn weui-dialog__btn_default btn_dangerous">删除</a>
                             <a v-on:click="close_detail" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
                         </div>
                         <div v-if="posting" class="weui-loadmore">
@@ -279,6 +283,34 @@
                         "title": "",
                         "detail": ""
                     }
+                },
+                'delete_post': function(){
+                    if(!confirm('该作业将被隐藏。可在“偏好设置”中解除隐藏。')){
+                        return;
+                    }
+                    var _vm = this;
+                    var post = _vm.detail_item;
+                    console.log('deleting ' + JSON.stringify(post));
+                    _vm.posting = true;
+
+                    postForm('/api/team/delete', {'post_id': post.post_id}, function(){
+                        _vm.posting = false;
+                        _vm.detail_item = false;
+
+                        var i;
+                        var n = _vm.posts.length;
+                        for(i=0; i<n; i++){
+                            if(_vm.posts[i].post_id == post.post_id){
+                                break;
+                            }
+                        }
+                        if(i < n){
+                            _vm.posts.splice(i, 1);
+                        }
+
+                    }, function(){
+                        _vm.posting = false;
+                    });
                 },
                 'submit': function() {
                     var _vm = this;
