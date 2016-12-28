@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'homework',
     'notice',
     'team',
-    'calendar_'
+    'calendar_',
+    'lecture'
 ]
 
 if DEBUG:
