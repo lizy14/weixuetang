@@ -36,24 +36,34 @@
 	vertical-align: center;
 }
 
+.primary-switcher {
+	background-color: #3cc51f;
+	color: #fff;
+}
+
+.default-switcher {
+	background-color: #fff;
+	color: #3cc51f;
+}
+
 #month-switch {
 	border-top-left-radius: 20px;
 	border-bottom-left-radius: 20px;
-	background-color: #3cc51f;
-	color: #fff;
 	margin-right: 1px;
 }
 
 #week-switch {
 	border-top-right-radius: 20px;
 	border-bottom-right-radius: 20px;
-	background-color: #fff;
-	color: #3cc51f;
 	margin-right: 1px;
 }
 
 .month-content {
 	margin-top: 10px;
+}
+
+.week-content {
+	width: 600px;
 }
 
 .weui-grid {
@@ -138,7 +148,19 @@
 }
 
 .time-content {
-	width: 1000px;
+	text-align: center;
+	color: #999999;
+}	
+
+.narrow-block {
+	position: absolute;
+	width: 80px;
+	display: block;
+    overflow: hidden;
+    padding: 10px;
+    display: -webkit-box;
+    overflow: scroll;
+    -webkit-box-orient: vertical;
 }
 
 .block {
@@ -205,6 +227,7 @@ table {
     border-collapse: collapse;
     background-color: #efeff4;
     margin: 2px 0px;
+    width: 100%;
 }
 
 .current-time-line {

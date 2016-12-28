@@ -91,7 +91,7 @@ window.is_same_week = function(a, b) {
         if ((a - b)/1000/86400 < 7 - day) return true;
         else return false;
     }
-    else (a < b){
+    else if (a < b) {
         if ((b - a)/1000/86400 < day + 1) return true;
         else return false;
     }
@@ -159,7 +159,6 @@ window.schedule = function (items, num_dates, focus_day) {
             new_items[index].push(i);
         });
     }
-    
     return new_items;
 }
 
