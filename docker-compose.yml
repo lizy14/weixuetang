@@ -1,0 +1,43 @@
+version: '2'
+services:
+  db:
+    image: mysql
+    hostname: db
+    env_file: secrets.env
+    command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci]
+  rabbitmq:
+    image: rabbitmq
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=django
+      - RABBITMQ_DEFAULT_PASS=pass
+  worker: &app_base
+    build: .
+    restart: always
+    entrypoint: ./entrypoint.sh
+    command: celery -A WeLearn worker -B -l info
+    depends_on:
+      - db
+      - app
+      - rabbitmq
+    environment:
+      - C_FORCE_ROOT=true
+  app:
+    <<: *app_base
+    entrypoint: ./entrypoint.sh
+    command: bash -c "python manage.py makemigrations team userpage wechat homework notice; python manage.py migrate; python manage.py synctemplate; python manage.py syncmenu; gunicorn -w 3 -b 0.0.0.0 WeLearn.wsgi"
+    volumes:
+      - /code/static
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+  nginx:
+    build: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app
+    volumes_from:
+      - app

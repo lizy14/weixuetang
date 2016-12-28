@@ -1,3 +1,7 @@
 from django.db import models
+from userpage.models import *
 
-# Create your models here.
+
+class PersonalCalendar(models.Model):
+    classes = models.TextField()  # JSON string, quick and dirty
+    student = models.ForeignKey(Student)

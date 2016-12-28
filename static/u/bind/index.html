@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
     <head>
-        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <script src="../../3rd/vue.js"></script>
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script src="../../js/base.js"></script>
         <meta charset="utf-8">
@@ -114,7 +114,7 @@
                 unbind: function() {
                     param = urlParam;
 					param.student_id = vm.id;
-                    $.post("/api/u/unbind", param, function(data,status){
+                    postForm("/api/u/unbind", param, function(data,status){
 						vm.binded = false;
 					});
                     this.unbind_popup_showing = false;
@@ -123,7 +123,7 @@
                     param = urlParam;
     	            param['student_id'] = $('#inputUsername').val();
     	            param['password'] = $('#inputPassword').val();
-                    $.post("/api/u/bind", param, function(data,status){
+                    postForm("/api/u/bind", param, function(data,status){
     	                if (data.code == 0) {
                             vm.msg_title = '绑定成功';
                             vm.msg_content = '';
@@ -138,7 +138,7 @@
                 },
             }
         });
-        $.getJSON('/api/u/bind', urlParam, function(data){
+        getJSON('/api/u/bind', urlParam, function(data){
             vm.id = data.data;
             vm.loading = false;
             vm.binded = (data.code  == 0);

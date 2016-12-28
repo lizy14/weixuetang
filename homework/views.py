@@ -3,15 +3,15 @@ from userpage.models import *
 from .models import *
 from codex.apiview import APIView
 from codex.baseerror import *
+from codex.utils import *
 from wechat.wrapper import WeChatView
 from datetime import datetime
 import logging
 __logger__ = logging.getLogger(name=__name__)
 
 
-def wrap_date(d):
-    return d.strftime('%Y-%m-%d')
-
+def parse_date(dt_str):
+    return datetime.strptime(dt_str, '%Y-%m-%d')
 
 def wrap_homework_status_status(hwSt):
     return 2 if hwSt.graded else 1 if hwSt.submitted else 0
@@ -23,8 +23,8 @@ class UnfinishedList(APIView):
         def wrap(hw):
             return {
                 'homework_id': hw.id,
-                'start_time': wrap_date(hw.start_time),
-                'end_time': wrap_date(hw.end_time),
+                'start_time': wrap_time(hw.start_time),
+                'end_time': wrap_time(hw.end_time),
                 'title': hw.title,
                 'course_name': hw.course.name,
                 'detail': hw.detail,
@@ -47,8 +47,8 @@ class List(APIView):
             hw = hwSt.homework
             return {
                 'homework_id': hw.id,
-                'start_time': wrap_date(hw.start_time),
-                'end_time': wrap_date(hw.end_time),
+                'start_time': wrap_time(hw.start_time),
+                'end_time': wrap_time(hw.end_time),
                 'title': hw.title,
                 'course_name': hw.course.name,
                 'status': wrap_homework_status_status(hwSt)
@@ -59,6 +59,10 @@ class List(APIView):
             ignored=False
         ).order_by('-homework__start_time')
 
+        # hack
+        # 为保持接口兼容，start 字段有二义性
+        # 与 limit 同时出现时，表示数目，供前端列表无限滚动
+        # 与 end 同时出现时，表示日期，供前端日历显示
         try:
             start = int(self.input['start'])
             limit = int(self.input['limit'])
@@ -67,6 +71,19 @@ class List(APIView):
             pass
         except KeyError:
             pass
+
+        try:
+            start = parse_date(self.input['start'])
+            end = parse_date(self.input['end'])
+            result = result.filter(
+                homework__end_time__gte=start,
+                homework__end_time__lte=end
+            )
+        except ValueError:
+            pass
+        except KeyError:
+            pass
+
 
         return [wrap(hwSt) for hwSt in result]
 
@@ -78,8 +95,8 @@ class Detail(APIView):
             hw = hwSt.homework
             return {
                 'homework_id': hw.id,
-                'start_time': wrap_date(hw.start_time),
-                'end_time': wrap_date(hw.end_time),
+                'start_time': wrap_time(hw.start_time),
+                'end_time': wrap_time(hw.end_time),
                 'title': hw.title,
                 'course_name': hw.course.name,
                 'status': wrap_homework_status_status(hwSt),
