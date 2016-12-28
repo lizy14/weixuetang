@@ -76,6 +76,13 @@ window.today =  new Date();
 
 window.getJSON = function(url, payload, callback, err_callback){
     payload = $.extend(payload, window.urlParam);
+    wrapped_err = function(err){
+        if(err_callback){
+            err_callback(err);
+        }else{
+            alert(JSON.stringify(err));
+        }
+    }
     $.getJSON(
         url,
         payload,
@@ -85,7 +92,10 @@ window.getJSON = function(url, payload, callback, err_callback){
                 if (location.pathname != BIND_LANDING) {
                     alert('先绑定 info 账号才可以哦 :(');
                     location.href = BIND_LANDING + location.search;
+                    return;
                 }
+            }else if(data.code != 0){
+                wrapped_err(data.msg);
             }
             if(data.code == 0){
                 data.data = datify(data.data);
@@ -94,13 +104,7 @@ window.getJSON = function(url, payload, callback, err_callback){
                 callback(data);
             }
         }
-    ).fail(function(err){
-        if(err_callback){
-            err_callback(err);
-        }else{
-            alert(JSON.stringify(err));
-        }
-    })
+    ).fail(wrapped_err)
 }
 
 window.schedule = function (items, num_dates, month) {
