@@ -108,7 +108,6 @@
                         'start': _vm.items.length
                     };
                     getJSON('/api/lecture/list/', param, function(data) {
-                        prune(data.data);
                         data.data.forEach(function(e){
                             _vm.items.push(e);
                         });
