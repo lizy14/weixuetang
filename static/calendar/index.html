@@ -139,7 +139,7 @@
 
             </div>
             <div class="calendar-container" id="week-view" v-if="view==='week'">
-                <div class="header-wrapper"> 
+                <div class="header-wrapper" > 
                     <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</h1>
                     <div id="views-switcher">
                         <span class="switcher default-switcher" id="month-switch" v-on:click="set_view('month')">月</span>
@@ -155,37 +155,46 @@
                     <div class="date_content_wrapper">
                         <table>
                             <thead class="time-row">
-                                <td class="time-mark"></td>
-                                <td class="time-content">周一</td>
-                                <td class="time-content">周二</td>
-                                <td class="time-content">周三</td>
-                                <td class="time-content">周四</td>
-                                <td class="time-content">周五</td>
-                                <td class="time-content">周六</td>
-                                <td class="time-content">周日</td>
+                                <td class="narrow-days-bar"></td>
+                                <td class="narrow-days-bar">周一</td>
+                                <td class="narrow-days-bar">周二</td>
+                                <td class="narrow-days-bar">周三</td>
+                                <td class="narrow-days-bar">周四</td>
+                                <td class="narrow-days-bar">周五</td>
+                                <td class="narrow-days-bar">周六</td>
+                                <td class="narrow-days-bar">周日</td>
                             </thead>
                             <tr class="time-row" v-for="time in 16">
-                                <td class="time-mark">{{time+7}}:00</td>
-                                <td class="time-content" v-for="i in 7"></td>
+                                <td class="time-mark">{{time+7}}:00&nbsp</td>
+                                <td class="time-content" v-for="day in 7" ></td>
                             </tr>
                             <tr class="time-row" >
                                 <td class="time-mark">ddls:</td>
-                                <td class="time-content" v-for="i in 7">
-                                    <div class="block hw-block" v-for="c, index in selected_day_hw" >
-                                        <div class="block-title">{{ c.title }}</div>
-                                        <div class="block-info">{{c.course_name}}</div> 
+                                <td class="time-content" v-for="day in 7" >
+                                    <div class="narrow-block narrow-hw-block" v-for="c in hw[day]" >
+                                        <div class="narrow-block-title">{{ c.title }}</div>
+                                    <div class="block-info">{{c.course_name}}</div>
                                     </div>
                                 </td>
                             </tr>
                             <tr class="time-row" >
                                 <td class="time-mark">events:</td>
-                                <td class="time-content" v-for="i in 7">
-                                    <div class="block event-block" v-for="c, index in selected_day_notice" >
-                                        <div class="block-title">{{ c.title }}</div> 
+                                <td class="time-content" v-for="day in 7" >
+                                    <div class="narrow-block narrow-event-block" v-for="c in notice[day]" >
+                                        <div class="narrow-block-title">{{ c.title }}</div> 
                                     </div>
                                 </td>
                             </tr>
                         </table>
+                        <div class="narrow-block narrow-course-block" v-for="c in course" :style="{top: c.top+'px', height: c.height+'px', left: (c.start_time.day*76+76)+'px'}">
+                            <div class="block-title">{{ c.title }}</div>
+                            <div class="block-subtitle">{{c.start_time.hour}}:{{c.start_time.min}} - {{c.end_time.hour}}:{{c.end_time.min}}</div>
+                            <div class="block-info">{{c.location}}</div> 
+                        </div>
+                        <div class="current-time" v-if="current_day.getDate() === selected_day.getDate()&& current_day.getMonth() === selected_day.getMonth() && current_day.getYear() === selected_day.getYear() && current_day.getHours()>=8">
+                            <div class="current-time-line"  :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()+3 + 'px', left: (get_day(current_day)*76 + 52)}"></div>
+                            <div class="current-time-dot" :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()-3 + 'px'}"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -233,42 +242,37 @@
                     }
 
                     foo = 3;
-                    _vm.initialized = true;
-                    // Get academic calendar
                     getJSON('/api/cal/personal', param, function(data) {
                         raw_data = data;
                         if (raw_data.code == 0) {
-                             _vm.course  = schedule(raw_data.data, _vm.num_dates, focus_day);
+                             course  = schedule(raw_data.data, _vm.num_dates, focus_day);
+                            if (_vm.view === "week") {
+                                produce_course_block_for_week(course[0]);
+                                _vm.course = course[0];
+                            }
+                            else _vm.course = course;
                         }
                         foo -= 1;
-                        _vm.initialized = true;
+                        if (foo == 0) _vm.initialized = true;
                     });
-                    // getJSON('/api/cal/personal', param, function(data) {
-                    //     raw_data = data;
-                    //     if (raw_data.code == 0) {
-                    //          _vm.course  = schedule(raw_data.data, _vm.num_dates, focus_day);
-                    //     }
-                    //     foo -= 1;
-                    //     if (foo == 0) _vm.initialized = true;
-                    // });
-                    // // Get important notice
-                    // getJSON('/api/cal/global', function(data) {
-                    //     raw_data = data;
-                    //     if (raw_data.code == 0) {
-                    //          _vm.notice  = schedule(raw_data.data, _vm.num_dates, focus_day);
-                    //     }
-                    //     foo -= 1;
-                    //     if (foo == 0) _vm.initialized = true;
-                    // });
-                    // // Get Homework ddls
-                    // getJSON('/api/hw/list', param, function(data) {
-                    //     raw_data = data;
-                    //     if (raw_data.code == 0) {
-                    //          _vm.hw  = schedule(raw_data.data, _vm.num_dates, focus_day);
-                    //     }
-                    //     foo -= 1;
-                    //     if (foo == 0) _vm.initialized = true;
-                    // });
+                    // Get important notice
+                    getJSON('/api/cal/global', function(data) {
+                        raw_data = data;
+                        if (raw_data.code == 0) {
+                             _vm.notice  = schedule(raw_data.data, _vm.num_dates, focus_day);
+                        }
+                        foo -= 1;
+                        if (foo == 0) _vm.initialized = true;
+                    });
+                    // Get Homework ddls
+                    getJSON('/api/hw/list', param, function(data) {
+                        raw_data = data;
+                        if (raw_data.code == 0) {
+                             _vm.hw  = schedule(raw_data.data, _vm.num_dates, focus_day);
+                        }
+                        foo -= 1;
+                        if (foo == 0) _vm.initialized = true;
+                    });
                        
                 },
                 update: function(focus_day) {

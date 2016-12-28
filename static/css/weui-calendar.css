@@ -7,6 +7,10 @@
 	overflow: scroll;
 }
 
+.date_content_wrapper {
+	position: relative;
+}
+
 .days-bar {
 	white-space: nowrap;
 	background-color: #dedee2;
@@ -16,6 +20,15 @@
 	width: 14.28%;
 	position: relative;
     float: left;
+}
+
+.narrow-days-bar {
+	white-space: nowrap;
+	background-color: #dedee2;
+	text-align: center;
+	font-size: 10px;
+	color: #999999;
+	width: 80px;
 }
 
 .news-title {
@@ -136,7 +149,7 @@
 }
 
 .time-mark {
-	width: 50px;
+	width: 50px !important;
 	color: #999999;
 	text-align: right;
 }
@@ -152,15 +165,22 @@
 	color: #999999;
 }	
 
+.white-time-content {
+	text-align: center;
+	color: #999999;
+	background-color: #fbfafc;
+}
+
 .narrow-block {
 	position: absolute;
-	width: 80px;
+	width: 60px;
 	display: block;
     overflow: hidden;
-    padding: 10px;
+    padding: 4px;
     display: -webkit-box;
     overflow: scroll;
     -webkit-box-orient: vertical;
+    text-align: left;
 }
 
 .block {
@@ -172,6 +192,7 @@
     display: -webkit-box;
     overflow: scroll;
     -webkit-box-orient: vertical;
+    text-align: left;
 }
 
 .course-block {
@@ -182,6 +203,12 @@
 
 }
 
+.narrow-course-block {
+	color: #3cc51f;
+	background-color: rgba(60,197,31,.2); 
+	border-left: 3px solid #3cc51f;
+}
+
 .hw-block {
 	position: static;
 	margin-left: 8.5px;
@@ -189,6 +216,17 @@
 	background-color: rgba(230,67,64,.2);
 	color:  #e64340;
 	border-left: 5px solid #e64340;
+	-webkit-line-clamp: 2;
+	text-overflow: ellipsis;
+}
+
+.narrow-hw-block {
+	position: static;
+	margin-left: 2.5px;
+	margin-bottom: 1px;
+	background-color: rgba(230,67,64,.2);
+	color:  #e64340;
+	border-left: 3px solid #e64340;
 	-webkit-line-clamp: 2;
 	text-overflow: ellipsis;
 }
@@ -204,8 +242,29 @@
 	text-overflow: ellipsis;
 }
 
+.narrow-event-block {
+	position: static;
+	margin-left: .5px;
+	margin-bottom: 1px;
+	background-color: rgba(255,190,0,.2);
+	color:  #ffbe00;
+	border-left: 3px solid #ffbe00;
+	-webkit-line-clamp: 2;
+	text-overflow: ellipsis;
+}
+
 .block-title {
 	font-size: 13px;
+	font-weight: 400;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-webkit-box-orient: vertical;
+}
+
+.narrow-block-title {
+	font-size: 11px;
 	font-weight: 400;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;

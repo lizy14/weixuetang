@@ -86,7 +86,7 @@ window.postForm = function(url, payload, callback){
 
 // followings are for calendar
 window.is_same_week = function(a, b) {
-    day = b.getUTCDay();
+    day = get_day(b);
     if (a >= b) {
         if ((a - b)/1000/86400 < 7 - day) return true;
         else return false;
@@ -97,7 +97,12 @@ window.is_same_week = function(a, b) {
     }
     else return true;
 }
-    
+
+window.get_day = function(date) {
+    day = date.getDay()
+    if (day == 0) return 6;
+    else return day - 1;
+}
 
 window.schedule = function (items, num_dates, focus_day) {
     new_items = new Array(num_dates);
@@ -111,21 +116,20 @@ window.schedule = function (items, num_dates, focus_day) {
             if (i.begin) { // curriculum
                 d = parseDate(i.begin);
                 if (!is_same_week(d, focus_day)) return;
-                index = d.getUTCDay();
-
-                i['start_time'] = {'hour': d.getHours(), 'min': d.getMinutes()};
+                index = 0;
+                i['start_time'] = {hour: d.getHours(), min: d.getMinutes(), day: get_day(d)};
                 e = parseDate(i.end);
-                i['end_time'] = {'hour': e.getHours(), 'min': e.getMinutes()}
+                i['end_time'] = {hour: e.getHours(), min: e.getMinutes(), day: get_day(e)}
             }
             else if (i.date) { // global events
                 d = parseDate(i.date);
                 if (!is_same_week(d, focus_day)) return;
-                index = d.getUTCDay();
+                index = get_day(d);
             }
             else if (i.end_time) {  // homework
                 d = parseDate(i.end_time);
                 if (!is_same_week(d, focus_day)) return;
-                index = d.getUTCDay();
+                index = get_day(d);
             }
             else return;
 
@@ -140,9 +144,9 @@ window.schedule = function (items, num_dates, focus_day) {
                 if (d.getMonth() != month) return;
                 index = d.getDate() - 1;
 
-                i['start_time'] = {'hour': d.getHours(), 'min': d.getMinutes()};
+                i['start_time'] = {hour: d.getHours(), min: d.getMinutes()};
                 e = parseDate(i.end);
-                i['end_time'] = {'hour': e.getHours(), 'min': e.getMinutes()}
+                i['end_time'] = {hour: e.getHours(), min: e.getMinutes()}
             }
             else if (i.date) { // global events
                 d = parseDate(i.date);
@@ -163,15 +167,11 @@ window.schedule = function (items, num_dates, focus_day) {
 }
 
 window.calculate_margin = function(day) {
-    fst_day = new Date(day.getFullYear(), day.getMonth(), 1).getDay();
-    if (fst_day == 0) before = 6;
-    else before = fst_day - 1;
-    lst_day = new Date(day.getFullYear(), day.getMonth()+1, 0).getDay()
-    if (lst_day == 0) after = 0;
-    else after = 7 - lst_day;
+    fst_day = get_day(new Date(day.getFullYear(), day.getMonth(), 1));
+    lst_day = get_day(new Date(day.getFullYear(), day.getMonth()+1, 0));
     return {
-        before:  before,
-        after: after
+        before:  fst_day - 1,
+        after: 7 - lst_day
     }
 }
 
@@ -183,6 +183,17 @@ window.produce_course_block = function (data) {
         i['top'] = (start.hour - 8)* 60 + start.min + 3;
         end = i.end_time;
         i['height'] = (end.hour - 8) * 60 + end.min - i['top'] - 17;
+    });
+}
+
+window.produce_course_block_for_week = function (data) {
+    if (!data) return [];
+    data.forEach(function(i){
+        start = i.start_time;
+        //alert(start[0] + ' ' + start[1]);
+        i['top'] = (start.hour - 8)* 60 + start.min + 18;
+        end = i.end_time;
+        i['height'] = (end.hour - 8) * 60 + end.min - i['top'] + 10;
     });
 }
 
@@ -198,9 +209,7 @@ window.week_range = function(data) {
     year = data.getFullYear();
     month = data.getMonth()
     date = data.getDate()
-    day = data.getDay();
-    if (day == 0) day = 6;
-    else day = day - 1;
+    day = get_day(data);
 
     s = new Date(year, month, date-day, 8).toISOString().substring(0,10);
     e = new Date(year, month, date-day+7, 8).toISOString().substring(0,10);
