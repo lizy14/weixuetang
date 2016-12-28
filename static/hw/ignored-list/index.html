@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-infinite-scroll@2.0.0"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="../../js/base.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="moqunzhu">
+
+    <title>已忽略作业列表</title>
+    <!-- Custom styles -->
+    <link href="../../css/weui-custom-style.css" rel="stylesheet">
+
+    <!-- WeUI styles -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
+
+    <!-- WeUI Javascript library -->
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+    <style>
+        .btn_dangerous{
+            color: red;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- Header -->
+    <h1 class="news-title">已忽略作业</h1>
+
+    <div class="weui-panel__bd" id="vue-container" v-infinite-scroll="load_more" infinite-scroll-disabled="no_more" >
+
+        <div class="news-subtitle">
+            <div class="weui-cells__title"> {{fortune}} </div>
+        </div>
+
+        <!-- news list -->
+        <div class="news-container">
+            <div class="weui-panel weui-panel_access">
+                <div v-on:click="undo_ignore" v-bind:id="item.homework_id" v-for="item in items" class="detail-box weui-media-box weui-media-box_text" >
+                    <!-- 3 homework status -->
+                    <!-- Unfinished homework -->
+
+                    <div v-if="item.status === 0">
+                        <h5 class="weui-media-box__title"><span class="weui-badge ddl-badge">未交</span>{{ item.title }}</h5>
+                        <p class="weui-media-box__desc">
+                            截止于
+                            <span v-if="item.end_time.days_left() == 0">
+                                今天
+                            </span>
+                            <span v-else>
+
+                                <span v-if="item.end_time.days_left() > 0">{{ item.end_time.days_left()}} 天后</span>
+                                <span v-else>{{-item.end_time.days_left()}} 天前</span>
+                            </span>
+                        </p>
+                    </div>
+                    <!-- Submitted homework -->
+                    <div v-if="item.status === 1">
+                        <h5 class="weui-media-box__title"><span class="green-badge weui-badge">已交</span>{{ item.title }}</h5>
+                    </div>
+                    <!-- Graded homework -->
+                    <div v-if="item.status === 2">
+                        <h5 class="weui-media-box__title"><span class="green-badge weui-badge">已批</span>{{ item.title }}</h5>
+                    </div>
+
+                    <ul class="weui-media-box__info">
+                        <li class="weui-media-box__info__meta">{{item.course_name}}</li>
+                        <li class="weui-media-box__info__meta">{{item.start_time.readable()}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="weui-loadmore" >
+            <div v-if="no_more">
+                <span v-if="items.length" class="weui-loadmore__tips">没有更多了</span>
+                <span v-else class="weui-loadmore__tips">没有作业 :)</span>
+            </div>
+            <div v-else>
+                <i v-if="loading_more" class="weui-loading"></i>
+                <span v-if="items.length" v-on:click="load_more" class="weui-loadmore__tips">加载更多</span>
+                <span v-else class="weui-loadmore__tips">正在加载</span>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script>
+        var vm = new Vue({
+            el: '#vue-container',
+            data: {
+                'fortune': "",
+                'items': [],
+                'no_more': false,
+                'loading_more': false,
+                'detail_showing': false,
+                'detail_item': {},
+            },
+            methods: {
+                load_more: function(){
+                    var _vm = this;
+                    _vm.loading_more = true;
+                    param = {
+                        'limit': 10,
+                        'start': _vm.items.length
+                    };
+                    getJSON('/api/hw/ignored-list/', param, function(data) {
+                        data.data.forEach(function(e){
+                            _vm.items.push(e);
+                        });
+                        _vm.loading_more = false;
+                        _vm.no_more = data.data.length < param.limit;
+                    })
+                },
+                undo_ignore: function(ev){
+                    var _vm = this;
+                    var id =  ev.currentTarget.id;
+                    _vm.posting = true;
+
+                    postForm('/api/hw/mark', {
+                        'homework_id': id,
+                        'ignore': 0
+                    }, function(){
+                        _vm.posting = false;
+                        _vm.detail_showing = false;
+
+                        var i;
+                        var n = _vm.items.length;
+                        for(i=0; i<n; i++){
+                            if(_vm.items[i].homework_id == id){
+                                break;
+                            }
+                        }
+                        if(i < n){
+                            _vm.items.splice(i, 1);
+                        }
+
+                    }, function(){
+                        _vm.posting = false;
+                    });
+                }
+            }
+        })
+        getJSON('/api/u/fortune', {}, function(data) {
+            vm.fortune = data.data
+        })
+
+    </script>
+</body>
+
+</html>
