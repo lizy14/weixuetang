@@ -10,8 +10,14 @@ from datetime import *
 from ztylearn.Util import get_curriculum, get_events, get_week_info
 
 
+# 为保持兼容性
 def wrap_date(dt):
-    # return dt.strftime('%Y-%m-%d')
+    return dt.strftime('%Y-%m-%d')
+    return int(dt.timestamp())
+
+
+def wrap_datetime(dt):
+    return dt.strftime('%Y-%m-%d %H:%M')
     return int(dt.timestamp())
 
 
@@ -23,9 +29,6 @@ def parse_date(dt_str):
     return datetime.strptime(dt_str, '%Y-%m-%d')
 
 
-def wrap_datetime(dt):
-    # return dt.strftime('%Y-%m-%d %H:%M')
-    return int(dt.timestamp())
 
 
 class Personal(APIView):
