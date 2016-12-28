@@ -23,10 +23,10 @@ class List(APIView):
                 'contact': d.contact,
                 'author_nickname': d.author_nick,
                 'i_am_the_author': d.author == self.student,
-                'published': wrap_datetime(d.published)
+                'published_time': wrap_datetime(d.published)
             }
             if d.last_update:
-                dat['last_update'] = wrap_datetime(d.last_update)
+                dat['last_update_time'] = wrap_datetime(d.last_update)
             return dat
         self.check_input('course_id')
         ls = TeamPost.objects.filter(course__id=self.input['course_id'])
