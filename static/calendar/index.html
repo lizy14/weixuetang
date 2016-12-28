@@ -164,12 +164,14 @@
             methods: {
                 init: function() {
                     var _vm = this;
+                    _vm.initialized = false;
                     focus_day = _vm.focus_day;
                     var param = month_range(focus_day);
                     _vm.num_dates = new Date(focus_day.getFullYear(), focus_day.getMonth()+1, 0).getDate();
                     _vm.margin = calculate_margin(focus_day);
+
+                    foo = 3;
                     // Get academic calendar
-                    _vm.initialized = true;
                     getJSON('/api/cal/personal', param, function(data) {
                         raw_data = data;
                         if (raw_data.code == 0) {
@@ -178,6 +180,8 @@
                         else {
                             // TODO
                         }
+                        foo -= 1;
+                        if (foo == 0) _vm.initialized = true;
                     });
                     // Get important notice
                     getJSON('/api/cal/global', function(data) {
@@ -188,12 +192,17 @@
                         else {
                             // TODO
                         }
+                        foo -= 1;
+                        if (foo == 0) _vm.initialized = true;
                     });
+                    // Get Homework ddls
                     getJSON('/api/hw/list', param, function(data) {
                         raw_data = data;
                         if (raw_data.code == 0) {
                              _vm.hw  = schedule(raw_data.data, _vm.num_dates, focus_day.getMonth());
                         }
+                        foo -= 1;
+                        if (foo == 0) _vm.initialized = true;
                     });
                        
                 },
