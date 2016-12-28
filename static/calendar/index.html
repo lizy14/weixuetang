@@ -168,19 +168,25 @@
                     var _vm = this;
                     _vm.initialized = false;
                     focus_day = _vm.focus_day;
-                    var param = month_range(focus_day);
-                    _vm.num_dates = new Date(focus_day.getFullYear(), focus_day.getMonth()+1, 0).getDate();
-                    _vm.margin = calculate_margin(focus_day);
+                    var param;
+
+                    if (_vm.view === 'month') {
+                        param = month_range(focus_day);
+                        _vm.num_dates = new Date(focus_day.getFullYear(), focus_day.getMonth()+1, 0).getDate();
+                        _vm.margin = calculate_margin(focus_day);
+                    }
+                    else if (_vm.view === 'week') {
+                        param = week_range(focus_day);
+                        _vm.num_dates = 7;
+                        _vm.margin = {before: 0, after: 0};
+                    }
 
                     foo = 3;
                     // Get academic calendar
                     getJSON('/api/cal/personal', param, function(data) {
                         raw_data = data;
                         if (raw_data.code == 0) {
-                             _vm.course  = schedule(raw_data.data, _vm.num_dates, focus_day.getMonth());
-                        }
-                        else {
-                            // TODO
+                             _vm.course  = schedule(raw_data.data, _vm.num_dates, focus_day);
                         }
                         foo -= 1;
                         if (foo == 0) _vm.initialized = true;
@@ -189,10 +195,7 @@
                     getJSON('/api/cal/global', function(data) {
                         raw_data = data;
                         if (raw_data.code == 0) {
-                             _vm.notice  = schedule(raw_data.data, _vm.num_dates, focus_day.getMonth());
-                        }
-                        else {
-                            // TODO
+                             _vm.notice  = schedule(raw_data.data, _vm.num_dates, focus_day);
                         }
                         foo -= 1;
                         if (foo == 0) _vm.initialized = true;
@@ -201,7 +204,7 @@
                     getJSON('/api/hw/list', param, function(data) {
                         raw_data = data;
                         if (raw_data.code == 0) {
-                             _vm.hw  = schedule(raw_data.data, _vm.num_dates, focus_day.getMonth());
+                             _vm.hw  = schedule(raw_data.data, _vm.num_dates, focus_day);
                         }
                         foo -= 1;
                         if (foo == 0) _vm.initialized = true;
