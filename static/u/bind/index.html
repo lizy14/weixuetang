@@ -52,7 +52,9 @@
                     </div>
                 </div>
                 <a :disabled="disabled" v-on:click="bind" class="weui-btn weui-btn_primary" id="confirm-button">确认</a>
-                <i v-if="disabled" class="weui-loading"></i>
+                <div v-if="disabled" class="weui-loadmore">
+                    <i class="weui-loading"></i>
+                </div>
             </div>
 
             <div v-if="bind_popup_showing" class="detail-dialog" id="msg-dialog">
