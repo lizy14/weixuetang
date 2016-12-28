@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'userpage',
     'homework',
     'notice',
+    'team',
 ]
 
 if DEBUG:
@@ -73,9 +74,10 @@ if DEBUG:
     NOSE_ARGS = [
         '--with-coverage',
         '--cover-no-print', # comment this line if confronted with bug
+        # pip install git+https://github.com/nose-devs/nose@master --upgrade
         '--cover-erase',
         '--cover-html',
-        '--cover-package=codex,homework,notice,userpage,wechat,WeLearn,ztylearn',
+        '--cover-package=codex,homework,notice,userpage,wechat,WeLearn,ztylearn,team',
     ]
 
 MIDDLEWARE_CLASSES = [
@@ -224,7 +226,8 @@ djcelery.setup_loader()
 
 from celery.schedules import crontab
 
-BROKER_URL = 'amqp://django:pass@rabbitmq:5672//'
+# BROKER_URL = 'amqp://django:pass@rabbitmq:5672//'
+BROKER_URL = 'amqp://'
 
 CELERY_IMPORTS = ('WeLearn.tasks',)
 CELERYBEAT_SCHEDULE = {
