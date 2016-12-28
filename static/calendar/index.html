@@ -18,10 +18,10 @@
         <!-- Custom styles -->
         <link href="../../css/weui-calendar.css" rel="stylesheet">
         <link href="../../css/weui-custom-style.css" rel="stylesheet">
-        
+
 
         <!-- WeUI Javascript library -->
-        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+        <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
     </head>
 
@@ -29,14 +29,14 @@
     <div id="vue-container">
         <div class="calendar-wrapper">
             <div class="calendar-container" id="month-view" v-if="view === 'month'">
-                <div class="header-wrapper"> 
+                <div class="header-wrapper">
                     <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</h1>
                     <div id="views-switcher">
                         <span class="switcher" id="month-switch" v-on:click="set_view('month')">月</span>
                         <span class="switcher" id="week-switch" v-on:click="set_view('week')">周</span>
                     </div>
                 </div>
-                
+
                 <div class="weui-grids">
                      <div class="days-bar">一</div>
                      <div class="days-bar">二</div>
@@ -105,7 +105,7 @@
                                         <td class="time-content">
                                             <div class="block hw-block" v-for="c, index in selected_day_hw" >
                                                 <div class="block-title">{{ c.title }}</div>
-                                                <div class="block-info">{{c.course_name}}</div> 
+                                                <div class="block-info">{{c.course_name}}</div>
                                             </div>
                                         </td>
                                     </tr>
@@ -113,7 +113,7 @@
                                         <td class="time-mark">events:</td>
                                         <td class="time-content">
                                             <div class="block event-block" v-for="c, index in selected_day_notice" >
-                                                <div class="block-title">{{ c.title }}</div> 
+                                                <div class="block-title">{{ c.title }}</div>
                                             </div>
                                         </td>
                                     </tr>
@@ -122,7 +122,7 @@
                                 <div class="block course-block" v-for="c in selected_day_course" :style="{top: c.top+'px', height: c.height+'px'}">
                                     <div class="block-title">{{ c.title }}</div>
                                     <div class="block-subtitle">{{c.start_time.hour}}:{{c.start_time.min}} - {{c.end_time.hour}}:{{c.end_time.min}}</div>
-                                    <div class="block-info">{{c.location}}</div> 
+                                    <div class="block-info">{{c.location}}</div>
                                 </div>
 
                                 <div class="current-time" v-if="current_day.getDate() === selected_day.getDate()&& current_day.getMonth() === selected_day.getMonth() && current_day.getYear() === selected_day.getYear() && current_day.getHours()>=8">
@@ -139,7 +139,7 @@
 
             </div>
             <div class="calendar-container" id="week-view" style="display:none;"></div>
-            
+
         </div>
     </div>
 
@@ -206,7 +206,7 @@
                         foo -= 1;
                         if (foo == 0) _vm.initialized = true;
                     });
-                       
+
                 },
                 update: function(focus_day) {
                     var _vm = this;
@@ -228,7 +228,7 @@
                     course_data = _vm.course[date-1];
                     hw_data = _vm.hw[date-1];
                     notice_data = _vm.notice[date-1];
-                    
+
                     produce_course_block(course_data);
                     _vm.selected_day_course = course_data;
                     _vm.selected_day_hw = hw_data;
@@ -246,7 +246,7 @@
                     }
                 },
             }
-        }); 
+        });
         vm.init();
 
     </script>
