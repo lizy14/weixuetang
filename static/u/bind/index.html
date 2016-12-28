@@ -18,7 +18,7 @@
         <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
 
         <!-- WeUI Javascript library -->
-        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+        <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
 </head>
 
@@ -51,7 +51,9 @@
                         </div>
                     </div>
                 </div>
-                <a v-on:click="bind" class="weui-btn weui-btn_primary" id="confirm-button">确认</a>
+                <a :disabled="disabled" v-on:click="bind" class="weui-btn weui-btn_primary" id="confirm-button">确认</a>
+                <i v-if="disabled" class="weui-loading"></i>
+            <span class="weui-loadmore__tips">正在加载</span>
             </div>
 
             <div v-if="bind_popup_showing" class="detail-dialog" id="msg-dialog">
@@ -99,6 +101,7 @@
                 'binded': false,
                 'msg_title': '',
                 'msg_content': '',
+                'disabled': false,
             },
             methods: {
                 hide_bind_popup: function() {
@@ -120,10 +123,13 @@
                     this.unbind_popup_showing = false;
                 },
                 bind: function() {
+                    vm.disabled = true;
                     param = urlParam;
     	            param['student_id'] = $('#inputUsername').val();
     	            param['password'] = $('#inputPassword').val();
                     postForm("/api/u/bind", param, function(data,status){
+                        this.bind_popup_showing = true;
+                        vm.disabled = false;
     	                if (data.code == 0) {
                             vm.msg_title = '绑定成功';
                             vm.msg_content = '';
@@ -134,7 +140,6 @@
                             vm.msg_content = data.msg;
     	                }
     	            });
-                    this.bind_popup_showing = true;
                 },
             }
         });
