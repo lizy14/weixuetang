@@ -29,22 +29,6 @@ class CalculatorHandler(WeChatHandler):
         return self.wechat.response_text(content=str(res))
 
 
-class BindStudentHandler(WeChatHandler):
-    res_bind = '您还没有绑定\n\n<a href="{}">点此绑定</a>'
-    res_unbind = '您已经绑定学号:\n{}\n\n回复“解绑”解除绑定'
-
-    def check(self):
-        return self.is_click_of_event('info_bind')
-
-    def handle(self):
-        if self.user.xt_id is not None:
-            return self.wechat.response_text(content=self.res_unbind.format(self.user.xt_id))
-        else:
-            return self.wechat.response_text(content=self.res_bind.format(settings.get_url('u/bind', {
-                'openid': self.user.open_id
-            })))
-
-
 class UnBindStudentHandler(WeChatHandler):
     response = '解绑成功\n\n<a href="{}">点此重新绑定</a>'
 
@@ -59,16 +43,6 @@ class UnBindStudentHandler(WeChatHandler):
         })))
 
 from userpage.tasks import notify
-
-
-class TestHandler(WeChatHandler):
-
-    def check(self):
-        return self.is_click_of_event('info_test') or self.is_text('测试', 'test')
-
-    def handle(self):
-        notify.delay()
-        return self.wechat.response_text(content='Done')
 
 
 class TemplateHandler(WeChatHandler):
