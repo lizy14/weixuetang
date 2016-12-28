@@ -73,7 +73,7 @@
 
 
                 <!-- Detail Dialog -->
-                <div id="dialog-container">
+                <transition id="dialog-container" name="fade">
                     <div v-if="detail_showing" class="detail-dialog">
                         <div class="weui-mask"></div>
                         <div class="scheduler-dialog weui-dialog">
@@ -122,7 +122,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </transition>
 
                  <div class="weui-loadmore" v-if="!initialized">
                     <i class="weui-loading"></i>
@@ -183,7 +183,6 @@
                                 raw_data = data;
                                 if (raw_data.code == 0) {
                                      _vm.hw  = schedule(raw_data.data, _vm.num_dates, today.getMonth());
-                                    console.log(_vm.hw);
                                 }
                             });
                         });

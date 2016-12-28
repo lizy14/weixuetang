@@ -168,7 +168,7 @@
 
 .hw-block {
 	position: static;
-	margin-left: 18.5px;
+	margin-left: 8.5px;
 	margin-bottom: 2px;
 	background-color: rgba(230,67,64,.2);
 	color:  #e64340;
@@ -179,7 +179,7 @@
 
 .event-block {
 	position: static;
-	margin-left: 18.5px;
+	margin-left: 8.5px;
 	margin-bottom: 2px;
 	background-color: rgba(255,190,0,.2);
 	color:  #ffbe00;
@@ -226,5 +226,5 @@ table {
 	width: 12px;
 	border-radius: 12px;
 	position: absolute;
-	left: 55px;
+	left: 57px;
 }

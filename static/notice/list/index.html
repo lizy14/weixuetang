@@ -49,7 +49,7 @@
 
 
             <!-- Detail Dialog -->
-            <div id="dialog-container">
+            <transition id="dialog-container" name="fade">
                 <div v-if="detail_showing" class="detail-dialog">
                     <div class="weui-mask"></div>
                     <div class="weui-dialog">
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </transition>
         </div>
         <div class="weui-loadmore" >
             <div v-if="no_more">

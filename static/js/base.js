@@ -65,7 +65,6 @@ window.getJSON = function(url, payload, callback){
 
 window.schedule = function (items, num_dates, month) {
     new_items = new Array(num_dates);
-    console.log(num_dates);
     for (var i = 0; i < num_dates; i++) {
         new_items[i] = new Array();
     }
