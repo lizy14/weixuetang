@@ -2,6 +2,8 @@ from codex.basetest import *
 from .models import *
 from .utils import Parser
 
+# import logging
+# __logger__ = logging.getLogger(name=__name__)
 
 class LectureTests(APITest):
 
@@ -9,14 +11,15 @@ class LectureTests(APITest):
         resp = self.simulate('get', '/api/lecture/list/')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()['code'], 0)
+        self.assertGreater(len(resp.json()['data']), 0)
 
     def test_detail(self):
         resp = self.simulate('get', '/api/lecture/detail/', {
-            'lecture_id': 1
+            'lecture_id': 80
         })
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()['code'], 0)
-        self.assertEqual(resp.json()['data'][0].lecture_id, 1)
+        self.assertEqual(resp.json()['data']['lecture_id'], 80)
         resp = self.simulate('get', '/api/lecture/detail/', {
             'lecture_id': 2333333
         })
