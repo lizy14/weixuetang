@@ -33,8 +33,8 @@ window.prune = function (items) {
 window.parseDate = function (str){
     return new Date(str * 1000);
     d = new Date(str);
-    d.setHours(23);
-    d.setMinutes(59);
+    //d.setHours(23);
+    //d.setMinutes(59);
     return d;
 };
 
@@ -103,21 +103,51 @@ window.getJSON = function(url, payload, callback, err_callback){
     })
 }
 
-window.schedule = function (items, num_dates) {
+window.schedule = function (items, num_dates, month) {
     new_items = new Array(num_dates);
+    for (var i = 0; i < num_dates; i++) {
+        new_items[i] = new Array();
+    }
+    if (!items) return new_items;
     items.forEach(function(i) {
-        index = parseDate(i.date).getDate() - 1;
-        if (new_items[index]) {
-            new_items[index].push(i);
+        if (i.begin) { // curriculum
+            d = parseDate(i.begin);
+            if (d.getMonth() != month) return;
+            index = d.getDate() - 1;
+
+            i['start_time'] = {'hour': d.getHours(), 'min': d.getMinutes()};
+            e = parseDate(i.end);
+            i['end_time'] = {'hour': e.getHours(), 'min': e.getMinutes()}
         }
-        else {
-            new_items[index] = new Array();
-            new_items[index].push(i);
+        else if (i.date) { // global events
+            d = parseDate(i.date);
+            if (d.getMonth() != month) return;
+            index = d.getDate() - 1;
         }
+        else if (i.end_time) {  // homework
+            d = parseDate(i.end_time);
+            if (d.getMonth() != month) return;
+            index = d.getDate() - 1;
+        }
+        else return;
+
+        new_items[index].push(i);
     });
     return new_items;
 }
 
+window.calculate_margin = function(day) {
+    fst_day = new Date(day.getFullYear(), day.getMonth(), 1).getDay();
+    if (fst_day == 0) before = 6;
+    else before = fst_day - 1;
+    lst_day = new Date(day.getFullYear(), day.getMonth()+1, 0).getDay()
+    if (lst_day == 0) after = 0;
+    else after = 7 - lst_day;
+    return {
+        before:  before,
+        after: after
+    }
+}
 
 window.postForm = function(url, payload, callback){
     payload = $.extend(payload, window.urlParam);
@@ -143,14 +173,31 @@ window.postForm = function(url, payload, callback){
 }
 
 window.produce_course_block = function (data) {
+    if (!data) return [];
     data.forEach(function(i){
-        start = i.start_time.split(':');
+        start = i.start_time;
         //alert(start[0] + ' ' + start[1]);
-        i['top'] = parseInt(start[0]-8) * 60 + parseInt(start[1]) + 3;
-        end = i.end_time.split(':');
-        i['height'] = parseInt(end[0]-8) * 60 + parseInt(end[1]) - i['top'] - 17;
-
+        i['top'] = (start.hour - 8)* 60 + start.min + 3;
+        end = i.end_time;
+        i['height'] = (end.hour - 8) * 60 + end.min - i['top'] - 17;
     });
+}
+
+window.month_range = function(date) {
+    year = date.getFullYear();
+    month = date.getMonth();
+    s = new Date(year, month, 1, 8).toISOString().substring(0,10);
+    e = new Date(year, month+1, 0, 8).toISOString().substring(0,10);
+    return {'start': s, 'end': e}
+}
+
+window.week_range = function(data) {
+    // TODO
+    year = date.getYear() + 1900;
+    day = date.getMonth();
+    s = new Date(year, month, 1, 8).toISOString().substring(0,10);
+    e = new Date(year, month+1, 0, 8).toISOString().substring(0,10);
+    return {'start': s, 'end': e}
 }
 
 // function krEncodeEntities(s){
