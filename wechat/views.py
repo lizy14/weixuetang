@@ -46,7 +46,7 @@ class CustomWeChatView(WeChatView):
                     {
                         'type': 'view',
                         'name': '讲座',
-                        'url': get_redirect_url('lecture'),
+                        'url': get_redirect_url('lecture/list'),
                     },
                     {
                         'type': 'view',
