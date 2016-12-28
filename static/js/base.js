@@ -167,7 +167,7 @@ window.schedule = function (items, num_dates, focus_day) {
         new_items[i] = new Array();
     }
     if (!items) return new_items;
-    
+
     if (num_dates == 7) { // Schedule for week view
         items.forEach(function(i) {
             if (i.begin) { // curriculum
@@ -227,7 +227,7 @@ window.calculate_margin = function(day) {
     fst_day = get_day(new Date(day.getFullYear(), day.getMonth(), 1));
     lst_day = get_day(new Date(day.getFullYear(), day.getMonth()+1, 0));
     return {
-        before:  fst_day - 1,
+        before:  fst_day,
         after: 7 - lst_day
     }
 }
