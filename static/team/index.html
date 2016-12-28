@@ -258,7 +258,7 @@
                 },
                 'show_detail': function(ev) {
                     var index = ev.currentTarget.id;
-                    this.detail_item = this.posts[index];
+                    this.detail_item = deepcopy(this.posts[index]);
                 },
                 'close_detail': function() {
                     this.detail_item = null;
@@ -310,7 +310,7 @@
                     }
                     window.postForm('/api/team/edit', payload, function(){
                         vm.change_course();
-                        alert('发布成功');
+                        alert(_vm.detail_item.creating? "发布成功" : "修改成功");
                         _vm.detail_item = null;
                     })
                 },
