@@ -36,8 +36,8 @@ window.prune = function (items) {
 
 window.parseDate = function (str){
     d = new Date(str);
-    d.setHours(23);
-    d.setMinutes(59);
+    //d.setHours(23);
+    //d.setMinutes(59);
     return d;
 };
 
@@ -65,31 +65,34 @@ window.getJSON = function(url, payload, callback){
 
 window.schedule = function (items, num_dates, month) {
     new_items = new Array(num_dates);
+    console.log(num_dates);
+    for (var i = 0; i < num_dates; i++) {
+        new_items[i] = new Array();
+    }
+
     items.forEach(function(i) {
-        if (i.begin) {
+        if (i.begin) { // curriculum
             d = parseDate(i.begin);
             if (d.getMonth() != month) return;
             index = d.getDate() - 1;
+
+            i['start_time'] = {'hour': d.getHours(), 'min': d.getMinutes()};
+            e = parseDate(i.begin);
+            i['end_time'] = {'hour': e.getHours(), 'min': e.getMinutes()}
         }
-        else if (i.date) {
+        else if (i.date) { // global events
             d = parseDate(i.date);
             if (d.getMonth() != month) return;
             index = d.getDate() - 1;
         }
-        else if (i.end_time) {
+        else if (i.end_time) {  // homework
             d = parseDate(i.end_time);
             if (d.getMonth() != month) return;
             index = d.getDate() - 1;
         }
         else return;
 
-        if (new_items[index]) {
-            new_items[index].push(i);
-        }
-        else {
-            new_items[index] = new Array();
-            new_items[index].push(i);
-        }
+        new_items[index].push(i);
     });
     return new_items;
 }
@@ -123,12 +126,11 @@ window.postForm = function(url, payload, callback){
 
 window.produce_course_block = function (data) {
     data.forEach(function(i){
-        start = i.start_time.split(':');
+        start = i.start_time;
         //alert(start[0] + ' ' + start[1]);
-        i['top'] = parseInt(start[0]-8) * 60 + parseInt(start[1]) + 3;
-        end = i.end_time.split(':');
-        i['height'] = parseInt(end[0]-8) * 60 + parseInt(end[1]) - i['top'] - 17;
-
+        i['top'] = (start.hour - 8)* 60 + start.min + 3;
+        end = i.end_time;
+        i['height'] = (end.hour - 8) * 60 + end.min - i['top'] - 17;
     });
 }
 
