@@ -15,7 +15,7 @@ services:
     build: .
     restart: always
     entrypoint: ./entrypoint.sh
-    command: celery -A WeLearn worker -l info
+    command: celery -A WeLearn worker -B -l info
     depends_on:
       - db
       - app
