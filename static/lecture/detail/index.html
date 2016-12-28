@@ -50,7 +50,7 @@
                 <div class="weui-panel weui-panel_access">
                     <div class="weui-panel__bd">
                         <div class="weui-media-box weui-media-box_text">
-                            <h5 class="weui-media-box__title">时间: {{ item.time }}</h5>
+                            <h5 v-if="item.time" class="weui-media-box__title">时间: {{ item.time }}</h5>
                             <h5 class="weui-media-box__title">地点: {{ item.place }}</h5>
                             <div class="weui-media-box__desc" id="detail-description">
                                     {{ item.detail }}

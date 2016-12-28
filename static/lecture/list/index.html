@@ -37,7 +37,6 @@
                     <!-- List Item -->
                     <div v-for="item in items" v-on:click="show_detail" v-bind:id="item.lecture_id" class="detail-box weui-media-box weui-media-box_text">
                         <h5 class="weui-media-box__title">{{ item.title }} ({{item.lecturer}})</h5>
-                        <p class="lecture-detail weui-media-box__desc">{{ item.detail }}</p>
                         <ul class="weui-media-box__info">
                             <li class="weui-media-box__info__meta"> {{ item.time }}</li>
                             <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.place }} </li>
