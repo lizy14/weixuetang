@@ -76,13 +76,14 @@ window.today =  new Date();
 
 window.getJSON = function(url, payload, callback, err_callback){
     payload = $.extend(payload, window.urlParam);
-    wrapped_err = function(err){
+    var wrapped_err = function(err){
         if(err_callback){
             err_callback(err);
         }else{
             alert(JSON.stringify(err));
         }
     };
+
     wrapped_success = function(data){
         if(data.code == 10){ // UnbindError
             if (location.pathname != BIND_LANDING) {
@@ -103,15 +104,15 @@ window.getJSON = function(url, payload, callback, err_callback){
     $.getJSON(
         url,
         payload,
-        wrapped_success,
+        wrapped_success
     ).fail(function(err){
         if(err.status == '403'){
-            // known issue, perform 1 retry
+            // known issue. perform 1 retry
             $.getJSON(
                 url,
                 payload,
-                wrapped_success,
-            ).fail(wrapped_err);
+                wrapped_success
+            ).fail(wrapped_err)
         }
     })
 }
