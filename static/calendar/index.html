@@ -28,12 +28,12 @@
 <body>
     <div id="vue-container">
         <div class="calendar-wrapper">
-            <div class="calendar-container" id="month-view" v-if="view === 'month' && initialized">
-                <div class="header-warper"> 
+            <div class="calendar-container" id="month-view" v-if="view === 'month'">
+                <div class="header-wrapper"> 
                     <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</h1>
                     <div id="views-switcher">
-                        <span class="switcher weui-btn weui-btn_primary" id="month-switch">月</span>
-                        <span class="switcher weui-btn weui-btn_default" id="week-switch">周</span>
+                        <span class="switcher" id="month-switch" v-on:click="set_view('month')">月</span>
+                        <span class="switcher" id="week-switch" v-on:click="set_view('week')">周</span>
                     </div>
                 </div>
                 
@@ -46,7 +46,12 @@
                      <div class="days-bar">六</div>
                      <div class="days-bar">日</div>
                 </div>
-                <div class="month-content weui-grids">
+
+                <div class="weui-loadmore" v-if="!initialized">
+                    <i class="weui-loading"></i>
+                    <span class="weui-loadmore__tips">正在加载</span>
+                </div>
+                <div class="month-content weui-grids" v-if="initialized">
                     <div class="weui-grid" v-for="i in margin.before"></div>
                     <div class="weui-grid" v-for="date in num_dates" v-on:click="show_detail" v-bind:id="date">
                         <div class="date_content_wrapper">
@@ -134,10 +139,7 @@
 
             </div>
             <div class="calendar-container" id="week-view" style="display:none;"></div>
-            <div class="weui-loadmore" v-if="!initialized">
-                <i class="weui-loading"></i>
-                <span class="weui-loadmore__tips">正在加载</span>
-            </div>
+            
         </div>
     </div>
 
@@ -233,6 +235,15 @@
                     _vm.selected_day_notice = notice_data;
                     _vm.detail_showing = true;
 
+                },
+                set_view: function(view) {
+                    var _vm = this;
+                    if (view === 'month') {
+                        _vm.view = view;
+                    }
+                    else if (view == 'week') {
+                        alert('尚未实现，敬请期待！');
+                    }
                 },
             }
         }); 

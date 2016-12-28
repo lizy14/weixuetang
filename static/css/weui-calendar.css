@@ -23,39 +23,33 @@
 }
 
 #views-switcher {
-	margin-right: 10px;
-	margin-bottom: 0px;
-	padding-bottom: 0px;
 	display: inline-block;
-	float: bottom;
-	float: right;
-	position: relative;
+	position:absolute;
+	right: 10px;
+	top: 50px;
 }
 
 .switcher {
-	width: 10%;
-	height: 20%;
-	margin-top: 0px;
-	font-size: 10px;
-	display: inline-block;
-}
-
-.switcher::after {
-	border: none;
-	margin-bottom: 0px;
-	display: inline-block;
+	padding: 1px 8px;
+	font-size: 14px;
+	text-align: center;
+	vertical-align: center;
 }
 
 #month-switch {
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
-	margin-right: 0;
+	border-top-left-radius: 20px;
+	border-bottom-left-radius: 20px;
+	background-color: #3cc51f;
+	color: #fff;
+	margin-right: 1px;
 }
 
 #week-switch {
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
-	margin-left: 0;
+	border-top-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+	background-color: #fff;
+	color: #3cc51f;
+	margin-right: 1px;
 }
 
 .month-content {
