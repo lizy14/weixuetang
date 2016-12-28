@@ -22,6 +22,12 @@
     <!-- WeUI Javascript library -->
     <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
+    <style>
+        .btn_dangerous{
+            color: red;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -129,6 +135,7 @@
                     </div>
 
                     <div class="weui-dialog__ft">
+                        <a v-on:click="ignore" class="weui-dialog__btn weui-dialog__btn_default btn_dangerous">隐藏</a>
                         <a v-on:click="hide_detail" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
                     </div>
                 </div>
@@ -192,6 +199,36 @@
                         _vm.detail_item = data.data;
                     })
                 },
+                ignore: function(){
+                    if(!confirm('该作业将被隐藏。可在“偏好设置”中解除隐藏。')){
+                        return;
+                    }
+                    var _vm = this;
+                    var post = _vm.detail_item;
+                    _vm.posting = true;
+
+                    postForm('/api/hw/mark', {
+                        'homework_id': post.homework_id,
+                        'ignore': 1
+                    }, function(){
+                        _vm.posting = false;
+                        _vm.detail_showing = false;
+
+                        var i;
+                        var n = _vm.items.length;
+                        for(i=0; i<n; i++){
+                            if(_vm.items[i].homework_id == post.homework_id){
+                                break;
+                            }
+                        }
+                        if(i < n){
+                            _vm.items.splice(i, 1);
+                        }
+
+                    }, function(){
+                        _vm.posting = false;
+                    });
+                }
             }
         })
         getJSON('/api/u/fortune', {}, function(data) {
