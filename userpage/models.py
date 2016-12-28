@@ -19,7 +19,6 @@ class Student(models.Model):
     xt_id = models.CharField(max_length=32, unique=True,
                              null=True, db_index=True)
     pref = models.OneToOneField(Preference, related_name='student')
-
     @classmethod
     def get_by_openid(cls, openid):
         try:

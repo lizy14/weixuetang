@@ -19,7 +19,7 @@ class BaseAPI(BaseView):
                         open_id=obj.request.session['openid'])
                 else:
                     try:
-                        student = Student.objects.get(
+                        student, create = Student.objects.get_or_create(
                             open_id=WeChatView.open_id_from_code(obj.input['code']))
                         obj.request.session['code'] = obj.input['code']
                         obj.request.session['openid'] = student.open_id

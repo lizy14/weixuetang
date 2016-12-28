@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^list/?$', List.as_view()),
     url(r'^detail/?$', Detail.as_view()),
     url(r'^mark/?$', Mark.as_view()),
+    url(r'^ignored-list/?$', IgnoreList.as_view()),
 ]

@@ -69,6 +69,6 @@ def notify_student_homework(usr):
     )
     if usr.pref.s_work:
         [send_template(usr.open_id, ins, '', safe_apply_async, eta=timezone.now().replace(
-            hour=23, minute=59, second=59, microsecond=0) - timedelta(minutes=usr.pref.ahead_time)) for ins in res]
+            hour=23, minute=59, second=59, microsecond=0) - timedelta(minutes=usr.pref.s_ddl_ahead_time)) for ins in res]
     else:
         visit_requests(cancel_check)

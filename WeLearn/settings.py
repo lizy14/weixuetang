@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'homework',
     'notice',
     'team',
-    'calendar_'
+    'calendar_',
+    'lecture'
 ]
 
 if DEBUG:
@@ -66,7 +67,7 @@ if DEBUG:
         # pip install git+https://github.com/nose-devs/nose@master --upgrade
         '--cover-erase',
         '--cover-html',
-        '--cover-package=codex,homework,notice,userpage,wechat,WeLearn,ztylearn,team',
+        '--cover-package=codex,homework,notice,userpage,wechat,WeLearn,ztylearn,team,calendar_,lecture',
     ]
 
 MIDDLEWARE_CLASSES = [

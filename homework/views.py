@@ -13,6 +13,7 @@ __logger__ = logging.getLogger(name=__name__)
 def parse_date(dt_str):
     return datetime.strptime(dt_str, '%Y-%m-%d')
 
+
 def wrap_homework_status_status(hwSt):
     return 2 if hwSt.graded else 1 if hwSt.submitted else 0
 
@@ -42,18 +43,19 @@ class UnfinishedList(APIView):
 
 class List(APIView):
 
-    def get(self):
-        def wrap(hwSt):
-            hw = hwSt.homework
-            return {
-                'homework_id': hw.id,
-                'start_time': wrap_time(hw.start_time),
-                'end_time': wrap_time(hw.end_time),
-                'title': hw.title,
-                'course_name': hw.course.name,
-                'status': wrap_homework_status_status(hwSt)
-            }
+    @classmethod
+    def wrap(cls, hwSt):
+        hw = hwSt.homework
+        return {
+            'homework_id': hw.id,
+            'start_time': wrap_time(hw.start_time),
+            'end_time': wrap_time(hw.end_time),
+            'title': hw.title,
+            'course_name': hw.course.name,
+            'status': wrap_homework_status_status(hwSt)
+        }
 
+    def get(self):
         result = HomeworkStatus.objects.filter(
             student__id=self.student.id,
             ignored=False
@@ -83,9 +85,7 @@ class List(APIView):
             pass
         except KeyError:
             pass
-
-
-        return [wrap(hwSt) for hwSt in result]
+        return [self.wrap(hwSt) for hwSt in result]
 
 
 class Detail(APIView):
@@ -112,6 +112,24 @@ class Detail(APIView):
             homework__id=self.input['homework_id']
         )
         return wrap(result)
+
+
+class IgnoreList(APIView):
+
+    def get(self):
+        result = HomeworkStatus.objects.filter(
+            student__id=self.student.id,
+            ignored=True
+        ).order_by('-homework__start_time')
+        try:
+            start = int(self.input['start'])
+            limit = int(self.input['limit'])
+            result = result[start: start + limit]
+        except ValueError:
+            pass
+        except KeyError:
+            pass
+        return [List.wrap(hwSt) for hwSt in result]
 
 
 class Mark(APIView):
