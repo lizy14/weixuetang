@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="moqunzhu">
 
-        <title>作业</title>
+        <title>作业详情</title>
         <!-- Custom styles -->
         <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
@@ -51,8 +51,8 @@
         <div class="weui-panel__bd">
 
             <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">截止时间: {{item.end_time}}</h5>
-                <h5 class="weui-media-box__title">发布时间: {{item.start_time}}</h5>
+                <h5 class="weui-media-box__title">截止时间: {{item.end_time.readable()}}</h5>
+                <h5 class="weui-media-box__title">发布时间: {{item.start_time.readable()}}</h5>
                 <div class="weui-media-box__desc" id="detail-description">{{item.detail}}
                 </div>
 
@@ -100,7 +100,7 @@
     </div>
 
     <script>
-        $.getJSON('/api/hw/detail/',urlParam, function(data){
+        getJSON('/api/hw/detail/',urlParam, function(data){
         new Vue({
             el: '#detail-container',
             data: {
