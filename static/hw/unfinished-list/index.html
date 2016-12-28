@@ -25,7 +25,7 @@
 </head>
 
 <body>
-    <div id="vue-container" v-infinite-scroll="init" infinite-scroll-disabled="!is_loading">
+    <div id="vue-container" >
         <!-- Header -->
         <h1 class="news-title">未交作业</h1>
 
@@ -133,8 +133,7 @@
     </div>
 
     <script>
-    
-        new Vue({
+        var vm = new Vue({
             el: '#vue-container',
             data: {
                 'items': [],
@@ -172,7 +171,8 @@
                 },
             }
         });
-
+        
+        vm.init();
 
 
     </script>

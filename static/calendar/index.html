@@ -27,7 +27,7 @@
 
 <body>
     <div id="vue-container">
-        <div class="calendar-wrapper" v-infinite-scroll="init" infinite-scroll-disabled="initialized">
+        <div class="calendar-wrapper">
             <div class="calendar-container" id="month-view" v-if="view === 'month' && initialized">
                 <div class="header-warper"> 
                     <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getYear()+1900 }}年</h1>
@@ -124,13 +124,12 @@
                     </div>
                 </transition>
 
-                 <div class="weui-loadmore" v-if="!initialized">
-                    <i class="weui-loading"></i>
-                    <span class="weui-loadmore__tips">正在加载</span>
-                </div>
-
             </div>
             <div class="calendar-container" id="week-view" style="display:none;"></div>
+            <div class="weui-loadmore" v-if="!initialized">
+                <i class="weui-loading"></i>
+                <span class="weui-loadmore__tips">正在加载</span>
+            </div>
         </div>
     </div>
 
@@ -184,9 +183,11 @@
                                 if (raw_data.code == 0) {
                                      _vm.hw  = schedule(raw_data.data, _vm.num_dates, today.getMonth());
                                 }
+                                _vm.initialized = true;
                             });
+
                         });
-                        _vm.initialized = true;
+                       
                     });
                 },
                 update: function() {
@@ -221,7 +222,8 @@
 
                 },
             }
-        });
+        }); 
+        vm.init();
 
     </script>
 </body>
