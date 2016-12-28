@@ -1,4 +1,4 @@
-
+window.BIND_LANDING = "/u/bind";
 
 
 
@@ -82,29 +82,38 @@ window.getJSON = function(url, payload, callback, err_callback){
         }else{
             alert(JSON.stringify(err));
         }
-    }
+    };
+    wrapped_success = function(data){
+        if(data.code == 10){ // UnbindError
+            if (location.pathname != BIND_LANDING) {
+                alert('先绑定 info 账号才可以哦 :(');
+                location.href = BIND_LANDING + location.search;
+                return;
+            }
+        }else if(data.code != 0){
+            wrapped_err(data.msg);
+        }
+        if(data.code == 0){
+            data.data = datify(data.data);
+        }
+        if(callback){
+            callback(data);
+        }
+    };
     $.getJSON(
         url,
         payload,
-        function(data){
-            if(data.code == 10){ // UnbindError
-                var BIND_LANDING = "/u/bind";
-                if (location.pathname != BIND_LANDING) {
-                    alert('先绑定 info 账号才可以哦 :(');
-                    location.href = BIND_LANDING + location.search;
-                    return;
-                }
-            }else if(data.code != 0){
-                wrapped_err(data.msg);
-            }
-            if(data.code == 0){
-                data.data = datify(data.data);
-            }
-            if(callback){
-                callback(data);
-            }
+        wrapped_success,
+    ).fail(function(err){
+        if(err.status == '403'){
+            // known issue, perform 1 retry
+            $.getJSON(
+                url,
+                payload,
+                wrapped_success,
+            ).fail(wrapped_err);
         }
-    ).fail(wrapped_err)
+    })
 }
 
 window.schedule = function (items, num_dates, month) {
