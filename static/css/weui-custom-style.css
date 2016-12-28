@@ -12,6 +12,7 @@ body {
     #text-align:center;
 }
 
+
 .news-subtitle{
     display: flex;
     -webkit-box-align: center;
@@ -67,4 +68,12 @@ body {
     -webkit-box-orient: vertical;
     overflow: scroll;
     text-overflow: clip !important;
+}
+
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s
+}
+.fade-enter, .fade-leave-active {
+  opacity: 0
 }

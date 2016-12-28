@@ -8,6 +8,14 @@ class Semester:
         self.user = user
 
     @property
+    async def curriculum(self):
+        response = await wrapped_json('/curriculum/{username}'.format_map({
+            'username': self.user.username
+        }))
+        assert(response['message'] == 'Success')
+        return response['classes']
+
+    @property
     async def courses(self):
         response = await wrapped_json('/learnhelper/{username}/courses'.format_map({
             'username': self.user.username

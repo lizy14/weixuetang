@@ -1,16 +1,20 @@
 {
   "SECRET_KEY": "%u#%k4@&wa+3*7h+^ia%^znq#616f$wdn^fgk6ml-ucg)p@i8d",
-  "DEBUG": true,
+  "DEBUG": false,
   "WECHAT_TOKEN": "dR8SScflBafd1FMrKIWl8aHXD5aXlq5ml4VTHvGiQxJZt0Uxiq",
   "WECHAT_APPID": "wx2e36e9c5e31cde42",
   "WECHAT_SECRET": "fa2864936faf0ff9d01db4ed9aeadb6f",
   "MSG_ENCRYPT": "normal",
   "WECHAT_AESKEY": "UE3kn8kziqGheupTNOe9OrB24TCL22VJTzF6C4GLbgVM3kK4Kn",
   "DB_NAME": "we_learn",
-  "DB_USER": "root",
-  "DB_PASS": "",
-  "DB_HOST": "127.0.0.1",
+  "DB_USER": "django",
+  "DB_PASS": "PoEHe8BQev4cpJyScLAPHvDyndtDa7H2z4OjBpIFbag",
+  "DB_HOST": "db",
   "DB_PORT": "3306",
   "SITE_DOMAIN": "http://localhost",
-  "IGNORE_CODE_CHECK": false
+  "IGNORE_CODE_CHECK": false,
+  "CAMUS_API_SECRET": "23AFC2B2C5A0",
+  "CAMUS_API_KEY": "21FF99646693",
+  "CAMUS_URL_PREFIX": "http://se.zhuangty.com:8000",
+  "BROKER_URL": "amqp://django:pass@rabbitmq:5672/"
 }

@@ -17,15 +17,7 @@ logger = logging.getLogger(name=__name__)
 class CustomWeChatView(WeChatView):
     handlers = [eval(m[0]) for m in inspect.getmembers(
         handlers_module, inspect.isclass) if m[1].__module__ == handlers_module.__name__ and m[1].__name__.endswith('Handler')]
-    event_keys = {
-        'news_assignments': 'NEWS_ASI',
-        'news_broadcasts': 'NEWS_BRO',
-        'news_lectures': 'NEWS_LEC',
-        'calendar': 'CALEN',
-        'info_bind': 'INFO_BIN',
-        'info_SETTING': 'INFO_SET',
-        'info_test': 'INFO_TEST',
-    }
+    event_keys = {}
     menu = {
         'button': [
             {
@@ -42,16 +34,26 @@ class CustomWeChatView(WeChatView):
                         'url': get_redirect_url('notice/list'),
                     },
                     {
-                        'type': 'click',
-                        'name': '讲座',
-                        'key': event_keys['news_lectures'],
+                        'type': 'view',
+                        'name': '日历',
+                        'url': get_redirect_url('calendar')
                     }
                 ]
             },
             {
-                'type': 'click',
-                'name': '日历',
-                'key': event_keys['calendar']
+                'name': '发现',
+                'sub_button': [
+                    {
+                        'type': 'view',
+                        'name': '讲座',
+                        'url': get_redirect_url('lecture'),
+                    },
+                    {
+                        'type': 'view',
+                        'name': '组队',
+                        'url': get_redirect_url('team'),
+                    }
+                ]
             },
             {
                 'name': '个人中心',
@@ -62,15 +64,10 @@ class CustomWeChatView(WeChatView):
                             'url': get_redirect_url('u/bind'),
                         },
                     {
-                            'type': 'click',
-                            'name': '设置',
-                                    'key': event_keys['info_SETTING'],
-                    },
-                    {
-                            'type': 'click',
-                            'name': '测试',
-                                    'key': event_keys['info_test'],
-                    }
+                            'type': 'view',
+                            'name': '偏好设置',
+                            'url': get_redirect_url('u/pref'),
+                        }
                 ]
             }
         ]

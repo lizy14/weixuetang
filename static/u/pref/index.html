@@ -1,167 +1,230 @@
 <!DOCTYPE html>
 <html lang="zh">
-    <head>
-        <script src="https://unpkg.com/vue/dist/vue.js"></script>
-        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-        <script src="../../js/base.js"></script>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="moqunzhu">
 
-        <title>个人中心</title>
-        <!-- Custom styles -->
-        <link href="../../css/weui-custom-style.css" rel="stylesheet">
+<head>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="../../3rd/zepto.min.js"></script>
+    <script src="../../js/base.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="moqunzhu">
 
-        <!-- WeUI styles -->
-        <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
+    <title>个人中心</title>
+    <!-- Custom styles -->
+    <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
-        <!-- WeUI Javascript library -->
-        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <!-- WeUI styles -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
 
-    </head>
+    <!-- WeUI Javascript library -->
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+</head>
 
 <body>
     <div id="vue-container">
 
-        <div v-if="pref===null" class="weui-loadmore">
-            <i class="weui-loading"></i>
-            <span class="weui-loadmore__tips">正在加载</span>
-        </div>
+        <!-- Header -->
+        <h1 class="news-title">设置</h1>
 
-        <div v-else v-on:click="post_pref">
-            <!-- Header -->
-            <h1 class="news-title">设置</h1>
+        <div v-if="! loading">
+            <div class="weui-cells__title">接收推送通知</div>
+            <div class="weui-cells">
 
-            <div class="weui-cells__title">通知</div>
-            <div class="weui-cells weui-cells_checkbox">
-                <label class="weui-cell weui-check__label" for="s11">
-                    <div class="weui-cell__hd">
-                        <input v-model="pref.s_work" type="checkbox" name="checkbox1" class="weui-check" id="s11">
-                        <i class="weui-icon-checked"></i>
+                <div class="weui-cell  weui-cell_switch">
+                    <div class="weui-cell__bd">课程公告出现</div>
+                    <div class="weui-cell__ft">
+                        <input class="weui-switch" type="checkbox" v-model="pref.s_notice" />
                     </div>
+                </div>
+                <div class="weui-cell weui-cells_form weui-cell_switch">
+                    <div class="weui-cell__bd">作业出现</div>
+                    <div class="weui-cell__ft">
+                        <input class="weui-switch" type="checkbox" v-model="pref.s_work" />
+                    </div>
+                </div>
+                <div class="weui-cell weui-cells_form weui-cell_switch">
+                    <div class="weui-cell__bd">作业被批改了</div>
+                    <div class="weui-cell__ft">
+                        <input class="weui-switch" type="checkbox" v-model="pref.s_grading" />
+                    </div>
+                </div>
+
+
+
+                <a class="weui-cell weui-cell_access" v-on:click="pick_s_ddl_ahead_time">
                     <div class="weui-cell__bd">
-                        <p>新作业通知</p>
+                        <p>作业即将截止</p>
                     </div>
-                </label>
-                <label class="weui-cell weui-check__label" for="s12">
-                    <div class="weui-cell__hd">
-                        <input v-model="pref.s_notice" type="checkbox" class="weui-check" name="checkbox1" id="s12">
-                        <i class="weui-icon-checked"></i>
-                    </div>
+                    <div class="weui-cell__ft">{{c_s_ddl_ahead_time}}</div>
+                </a>
+                <a class="weui-cell weui-cell_access" v-on:click="pick_s_class_ahead_time">
                     <div class="weui-cell__bd">
-                        <p>新公告通知</p>
+                        <p>该去上课了</p>
                     </div>
-                </label>
-                <label class="weui-cell weui-check__label" for="s13">
-                    <div class="weui-cell__hd">
-                        <input v-model="pref.s_grading" type="checkbox" name="checkbox1" class="weui-check" id="s13">
-                        <i class="weui-icon-checked"></i>
-                    </div>
-                    <div class="weui-cell__bd">
-                        <p>作业批改情况变动通知</p>
-                    </div>
-                </label>
-                <label class="weui-cell weui-check__label" for="s14">
-                    <div class="weui-cell__hd">
-                        <input v-model="pref.s_class" type="checkbox" name="checkbox1" class="weui-check" id="s14">
-                        <i class="weui-icon-checked"></i>
-                    </div>
-                    <div class="weui-cell__bd">
-                        <p>上课通知</p>
-                    </div>
-                </label>
+                    <div class="weui-cell__ft">{{c_s_class_ahead_time}}</div>
+                </a>
             </div>
 
-            <div class="weui-cells__title">通知提前时间</div>
-            <div class="weui-cells weui-cells_radio">
-                <label class="weui-cell weui-check__label" for="x11">
-                   <div class="weui-cell__bd">
-                       <p>不提醒</p>
-                   </div>
-                   <div class="weui-cell__ft">
-                       <input type="radio" class="weui-check" name="radio1" id="x11" value="-1" v-model="pref.ahead_time">
-                       <span class="weui-icon-checked"></span>
-                   </div>
-               </label>
-                <label class="weui-cell weui-check__label" for="x12">
 
-                    <div class="weui-cell__bd">
-                        <p>提前4小时</p>
-                    </div>
-                    <div class="weui-cell__ft">
-                        <input type="radio" name="radio1" class="weui-check" id="x12" value="240" v-model="pref.ahead_time">
-                        <span class="weui-icon-checked"></span>
-                    </div>
-                </label>
-                <label class="weui-cell weui-check__label" for="x13">
-
-                    <div class="weui-cell__bd">
-                        <p>提前1天</p>
-                    </div>
-                    <div class="weui-cell__ft">
-                        <input type="radio" name="radio1" class="weui-check" id="x13" value="1440" v-model="pref.ahead_time">
-                        <span class="weui-icon-checked"></span>
-                    </div>
-                </label>
-            </div>
-
-            <div class="weui-cells__title">订阅</div>
+            <div class="weui-cells__title">订阅公共信息</div>
             <div class="weui-cells weui-cells_form">
                 <div class="weui-cell weui-cell_switch">
                     <div class="weui-cell__bd">文化素质教育讲座</div>
                     <div class="weui-cell__ft">
-                        <input class="weui-switch" type="checkbox" v-model="pref.s_lecture"/>
+                        <input class="weui-switch" type="checkbox" v-model="pref.s_lecture" />
                     </div>
                 </div>
                 <div class="weui-cell weui-cell_switch">
                     <div class="weui-cell__bd">教务通知</div>
                     <div class="weui-cell__ft">
-                        <input class="weui-switch" type="checkbox" v-model="pref.s_academic"/>
+                        <input class="weui-switch" type="checkbox" v-model="pref.s_academic" />
                     </div>
                 </div>
             </div>
+
+
+
+
+            <div v-if="courses.length" class="weui-cells__title">刷屏防护：只接收选中课程的消息</div>
+            <div class="weui-cells weui-cells_checkbox">
+                <label class="weui-cell weui-check__label" v-bind:for="course.course_id" v-for="course, index in courses">
+                    <div class="weui-cell__hd">
+                        <input
+                        type="checkbox" class="weui-check"
+                            v-model="course.ignored"
+                            v-bind:true-value="false"
+                            v-bind:false-value="true"
+                            v-bind:id="course.course_id"
+                            v-on:change="course_ignore_toggled(index)">
+                        <i class="weui-icon-checked"></i>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <p>{{course.course_name}}</p>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div v-else class="weui-loadmore">
+            <i class="weui-loading"></i>
+            <span class="weui-loadmore__tips">正在加载</span>
         </div>
     </div>
     <script>
-        var vm = new Vue({
-            el: '#vue-container',
-            data: {
-                'pref': {
-                    's_work': true,
-                    's_notice': true,
-                    'ignore_courses': [],
-                    's_grading': true,
-                    's_academic': true,
-                    's_lecture': true,
-                    's_class': true,
-                    'ahead_time': "-1",
-                },
+    function renderMinutes(m){
+        if(m < 0){
+            return '关闭';
+        }
+        return '提前 ' + (function(m){
+            if(m < 60){
+                return m + ' 分钟';
+            }else if(m < 24 * 60){
+                return Math.floor(m/60) + ' 小时';
+            }else{
+                return Math.floor(m/24/60) + ' 天';
+            }
+        })(m);
+    }
+
+    function renderPickerOptions(ms){
+        var result = [];
+        ms.forEach(function(e){
+            result.push({
+                'label': renderMinutes(e),
+                'value': e
+            });
+        });
+        return result;
+    }
+
+    function deepcopy(original){
+        return JSON.parse(JSON.stringify(original)); // deep copy
+    }
+
+    var vm = new Vue({
+        el: '#vue-container',
+        data: {
+            'loading': 2,
+            'pref': null,
+            'courses': [],
+        },
+        computed: {
+            'c_s_class_ahead_time': function() {
+                return renderMinutes(this.pref.s_class_ahead_time);
             },
-            methods: {
-                post_pref: function() {
-                    param = {
-                        's_work': true,
-'s_notice': true,
-'ignore_courses': JSON.stringify(['1']),
-'s_grading': true,
-'s_academic': true,
-'s_lecture': true,
-'s_class': true,
-'ahead_time': "-1",
-                    };
-                    param.code = urlParam.code;
-                    param.state = urlParam.state;
-                    $.post('/api/u/pref', param);
+            'c_s_ddl_ahead_time': function() {
+                return renderMinutes(this.pref.s_ddl_ahead_time);
+            }
+        },
+        methods: {
+            'pick_s_ddl_ahead_time': function() {
+                var options = [-1, 30, 60, 6*60, 12*60, (24+12)*60, (2*24+12)*60]; // “提前1天” -> 36 小时前 -> 前一天正午
+                weui.picker(
+                    renderPickerOptions(options), {
+                    onChange: function(result) {},
+                    onConfirm: function(result) {
+                        vm.pref.s_ddl_ahead_time = result[0];
+                    },
+                    id: 'pick_s_ddl_ahead_time',
+                    defaultValue: [deepcopy(vm.pref.s_ddl_ahead_time)]
+                });
+            },
+            'pick_s_class_ahead_time': function() {
+                var options = [-1, 5, 15, 30];
+                weui.picker(
+                    renderPickerOptions(options), {
+                    onChange: function(result) {},
+                    onConfirm: function(result) {
+                        console.log(result)
+                        vm.pref.s_class_ahead_time = result[0];
+                    },
+                    id: 'pick_s_class_ahead_time',
+                    defaultValue: [deepcopy(vm.pref.s_class_ahead_time)]
+                });
+            },
+            'course_ignore_toggled': function(index){
+                var c = this.courses[index];
+                console.log("course #" + c.course_id + ' (' + c.course_name + ') ignore set to ' + c.ignored);
+                var payload = {
+                    course_id: c.course_id,
+                    ignore: c.ignored + 0 // true/false -> 1/0
                 }
+                postForm('/api/u/courses', payload);
             }
-        })
-        $.getJSON('/api/u/pref', urlParam, function(resp){
-            if(resp.code === 0) {
-                vm.pref = resp.data;
-            }
-        })
+        },
+    })
+
+    getJSON('/api/u/pref', {}, function(resp) {
+        pref = resp.data;
+        vm.pref = pref;
+        for (key in pref) {
+            (function(_key) {
+                vm.$watch('pref.' + _key, function() {
+                    console.log(_key + ' set to ' + this.pref[_key]);
+                    var payload = {};
+                    var new_val = this.pref[_key];
+                    if(false == _key.endsWith('_ahead_time')){
+                        new_val += 0;  // true/false -> 1/0
+                    }
+                    payload[_key] = new_val;
+                    postForm('/api/u/pref', payload);
+                })
+            })(key);
+        }
+        vm.loading -= 1;
+    })
+
+    getJSON('/api/u/courses', {}, function(resp) {
+        var courses = resp.data;
+        vm.courses = courses;
+        vm.loading -= 1;
+    })
     </script>
+
+    <script src="../../3rd/weui.min.js"></script>
 </body>
+
 </html>

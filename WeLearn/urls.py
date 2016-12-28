@@ -24,5 +24,7 @@ urlpatterns = [
     url(r'^api/u/', include('userpage.urls')),
     url(r'^api/hw/', include('homework.urls')),
     url(r'^api/notice/', include('notice.urls')),
+    url(r'^api/cal/', include('calendar_.urls')),
+    url(r'^api/team/', include('team.urls')),
     url(r'^', StaticFileView.as_view()),
 ]

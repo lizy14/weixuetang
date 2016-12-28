@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="../../3rd/zepto.min.js"></script>
+    <script src="../../js/base.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="moqunzhu">
+
+    <title>组队</title>
+    <!-- Custom styles -->
+    <link href="../../css/weui-custom-style.css" rel="stylesheet">
+
+    <!-- WeUI styles -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
+
+    <!-- WeUI Javascript library -->
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+
+    <style>
+        span.i_am_the_author {
+            color: #586c94; /* .weui-cell_link */
+        }
+        span.post_type {}
+        span.pt_zhaoduiyou {
+            color: red;
+        }
+        span.pt_qiudatui {
+            color: blue;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="vue-container">
+
+        <!-- Header -->
+        <h1 class="news-title">组队</h1>
+
+        <div>
+
+            <!-- course select -->
+            <div class="weui-cells__title">课程</div>
+            <div class="weui-cells">
+                <div class="weui-cell weui-cell_select">
+                    <div class="weui-cell__bd">
+                        <select class="weui-select" name="select1" v-model="course">
+                            <option v-for="course in courses" v-bind:value="course">{{course.course_name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- post list -->
+            <div v-if="posts">
+                <div class="weui-cells__title">目前共有 {{posts.length}} 条消息</div>
+
+                <div class="weui-panel__bd">
+                    <div class="news-container">
+                        <div class="weui-panel weui-panel_access">
+                            <!-- List Item -->
+                            <div v-for="item, index in posts" v-on:click="show_detail" v-bind:id="index" class="detail-box weui-media-box weui-media-box_text">
+                                <h5 class="weui-media-box__title">
+                                    <span v-if="item.type==1" class="post_type pt_zhaoduiyou">[招队友]</span>
+                                    <span v-if="item.type==2" class="post_type pt_qiudatui">[求大腿]</span>
+                                    {{ item.title }}
+                                </h5>
+                                <p class="weui-media-box__desc">{{ item.detail }}</p>
+                                <ul class="weui-media-box__info">
+                                    <li class="weui-media-box__info__meta">
+                                        <span v-if="item.i_am_the_author" class="i_am_the_author">我（{{item.author_nickname}}）</span>
+                                        <span v-else>{{item.author_nickname}}</span>
+                                        <span v-if="item.last_update">更新于 {{ item.last_update }}</span>
+                                        <span v-else>发布于 {{ item.published }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div v-if="loading" class="weui-loadmore">
+                <i class="weui-loading"></i>
+                <span class="weui-loadmore__tips">正在加载</span>
+            </div>
+
+            <!-- publish button -->
+            <div v-if="! loading">
+                <div v-if="course.course_id">
+                    <div v-if="posts">
+                        <div class="weui-cells__title">还没有人发布过求组队……</div>
+                    </div>
+                    <a v-on:click="create_post" class="weui-btn weui-btn_primary">
+                        我要发布
+                    </a>
+                </div>
+            </div>
+
+            <!-- detail or edit popup -->
+            <div v-if="detail_item">
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__hd">
+                        <div class="weui-dialog__title">
+                            <span v-if="!detail_item.i_am_the_author">
+                                <span v-if="detail_item.type==1">招队友</span>
+                                <span v-if="detail_item.type==2">求大腿</span>
+                                详情
+                            </span>
+                            <span v-else>
+                                <span v-if="detail_item.creating">发布</span>
+                                <span v-else>编辑</span>
+                                求组队信息
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="weui-page__bd">
+                        <div v-if="detail_item.i_am_the_author">
+                            <div class="weui-cells weui-cells_form">
+                                <div class="weui-cell weui-cell_select weui-cell_select-after">
+                                    <div class="weui-cell__hd"><label class="weui-label">类型</label></div>
+                                    <div class="weui-cell__bd">
+                                        <select v-model="detail_item.type" class="weui-select">
+                                            <option value="1">招队友-我要当组长</option>
+                                            <option value="2">求大腿-我要当组员</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="weui-cell">
+                                    <div class="weui-cell__hd"><label class="weui-label">标题</label></div>
+                                    <div class="weui-cell__bd">
+                                        <input v-model="detail_item.title" class="weui-input" placeholder=""/>
+                                    </div>
+                                </div>
+
+                                <div class="weui-cell">
+                                    <div class="weui-cell__hd"><label class="weui-label">详细描述</label></div>
+                                    <div class="weui-cell__bd">
+                                        <textarea v-model="detail_item.detail" class="weui-textarea" placeholder="" rows="5"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="weui-cell">
+                                    <div class="weui-cell__hd"><label class="weui-label">署名</label></div>
+                                    <div class="weui-cell__bd">
+                                        <input v-model="detail_item.author_nickname" class="weui-input" placeholder=""/>
+                                    </div>
+                                </div>
+
+                                <div class="weui-cell">
+                                    <div class="weui-cell__hd"><label class="weui-label">联系方式</label></div>
+                                    <div class="weui-cell__bd">
+                                        <input v-model="detail_item.contact" class="weui-input" pattern=".+" placeholder=""/>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div v-else class="dialog-detail-box weui-dialog__bd">
+                            <div class="weui-media-box__info">
+                                <div class="weui-media-box__desc">{{detail_item.title}}</div>
+                            </div>
+
+                            <div class="weui-media-box__info">
+                                <div v-if="detail_item.detail" class="weui-media-box__desc">
+                                    {{detail_item.detail}}</div>
+                                <div v-else>作者惜字如金，没有撰写详情 :(</div>
+                            </div>
+                            <div class="weui-media-box__info">
+                                <div v-if="detail_item.author_nickname" class="weui-media-box__desc">
+                                    发布者：{{detail_item.author_nickname}}</div>
+                                <div v-else>作者没有留下名字 :(</div>
+
+                                <div v-if="detail_item.contact" class="weui-media-box__desc">
+                                    联系方式：{{detail_item.contact}}</div>
+                                <div v-else>作者没有留下联系方式 :(</div>
+                            </div>
+
+                            <div class="weui-media-box__info">
+                                <div class="weui-media-box__desc">
+                                    {{course.course_name}}</div>
+                                <div class="weui-media-box__desc">
+                                    发布时间: {{detail_item.published}}</div>
+                                <div v-if="detail_item.last_update" class="weui-media-box__desc">
+                                    最近更新: {{detail_item.last_update}}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="detail_item.i_am_the_author">
+                        <div v-if="detail_item.creating"  class="weui-dialog__ft">
+                            <a v-on:click="submit" class="weui-dialog__btn weui-dialog__btn_primary">发布</a>
+                            <a v-on:click="close_detail" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                        </div>
+                        <div v-else  class="weui-dialog__ft">
+                            <a v-on:click="submit" class="weui-dialog__btn weui-dialog__btn_primary">保存</a>
+                            <a v-on:click="close_detail" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                        </div>
+
+                    </div>
+                    <div v-else class="weui-dialog__ft">
+                        <a v-on:click="close_detail" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <script>
+        function deepcopy(original) {
+            return JSON.parse(JSON.stringify(original)); // deep copy
+        }
+
+        var vm = new Vue({
+            el: '#vue-container',
+            data: {
+                'loading': 1,
+                'courses': [],
+                'course': {},
+                'posts': null,
+                'detail_item': null,
+            },
+            methods: {
+                'change_course': function(){
+                    var _vm = this;
+                    _vm.loading += 1;
+                    getJSON(
+                        '/api/team/course',
+                        {
+                            'course_id': c.course_id
+                        },
+                        function(resp){
+                            _vm.loading -= 1;
+                            _vm.posts = resp.data;
+                        },
+                        function(err){
+                            alert("获取信息出错，请稍后重试");
+                            _vm.loading -= 1;
+                            _vm.course = _vm.courses[0];
+                        }
+                    );
+                },
+                'show_detail': function(ev) {
+                    var index = ev.currentTarget.id;
+                    this.detail_item = deepcopy(this.posts[index]);
+                },
+                'close_detail': function() {
+                    this.detail_item = null;
+                },
+                'create_post': function() {
+                    this.detail_item = {
+                        'course_id': this.course.course_id,
+                        'creating': true,
+                        'i_am_the_author': true,
+                        'type': null,
+                        'contact': "",
+                        "author_nickname": "",
+                        "title": "",
+                        "detail": ""
+                    }
+                },
+                'submit': function() {
+                    var _vm = this;
+                    var post = _vm.detail_item;
+                    function check_fields(post){
+                        if(post.type === null){
+                            return false;
+                        }
+                        function check_text_field(obj, key){
+                            return typeof obj === "object" && obj.hasOwnProperty(key) && typeof post[key] === "string" && post[key].length > 0;
+                        }
+                        return (
+                            check_text_field(post, 'title') &&
+                            check_text_field(post, 'author_nickname') &&
+                            check_text_field(post, 'detail') &&
+                            check_text_field(post, 'contact')
+                            );
+                    }
+                    console.log("submitting " + JSON.stringify(post));
+                    if(!check_fields(post)){
+                        alert("所有项目均为必填");
+                        return;
+                    }
+
+                    var payload = {}
+                    var keys = ['type', 'title', 'author_nickname', 'detail', 'contact'];
+                    keys.forEach(function(k){
+                        payload[k] = post[k];
+                    })
+                    if(post.creating){
+                        payload.course_id = _vm.course.course_id;
+                    }else{
+                        payload.post_id = post.post_id;
+                    }
+                    window.postForm('/api/team/edit', payload, function(){
+                        vm.change_course();
+                        alert(_vm.detail_item.creating? "发布成功" : "修改成功");
+                        _vm.detail_item = null;
+                    })
+                },
+            },
+            watch: {
+                'course': function() {
+                    var _vm = this;
+                    c = _vm.course;
+                    _vm.posts = null;
+                    if (c.course_id) {
+                        console.log('course changed to ' + c.course_id + ' (' + c.course_name + ')');
+                        _vm.change_course();
+                    } else {
+                        console.log('no course specified');
+                    }
+                },
+            },
+        })
+
+        vm.loading = 1;
+        getJSON('/api/u/courses', {}, function(resp) {
+            var courses = resp.data;
+            var prompt = {
+                course_name: '请选择一门课程',
+                // course_id is undefined
+            }
+            courses.unshift(prompt)
+            vm.courses = courses;
+            vm.course = prompt;
+            vm.loading -= 1;
+        })
+    </script>
+
+    <script src="../../3rd/weui.min.js"></script>
+</body>
+
+</html>

@@ -1,17 +1,1 @@
-django~=1.9.5
-mysqlclient~=1.3.7
-django-extensions~=1.7.4
-pycrypto~=2.6.1
-uWSGI~=2.0.13
-python-dateutil~=2.5.3
-pytz~=2016.7
-selenium~=3.0.1
-mock~=2.0.0
-celery~=3.1
-django-mysql~=1.1.0
-django-celery~=3.1
-wechat-sdk~=0.6.4
-aiohttp~=1.1.6
-requests
-django-nose~=1.4.4
-coverage
+-r requirements/production.txt

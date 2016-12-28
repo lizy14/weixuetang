@@ -100,3 +100,5 @@ active.bat
 __.json
 reconstruct*
 */migrations/
+static/*.crt
+static/*.key
