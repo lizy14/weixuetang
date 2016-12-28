@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
     <head>
-        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <script src="../../3rd/vue.js"></script>
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script src="../../js/base.js"></script>
         <meta charset="utf-8">
@@ -17,7 +17,7 @@
         <!-- Custom styles -->
         <link href="../../css/weui-calendar.css" rel="stylesheet">
         <link href="../../css/weui-custom-style.css" rel="stylesheet">
-        
+
 
         <!-- WeUI Javascript library -->
         <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
@@ -26,16 +26,16 @@
 
 <body>
     <div id="vue-container">
-        
+
         <div class="calendar-container" id="month-view" v-if="view === 'month'">
-            <div class="header-warper"> 
+            <div class="header-warper">
                 <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getYear()+1900 }}年</h1>
                 <div id="views-switcher">
                     <span class="switcher weui-btn weui-btn_primary" id="month-switch">月</span>
                     <span class="switcher weui-btn weui-btn_default" id="week-switch">周</span>
                 </div>
             </div>
-            
+
             <div class="weui-grids">
                  <div class="days-bar">一</div>
                  <div class="days-bar">二</div>
@@ -85,7 +85,7 @@
                                     <td class="time-content">
                                         <div class="block hw-block" v-for="c, index in selected_day_hw" >
                                             <div class="block-title">{{ c.hw_name }}</div>
-                                            <div class="block-info">{{c.course_name}}</div> 
+                                            <div class="block-info">{{c.course_name}}</div>
                                         </div>
                                     </td>
                                 </tr>
@@ -94,14 +94,14 @@
                             <div class="block course-block" v-for="c in selected_day_course" :style="{top: c.top+'px', height: c.height+'px'}">
                                 <div class="block-title">{{ c.course_name }}</div>
                                 <div class="block-subtitle">{{c.start_time}} - {{c.end_time}}</div>
-                                <div class="block-info">{{c.location}}</div> 
+                                <div class="block-info">{{c.location}}</div>
                             </div>
 
                             <div class="current-time" v-if="current_day.getDate() === selected_day.getDate()&& current_day.getMonth() === selected_day.getMonth() && current_day.getHours()>=8">
                                 <div class="current-time-line"  :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()+3 + 'px'}"></div>
                                 <div class="current-time-dot" :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()-3 + 'px'}"></div>
                             </div>
-                            
+
                         </div>
 
 
@@ -149,7 +149,7 @@
             computed: {
                 // the following data is to be shown in the calendar grids.
                 // since they should be fetched at the very begining, I put them in the
-                // "computed" component of vue.js. Maybe moving them into "methods" is a 
+                // "computed" component of vue.js. Maybe moving them into "methods" is a
                 // better choice.
                 // (https://vuejs.org/v2/guide/computed.html#Computed-Caching-vs-Methods)
                 // mo qun zhu. orz
@@ -164,7 +164,7 @@
                 course: function() {
                     var _vm = this;
 
-                    // fetch course data; 
+                    // fetch course data;
 
                     raw_course_data = {data: [
                         {course_name:"软件工程（3）", date:"2016-12-12"},
@@ -208,7 +208,7 @@
                         {hw_name:"homework3", course_name:"软件理论基础（2）"},
                         {hw_name:"第7次作业", course_name:"计算机网络系统"}
                     ];
-                    
+
                     produce_course_block(course_data);
                     _vm.selected_day_course = course_data;
 

@@ -23,7 +23,7 @@ services:
       - C_FORCE_ROOT=true
   app:
     <<: *app_base
-    command: bash -c "python manage.py makemigrations homework notice userpage wechat; python manage.py migrate; python manage.py synctemplate; gunicorn -w 3 -b 0.0.0.0 WeLearn.wsgi"
+    command: bash -c "python manage.py makemigrations homework notice userpage wechat team; python manage.py migrate; python manage.py synctemplate; gunicorn -w 3 -b 0.0.0.0 WeLearn.wsgi"
     volumes:
       - /code/static
     depends_on:
