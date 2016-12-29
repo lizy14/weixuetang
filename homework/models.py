@@ -91,6 +91,6 @@ def create_hw_status(sender, instance, raw, **kwargs):
             _ = HomeworkStatus.objects.get(student=stu, homework=instance)
         except:
             hws = HomeworkStatus(student=stu, homework=instance)
-            if instance.force_now:
+            if getattr(instance, 'force_now', False):
                 hws.force_now = True
             hws.save()
