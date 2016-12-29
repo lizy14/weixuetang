@@ -21,7 +21,7 @@ class StaticFileView(BaseView): # pragma: no cover
     def do_dispatch(self, *args, **kwargs):
         if not settings.DEBUG:
             self.logger.warn('Please use nginx/apache to serve static files in production!')
-            raise Http404()
+            # raise Http404()
         rpath = self.request.path.replace('..', '.').strip('/')
         if '__' in rpath:
             raise Http404('Could not access private static file: ' + self.request.path)

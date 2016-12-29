@@ -192,10 +192,10 @@
                             <div class="block-subtitle">{{c.start_time.hour}}:{{c.start_time.min}} - {{c.end_time.hour}}:{{c.end_time.min}}</div>
                             <div class="block-info">{{c.location}}</div>
                         </div>
-                        <div class="current-time" v-if="current_day.getDate() === selected_day.getDate()&& current_day.getMonth() === selected_day.getMonth() && current_day.getYear() === selected_day.getYear() && current_day.getHours()>=8">
-                            <div class="current-time-line"  :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()+3 + 'px', left: (get_day(current_day)*76 + 52)}"></div>
+                        <!-- <div class="current-time" v-if="current_day.getDate() === selected_day.getDate()&& current_day.getMonth() === selected_day.getMonth() && current_day.getYear() === selected_day.getYear() && current_day.getHours()>=8">
+                            <div class="current-time-line"  :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()+3 + 'px', left: ((current_day.getDay())*76 + 52)}"></div>
                             <div class="current-time-dot" :style="{top: (current_day.getHours()-8)*60+current_day.getMinutes()-3 + 'px'}"></div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
@@ -267,6 +267,7 @@
                     });
                     // Get Homework ddls
                     getJSON('/api/hw/list', param, function(data) {
+                        debugger;
                         raw_data = data;
                         if (raw_data.code == 0) {
                              _vm.hw  = schedule(raw_data.data, _vm.num_dates, focus_day);
