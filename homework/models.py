@@ -56,8 +56,8 @@ def update_hw_status(sender, instance, raw, **kwargs):
             pass
         else:
             ahead = instance.student.pref.s_ddl_ahead_time
-            eta = datetime.combine(instance.homework.end_time, time(
-                23, 59, 59)) - timedelta(minutes=ahead) if not getattr(instance, 'force_now', False) else datetime.now() + timedelta(seconds=10)
+            eta = timezone.make_aware(datetime.combine(instance.homework.end_time, time(
+                23, 59, 59)) - timedelta(minutes=ahead) if not getattr(instance, 'force_now', False) else datetime.now() + timedelta(seconds=10), timezone.get_current_timezone())
             __logger__.critical(eta)
             send_template(instance.student.open_id, instance.homework, '', safe_apply_async, eta=eta)
 
