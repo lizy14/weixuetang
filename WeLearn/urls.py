@@ -27,5 +27,9 @@ urlpatterns = [
     url(r'^api/cal/', include('calendar_.urls')),
     url(r'^api/team/', include('team.urls')),
     url(r'^api/lecture/', include('lecture.urls')),
-    url(r'^', StaticFileView.as_view()),
 ]
+
+from .settings import DEBUG
+
+if DEBUG:
+    urlpatterns.append(url(r'^', StaticFileView.as_view()))
