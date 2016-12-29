@@ -11,3 +11,4 @@ wechat-sdk~=0.6.4
 aiohttp~=1.1.6
 requests
 gunicorn
+django-model-changes-py3

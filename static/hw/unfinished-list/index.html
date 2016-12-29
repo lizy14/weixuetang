@@ -12,7 +12,7 @@
     <meta name="description" content="">
     <meta name="author" content="moqunzhu">
 
-    <title>新鲜事</title>
+    <title>未完成作业列表</title>
     <!-- Custom styles -->
     <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
@@ -20,7 +20,13 @@
     <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
 
     <!-- WeUI Javascript library -->
-    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+    <style>
+        .btn_dangerous{
+            color: red;
+        }
+    </style>
 
 </head>
 
@@ -46,11 +52,11 @@
                     <!-- List Item -->
                     <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.homework_id" v-for="item in items" v-on:click="show_detail">
                         <h5 class="weui-media-box__title">{{item.title}}</h5>
-                        <h5 class="weui-media-box__title">ddl: {{item.end_time}}，还有<span class="weui-badge ddl-badge">{{item.days_left}}</span>天</h5>
+                        <h5 class="weui-media-box__title">ddl: {{item.end_time.readable()}}，还有<span class="weui-badge ddl-badge">{{item.end_time.days_left()}}</span>天</h5>
                         <p class="weui-media-box__desc" >{{item.detail}}</p>
                         <div class="weui-media-box__info">{{item.course_name}}</div>
                         <ul class="weui-media-box__info">
-                            <li class="weui-media-box__info__meta">发布时间: {{item.start_time}}</li>
+                            <li class="weui-media-box__info__meta">发布时间: {{item.start_time.readable()}}</li>
                             <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ item.attachment }}</li>
                         </ul>
                     </div>
@@ -81,8 +87,8 @@
                                 <div class="weui-panel weui-panel_access">
                                     <div class="weui-panel__bd">
                                         <div class="weui-media-box weui-media-box_text">
-                                            <h5 class="weui-media-box__title">截止时间: {{detail_item.end_time}}</h5>
-                                            <h5 class="weui-media-box__title">发布时间: {{detail_item.start_time}}</h5>
+                                            <h5 class="weui-media-box__title">截止时间: {{detail_item.end_time.readable()}}</h5>
+                                            <h5 class="weui-media-box__title">发布时间: {{detail_item.start_time.readable()}}</h5>
                                             <div class="weui-media-box__desc detail-description" v-if="detail_item.detail">{{detail_item.detail}}
                                             </div>
                                             <div class="weui-dialog__desc" v-else>无描述</div>
@@ -124,7 +130,12 @@
                         </div>
 
                         <div class="weui-dialog__ft">
+                            <a v-on:click="ignore" class="weui-dialog__btn weui-dialog__btn_primary btn_dangerous">忽略</a>
                             <a v-on:click="hide_detail" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
+                        </div>
+                        <div v-if="posting" class="weui-loadmore">
+                            <i class="weui-loading"></i>
+                            <span class="weui-loadmore__tips">正在提交</span>
                         </div>
                     </div>
                 </div>
@@ -141,12 +152,13 @@
                 'detail_showing': false,
                 'detail_item': {},
                 'is_loading': true,
+                'posting': false
             },
             methods: {
                 init: function() {
                     var _vm = this;
-                    $.getJSON('/api/hw/unfinished-list/', urlParam, function(data){
-                        expand(data.data);
+                    getJSON('/api/hw/unfinished-list/', urlParam, function(data){
+                        // expand(data.data);
                         data.data.sort(function(a, b){
                             return a.days_left - b.days_left;
                         });
@@ -169,9 +181,36 @@
                         _vm.detail_item = data.data;
                     })
                 },
+                ignore: function(){
+                    var _vm = this;
+                    var post = _vm.detail_item;
+                    _vm.posting = true;
+
+                    postForm('/api/hw/mark', {
+                        'homework_id': post.homework_id,
+                        'ignore': 1
+                    }, function(){
+                        _vm.posting = false;
+                        _vm.detail_showing = false;
+
+                        var i;
+                        var n = _vm.items.length;
+                        for(i=0; i<n; i++){
+                            if(_vm.items[i].homework_id == post.homework_id){
+                                break;
+                            }
+                        }
+                        if(i < n){
+                            _vm.items.splice(i, 1);
+                        }
+
+                    }, function(){
+                        _vm.posting = false;
+                    });
+                }
             }
         });
-        
+
         vm.init();
 
 

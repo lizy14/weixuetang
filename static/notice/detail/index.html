@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="moqunzhu">
 
-        <title>公告</title>
+        <title>课程公告详情</title>
         <!-- Custom styles -->
         <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
@@ -18,7 +18,7 @@
         <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
 
         <!-- WeUI Javascript library -->
-        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+        <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
 </head>
 
@@ -50,7 +50,7 @@
         <div class="weui-panel__bd">
 
             <div class="weui-media-box weui-media-box_text">
-                <h5 class="weui-media-box__title">发布时间: {{ item.publish_time }}</h5>
+                <h5 class="weui-media-box__title">发布时间: {{ item.publish_time.readable() }}</h5>
                 <h5 class="weui-media-box__title">发布人: {{ item.publisher }}</h5>
                 <div class="weui-media-box__desc" id="detail-description">
                         {{ item.detail }}
@@ -64,7 +64,7 @@
     </div>
 
     <script>
-    $.getJSON('/api/notice/detail/', urlParam, function(data){
+    getJSON('/api/notice/detail/', urlParam, function(data){
         // expand(data.data);
         // data.data.sort(function(a, b){
             // return parseDate(a.end_time) > parseDate(b.end_time)

@@ -11,7 +11,10 @@ from ztylearn.Util import get_curriculum, get_events, get_week_info
 
 
 def wrap_date(dt):
-    # return dt.strftime('%Y-%m-%d')
+    return int(dt.timestamp())
+
+
+def wrap_datetime(dt):
     return int(dt.timestamp())
 
 
@@ -23,9 +26,6 @@ def parse_date(dt_str):
     return datetime.strptime(dt_str, '%Y-%m-%d')
 
 
-def wrap_datetime(dt):
-    # return dt.strftime('%Y-%m-%d %H:%M')
-    return int(dt.timestamp())
 
 
 class Personal(APIView):
@@ -116,13 +116,10 @@ class Global(APIView):
 
         def wrap_event(ev):
             status = ev['status']
-            try:
-                status = {
-                    'begin': '开始',
-                    'end': '结束'
-                }[status]
-            except KeyError:
-                pass
+            status = {
+                'begin': '开始',
+                'end': '结束'
+            }[status]
             today = datetime.combine(
                 datetime.today().date(), datetime.min.time())
 

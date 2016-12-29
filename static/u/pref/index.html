@@ -12,7 +12,7 @@
     <meta name="description" content="">
     <meta name="author" content="moqunzhu">
 
-    <title>个人中心</title>
+    <title>个人中心 - 偏好设置</title>
     <!-- Custom styles -->
     <link href="../../css/weui-custom-style.css" rel="stylesheet">
 
@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.0/weui.min.css">
 
     <!-- WeUI Javascript library -->
-    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
 </head>
 
@@ -107,6 +107,9 @@
                     </div>
                 </label>
             </div>
+            <div>
+                <a :href="'/hw/ignored-list/?code=' + urlParam.code + '&state=' + urlParam.state" class="weui-btn weui-btn_default">查看已忽略作业</a>
+            </div>
         </div>
         <div v-else class="weui-loadmore">
             <i class="weui-loading"></i>
@@ -150,6 +153,7 @@
             'loading': 2,
             'pref': null,
             'courses': [],
+            'urlParam': urlParam,
         },
         computed: {
             'c_s_class_ahead_time': function() {

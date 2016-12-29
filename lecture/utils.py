@@ -71,4 +71,6 @@ class Parser(object):
         res = {}
         for line in content.splitlines():
             res.update(cls.parse_line(line))
+        if getattr(res, 'title', False):
+            title = res['title']
         return (title, res)
