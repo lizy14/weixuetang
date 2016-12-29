@@ -75,6 +75,9 @@ Date.prototype.days_left = function(){
 window.today =  new Date();
 
 window.getJSON = function(url, payload, callback, err_callback){
+
+(function(url, payload, callback, err_callback){ //造闭包
+
     payload = $.extend(payload, window.urlParam);
     var wrapped_err = function(err){
         if(err_callback){
@@ -115,6 +118,7 @@ window.getJSON = function(url, payload, callback, err_callback){
             ).fail(wrapped_err)
         }
     })
+})(url, payload, callback, err_callback); //造闭包
 }
 
 window.alerting_bind_required = false;
