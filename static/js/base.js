@@ -146,6 +146,13 @@ window.postForm = function(url, payload, callback){
 
 
 // followings are for calendar
+
+window.get_day = function(date) {
+    day = date.getDay()
+    if (day == 0) return 6;
+    else return day - 1;
+}
+
 window.is_same_week = function(a, b) {
     day = get_day(b);
     if (a >= b) {
@@ -159,11 +166,6 @@ window.is_same_week = function(a, b) {
     else return true;
 }
 
-window.get_day = function(date) {
-    day = date.getDay()
-    if (day == 0) return 6;
-    else return day - 1;
-}
 
 window.schedule = function (items, num_dates, focus_day) {
     new_items = new Array(num_dates);
@@ -188,7 +190,7 @@ window.schedule = function (items, num_dates, focus_day) {
                 index = get_day(d);
             }
             else if (i.end_time) {  // homework
-                d = parseDate(i.end_time);
+                d = i.end_time;
                 if (!is_same_week(d, focus_day)) return;
                 index = get_day(d);
             }
@@ -215,7 +217,7 @@ window.schedule = function (items, num_dates, focus_day) {
                 index = d.getDate() - 1;
             }
             else if (i.end_time) {  // homework
-                d = parseDate(i.end_time);
+                d = i.end_time;
                 if (d.getMonth() != month) return;
                 index = d.getDate() - 1;
             }
@@ -232,7 +234,7 @@ window.calculate_margin = function(day) {
     lst_day = get_day(new Date(day.getFullYear(), day.getMonth()+1, 0));
     return {
         before:  fst_day,
-        after: 7 - lst_day
+        after: 6 - lst_day
     }
 }
 
