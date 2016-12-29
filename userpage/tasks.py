@@ -11,7 +11,8 @@ __logger__ = logging.getLogger(__name__)
 def t_flush_student(id, mute=True):
     try:
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(Student.objects.get(pk=id), mute)
+        loop.run_until_complete(update_student(
+            Student.objects.get(pk=id), mute))
     except Exception as e:
         __logger__.exception(str(e))
 
