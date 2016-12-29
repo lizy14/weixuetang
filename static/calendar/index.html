@@ -267,7 +267,6 @@
                     });
                     // Get Homework ddls
                     getJSON('/api/hw/list', param, function(data) {
-                        debugger;
                         raw_data = data;
                         if (raw_data.code == 0) {
                              _vm.hw  = schedule(raw_data.data, _vm.num_dates, focus_day);
@@ -312,6 +311,7 @@
                     else if (view === 'week' && view != _vm.view) {
                         // alert('尚未实现，敬请期待！');
                         _vm.view = view;
+                        _vm.focus_day = today;
                         _vm.init();
                     }
                 },
