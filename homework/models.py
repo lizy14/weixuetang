@@ -47,7 +47,7 @@ def update_hw_status(sender, instance, raw, **kwargs):
 
     def graded(tup):
         nonlocal instance
-        send_template(instance.student.openid, instance)
+        send_template(instance.student.open_id, instance)
 
     def ignored(tup):
         nonlocal instance
