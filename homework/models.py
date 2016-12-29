@@ -70,7 +70,7 @@ def update_hw_status(sender, instance, raw, **kwargs):
             pass
     # if 'ignored' not in instance.changes():
         # ignored((0, 0))
-    if instance.force_now:
+    if getattr(instance, 'force_now', False):
         ignored((0, 0))
 
 class CourseStatus(models.Model):
