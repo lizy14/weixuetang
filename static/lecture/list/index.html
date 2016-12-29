@@ -108,7 +108,6 @@
                         'start': _vm.items.length
                     };
                     getJSON('/api/lecture/list/', param, function(data) {
-                        prune(data.data);
                         data.data.forEach(function(e){
                             _vm.items.push(e);
                         });
@@ -138,21 +137,6 @@
         getJSON('/api/u/fortune', {}, function(data) {
             vm.fortune = data.data
         })
-
-        vm.fortune = "fortune";
-        vm.no_more = true;
-        vm.loading_more = false;
-        vm.detail_showing = true;
-        vm.detail_item = {
-            'lecture_id': '3',
-            'time': '2016-3-3',
-            'place': '三教',
-            'lecturer': '朋神',
-            'title': '期末加油',
-            'detail': '这是一个很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的内容'
-        };
-        vm.items = [vm.detail_item, vm.detail_item, vm.detail_item, vm.detail_item, vm.detail_item, vm.detail_item];
-
     </script>
 </body>
 

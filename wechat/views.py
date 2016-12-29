@@ -74,7 +74,7 @@ class CustomWeChatView(WeChatView):
     }
 
     @classmethod
-    def update_menu(cls, menu=None):
+    def update_menu(cls, menu=None): # pragma: no cover
         if not menu:
             menu = cls.menu
         try:
@@ -84,7 +84,7 @@ class CustomWeChatView(WeChatView):
                             'CustomWeChatView:update_menu() error setting menu: {}'.format(str(e)))
 
     @classmethod
-    def get_templates(cls):
+    def get_templates(cls): # pragma: no cover
         Template.objects.all().delete()
         res = cls._wechat.request.get(
             url='https://api.weixin.qq.com/cgi-bin/template/get_all_private_template')

@@ -90,21 +90,21 @@
 }
 
 .course_badge {
-	font-size: 8px; 
+	font-size: 8px;
 	background: #3cc51f;
 	padding: .5em;
 	margin: 0 0 2px 2px;
 }
 
 .hw_badge {
-	font-size: 8px; 
+	font-size: 8px;
 	background: #E64340;
 	padding: .5em;
 	margin: 0 0 2px 2px;
 }
 
 .event_badge {
-	font-size: 8px; 
+	font-size: 8px;
 	background: #ffbe00;
 	padding: .5em;
 	margin: 0 0 2px 2px;
@@ -163,7 +163,7 @@
 .time-content {
 	text-align: center;
 	color: #999999;
-}	
+}
 
 .white-time-content {
 	text-align: center;
@@ -198,14 +198,14 @@
 .course-block {
 	color: #3cc51f;
 	left: 60px;
-	background-color: rgba(60,197,31,.2); 
+	background-color: rgba(60,197,31,.2);
 	border-left: 5px solid #3cc51f;
 
 }
 
 .narrow-course-block {
 	color: #3cc51f;
-	background-color: rgba(60,197,31,.2); 
+	background-color: rgba(60,197,31,.2);
 	border-left: 3px solid #3cc51f;
 }
 
@@ -236,7 +236,7 @@
 	margin-left: 8.5px;
 	margin-bottom: 2px;
 	background-color: rgba(255,190,0,.2);
-	color:  #ffbe00;
+	color:  #ff9600;
 	border-left: 5px solid #ffbe00;
 	-webkit-line-clamp: 2;
 	text-overflow: ellipsis;
@@ -247,7 +247,7 @@
 	margin-left: .5px;
 	margin-bottom: 1px;
 	background-color: rgba(255,190,0,.2);
-	color:  #ffbe00;
+	color:  #ff9600;
 	border-left: 3px solid #ffbe00;
 	-webkit-line-clamp: 2;
 	text-overflow: ellipsis;

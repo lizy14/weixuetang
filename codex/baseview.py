@@ -15,9 +15,9 @@ class BaseView(View):
         self.request = request
         return self.do_dispatch(*args, **kwargs)
 
-    def do_dispatch(self, *args, **kwargs):
+    def do_dispatch(self, *args, **kwargs): # pragma: no cover
         raise NotImplementedError(
             'You should implement do_dispatch() in sub-class of BaseView')
 
-    def http_method_not_allowed(self, *args, **kwargs):
+    def http_method_not_allowed(self, *args, **kwargs): # pragma: no cover
         return super(BaseView, self).http_method_not_allowed(self.request, *args, **kwargs)
