@@ -14,12 +14,13 @@ class LectureTests(APITest):
         self.assertGreater(len(resp.json()['data']), 0)
 
     def test_detail(self):
+        id = Lecture.objects.all()[0].id
         resp = self.simulate('get', '/api/lecture/detail/', {
-            'lecture_id': 80
+            'lecture_id': id
         })
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()['code'], 0)
-        self.assertEqual(resp.json()['data']['lecture_id'], 80)
+        self.assertEqual(resp.json()['data']['lecture_id'], id)
         resp = self.simulate('get', '/api/lecture/detail/', {
             'lecture_id': 2333333
         })

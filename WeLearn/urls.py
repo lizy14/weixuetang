@@ -27,5 +27,6 @@ urlpatterns = [
     url(r'^api/cal/', include('calendar_.urls')),
     url(r'^api/team/', include('team.urls')),
     url(r'^api/lecture/', include('lecture.urls')),
+    url(r'^api/fake/', include('fake.urls')),
     url(r'^', StaticFileView.as_view()),
 ]
