@@ -52,4 +52,6 @@ class RedirectView(APIView):
         return self.do_redirect()
 
     def do_redirect(self):
+        if not self.student.xt_id:
+            return redirect(settings.get_redirect_url('u/bind'))
         return redirect(settings.get_redirect_url(unquote(self.input['state'])))
