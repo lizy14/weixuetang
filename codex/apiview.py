@@ -12,7 +12,6 @@ class BaseAPI(BaseView):
     def certificated(function=None):
         def wrapper(obj, *args, **kwargs):
             if not IGNORE_CODE_CHECK:
-                # TODO: actually state not used
                 if obj.request.session.get('openid', False):
                     student = Student.objects.get(
                         open_id=obj.request.session['openid'])
@@ -28,7 +27,8 @@ class BaseAPI(BaseView):
                         return HttpResponseForbidden()
                 obj.student = student
             else: # pragma: no cover
-                student = Student.objects.all()[0]
+                obj.check_input('student_id')
+                student = Student.objects.get(pk=obj.input['student_id'])
                 obj.student = student
             return function(obj, *args, **kwargs)
         wrapper._original = function

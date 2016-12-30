@@ -9,7 +9,7 @@ from wechat.wrapper import WeChatView
 import inspect
 from .models import Template
 import logging
-from WeLearn.settings import get_url
+from WeLearn.settings import get_redirect_url
 
 logger = logging.getLogger(name=__name__)
 
@@ -26,17 +26,17 @@ class CustomWeChatView(WeChatView):
                     {
                         'type': 'view',
                         'name': '作业',
-                        'url': get_url('redirect', {'state':'hw/unfinished-list'}) + '#wechat_redirect',
+                        'url': get_redirect_url('redirect', state='hw/unfinished-list'),
                     },
                     {
                         'type': 'view',
                         'name': '公告',
-                        'url': get_url('redirect', {'state':'notice/list'}) + '#wechat_redirect',
+                        'url': get_redirect_url('redirect', state='notice/list'),
                     },
                     {
                         'type': 'view',
                         'name': '日历',
-                        'url': get_url('redirect', {'state':'calendar'}) + '#wechat_redirect',
+                        'url': get_redirect_url('redirect', state='calendar'),
                     }
                 ]
             },
@@ -46,12 +46,12 @@ class CustomWeChatView(WeChatView):
                     {
                         'type': 'view',
                         'name': '讲座',
-                        'url': get_url('redirect', {'state':'lecture/list'}) + '#wechat_redirect',
+                        'url': get_redirect_url('redirect', state='lecture/list'),
                     },
                     {
                         'type': 'view',
                         'name': '组队',
-                        'url': get_url('redirect', {'state':'team'}) + '#wechat_redirect',
+                        'url': get_redirect_url('redirect', state='team'),
                     }
                 ]
             },
@@ -61,12 +61,12 @@ class CustomWeChatView(WeChatView):
                         {
                             'type': 'view',
                             'name': '绑定/解绑',
-                            'url': get_url('redirect', {'state':'u/bind'}) + '#wechat_redirect',
+                            'url': get_redirect_url('redirect', state='u/bind'),
                         },
                     {
                             'type': 'view',
                             'name': '偏好设置',
-                            'url': get_url('redirect', {'state':'u/pref'}) + '#wechat_redirect',
+                            'url': get_redirect_url('redirect', state='u/pref'),
                         }
                 ]
             }
