@@ -30,7 +30,7 @@
         <div class="calendar-wrapper">
             <div class="calendar-container" id="month-view" v-if="view === 'month'">
                 <div class="header-wrapper">
-                    <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</h1>
+                    <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</span></h1>
                     <div id="views-switcher">
                         <span class="switcher primary-switcher" id="month-switch" v-on:click="set_view('month')">月</span>
                         <span class="switcher  default-switcher" id="week-switch" v-on:click="set_view('week')">周</span>
@@ -141,7 +141,7 @@
 
             <div class="calendar-container" id="week-view" v-if="view==='week'">
                 <div class="header-wrapper" >
-                    <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</h1>
+                    <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</span></h1>
                     <div id="views-switcher">
                         <span class="switcher default-switcher" id="month-switch" v-on:click="set_view('month')">月</span>
                         <span class="switcher primary-switcher" id="week-switch" v-on:click="set_view('week')">周</span>
