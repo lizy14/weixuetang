@@ -46,6 +46,10 @@ async def update_student_course(student, _course):
         xt_id=_course.id,
         name=_course.name
     )
+    CourseStatus.objects.get_or_create(
+        course=course,
+        student=student
+    )
     tasks_hw = [
         update_student_course_work(student, course, _homework)
         for _homework in await _course.works
