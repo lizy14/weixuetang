@@ -244,6 +244,7 @@
 
                     foo = 3;
                     getJSON('/api/cal/personal', param, function(data) {
+                        console.log(data);
                         raw_data = data;
                         if (raw_data.code == 0) {
                              course  = schedule(raw_data.data, _vm.num_dates, focus_day);
@@ -258,6 +259,7 @@
                     });
                     // Get important notice
                     getJSON('/api/cal/global', {}, function(data) {
+                        console.log(data);
                         raw_data = data;
                         if (raw_data.code == 0) {
                              _vm.notice  = schedule(raw_data.data, _vm.num_dates, focus_day);
@@ -267,6 +269,7 @@
                     });
                     // Get Homework ddls
                     getJSON('/api/hw/list', param, function(data) {
+                        console.log(data);
                         raw_data = data;
                         if (raw_data.code == 0) {
                              _vm.hw  = schedule(raw_data.data, _vm.num_dates, focus_day);

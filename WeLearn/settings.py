@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_mysql',
     'django_extensions',
+    'django_model_changes',
     'djcelery',
     'wechat',
     'userpage',
@@ -67,7 +68,7 @@ if DEBUG:
         # pip install git+https://github.com/nose-devs/nose@master --upgrade
         '--cover-erase',
         '--cover-html',
-        '--cover-package=codex,homework,notice,userpage,wechat,WeLearn,ztylearn,team,calendar_,lecture',
+        '--cover-package=codex,homework,notice,userpage,wechat,WeLearn,ztylearn,team,calendar_,lecture,fake',
     ]
 
 MIDDLEWARE_CLASSES = [
