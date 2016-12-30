@@ -26,17 +26,17 @@ class CustomWeChatView(WeChatView):
                     {
                         'type': 'view',
                         'name': '作业',
-                        'url': get_url('redirect', {'state':'hw/unfinished-list'}),
+                        'url': get_redirect_url('redirect', state='hw/unfinished-list'),
                     },
                     {
                         'type': 'view',
                         'name': '公告',
-                        'url': get_url('redirect', {'state':'notice/list'}),
+                        'url': get_redirect_url('redirect', state='notice/list'),
                     },
                     {
                         'type': 'view',
                         'name': '日历',
-                        'url': get_url('redirect', {'state':'calendar'})
+                        'url': get_redirect_url('redirect', state='calendar')
                     }
                 ]
             },
@@ -46,12 +46,12 @@ class CustomWeChatView(WeChatView):
                     {
                         'type': 'view',
                         'name': '讲座',
-                        'url': get_url('redirect', {'state':'lecture/list'}),
+                        'url': get_redirect_url('redirect', state='lecture/list'),
                     },
                     {
                         'type': 'view',
                         'name': '组队',
-                        'url': get_url('redirect', {'state':'team'}),
+                        'url': get_redirect_url('redirect', state='team'),
                     }
                 ]
             },
@@ -61,12 +61,12 @@ class CustomWeChatView(WeChatView):
                         {
                             'type': 'view',
                             'name': '绑定/解绑',
-                            'url': get_url('redirect', {'state':'u/bind'}),
+                            'url': get_redirect_url('redirect', state='u/bind'),
                         },
                     {
                             'type': 'view',
                             'name': '偏好设置',
-                            'url': get_url('redirect', {'state':'u/pref'}),
+                            'url': get_redirect_url('redirect', state='u/pref'),
                         }
                 ]
             }
