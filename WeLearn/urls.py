@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from wechat.views import CustomWeChatView
-from WeLearn.views import StaticFileView
+from wechat.views import *
+from WeLearn.views import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -27,6 +27,11 @@ urlpatterns = [
     url(r'^api/cal/', include('calendar_.urls')),
     url(r'^api/team/', include('team.urls')),
     url(r'^api/lecture/', include('lecture.urls')),
+    url(r'^redirect/?$', RedirectView.as_view()),
     url(r'^api/fake/', include('fake.urls')),
-    url(r'^', StaticFileView.as_view()),
 ]
+
+from .settings import DEBUG
+
+if DEBUG:
+    urlpatterns.append(url(r'^', StaticFileView.as_view()))
