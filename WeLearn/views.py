@@ -47,4 +47,4 @@ class RedirectView(APIView):
         return self.do_redirect()
 
     def do_redirect(self):
-        return redirect(settings.get_url(unquote(self.input['state']) + '#wechat_redirect'))
+        return redirect(settings.get_redirect_url(unquote(self.input['state'])))
