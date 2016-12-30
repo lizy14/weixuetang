@@ -1,5 +1,5 @@
 window.BIND_LANDING = "/u/bind";
-window.BIND_POPED = false;
+
 
 
 function getQueryParams(qs) {
@@ -87,8 +87,7 @@ window.getJSON = function(url, payload, callback, err_callback){
                 }
                 alert('先绑定 info 账号才可以哦 :(');
                 location.href = BIND_LANDING + location.search;
-                window.BIND_POPED = true;
-                return;
+                window.stop();
             }
         }else if(data.code !== 0){
             wrapped_err(data.msg);
