@@ -80,8 +80,11 @@ window.getJSON = function(url, payload, callback, err_callback){
         }
     };
     wrapped_success = function(data){
-        if(data.code == 10 && !window.BIND_POPED){ // UnbindError
+        if(data.code == 10){ // UnbindError
             if (location.pathname != BIND_LANDING) {
+                if (window.BIND_POPED) {
+                    return;
+                }
                 alert('先绑定 info 账号才可以哦 :(');
                 location.href = BIND_LANDING + location.search;
                 window.BIND_POPED = true;
