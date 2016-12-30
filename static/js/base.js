@@ -84,7 +84,7 @@ window.getJSON = function(url, payload, callback, err_callback){
             if (location.pathname != BIND_LANDING) {
                 alert('先绑定 info 账号才可以哦 :(');
                 location.href = BIND_LANDING + location.search;
-                window.stop();
+                return;
             }
         }else if(data.code !== 0){
             wrapped_err(data.msg);
