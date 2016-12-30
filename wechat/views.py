@@ -9,7 +9,7 @@ from wechat.wrapper import WeChatView
 import inspect
 from .models import Template
 import logging
-from WeLearn.settings import get_redirect_url
+from WeLearn.settings import get_url
 
 logger = logging.getLogger(name=__name__)
 
