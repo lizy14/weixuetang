@@ -15,9 +15,10 @@ class Work:
         self.detail = detail
         self.attachment = attachment
         self.grading = grading
-        self.graded = graded
-        self.grading_author = grading_author
+        self.graded = completion > 1
+        self.graded_by = grading_author
         self.grading_comment = grading_comment
+        self.submitted = completion > 0
 
 
     @property
