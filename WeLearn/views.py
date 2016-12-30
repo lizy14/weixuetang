@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 from codex.baseview import BaseView
+from codex.apiview import APIView
 from WeLearn import settings
 from django.http import HttpResponse, Http404
 import logging
@@ -35,3 +36,16 @@ class StaticFileView(BaseView): # pragma: no cover
         if content is not None:
             return HttpResponse(content, content_type=mimetypes.guess_type(rpath + '/index.html')[0])
         raise Http404('Could not found static file: ' + self.request.path)
+
+from django.shortcuts import redirect
+from urllib.parse import unquote
+
+class RedirectView(APIView):
+
+    def do_dispatch(self, *args, **kwargs):
+        self.input = self.query or self.body
+        return self.do_redirect()
+
+    @APIView.certificated
+    def do_redirect(self):
+        return redirect(settings.get_redirect_url(unquote(self.input['state'])))
