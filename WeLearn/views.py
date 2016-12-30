@@ -46,6 +46,5 @@ class RedirectView(APIView):
         self.input = self.query or self.body
         return self.do_redirect()
 
-    @APIView.certificated
     def do_redirect(self):
         return redirect(settings.get_redirect_url(unquote(self.input['state'])))
