@@ -13,11 +13,11 @@ class BaseAPI(BaseView):
         def wrapper(obj, *args, **kwargs):
             if not IGNORE_CODE_CHECK:
                 # TODO: actually state not used
-                obj.check_input('code', 'state')
-                if obj.request.session.get('code', False) and obj.request.session.get('openid', False) and obj.input['code'] == obj.request.session['code']:
+                if obj.request.session.get('openid', False):
                     student = Student.objects.get(
                         open_id=obj.request.session['openid'])
                 else:
+                    obj.check_input('code', 'state')
                     try: # pragma: no cover
                         student, create = Student.objects.get_or_create(
                             open_id=WeChatView.open_id_from_code(obj.input['code']))
