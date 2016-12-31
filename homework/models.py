@@ -68,7 +68,7 @@ def update_hw_status(sender, instance, created, **kwargs):
                         instance.homework, '', eta=eta)
         elif instance.student.pref.s_work:
             send_template(instance.student.open_id,
-                          instance.homework, '', safe_apply_async, eta=eta)
+                          instance.homework, '', eta=eta)
     def ddl_changed(tup):
         nonlocal instance
         ahead=instance.student.pref.s_ddl_ahead_time
