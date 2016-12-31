@@ -28,7 +28,7 @@ def update_hw_status(sender, instance, raw, **kwargs):
                 23, 59, 59)) - timedelta(minutes=ahead) if not getattr(instance, 'force_now', False) else datetime.now() + timedelta(seconds=10), timezone.get_current_timezone())
             send_template(instance.student.open_id,
                           instance.homework, '', safe_apply_async, eta=eta)
-    logger.critical(instance.changes().items())
+    logger.exception(instance.changes().items())
     # for k, v in instance.changes().items():
     #     if k == 'graded':
     #         graded(v)
