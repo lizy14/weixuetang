@@ -13,6 +13,8 @@ logger = logging.getLogger(name=__name__)
 def update_hw_status(sender, instance, created, **kwargs):
     def graded(tup):
         nonlocal instance
+        if not instance.student.pref.s_grading:
+            return
         send_template(instance.student.open_id, instance)
 
     def ignored(tup):
@@ -23,9 +25,10 @@ def update_hw_status(sender, instance, created, **kwargs):
         if tup[1]:
             revoke_send(instance.student.open_id,
                         instance.homework, '', eta=eta)
-        else:
+        elif instance.student.pref.s_work:
             send_template(instance.student.open_id,
                           instance.homework, '', safe_apply_async, eta=eta)
+
     for k, v in instance.changes().items():
         if k == 'graded':
             graded(v)
