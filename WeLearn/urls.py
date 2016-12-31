@@ -28,7 +28,6 @@ urlpatterns = [
     url(r'^api/team/', include('team.urls')),
     url(r'^api/lecture/', include('lecture.urls')),
     url(r'^redirect/?$', RedirectView.as_view()),
-    url(r'^api/fake/', include('fake.urls')),
 ]
 
 from .settings import DEBUG
