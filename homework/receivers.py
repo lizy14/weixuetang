@@ -57,3 +57,17 @@ def create_hw_status(sender, instance, created, **kwargs):
         'graded_by': instance._status.graded_by,
     })
     status.save()
+
+@receiver(post_save, sender=CourseStatus)
+def modified_cs_status(sender, instance, created, **kwargs):
+    def ignored(tup):
+        nonlocal instance
+        works=HomeworkStatus.objects.filter(
+            student=instance.student, course=instance.course)
+        for work in works:
+            work.ignored=tup[1]
+            work.save()
+    if created:
+        return
+    if 'ignored' in instance.changes():
+        ignored(instance.changes()['ignored'])

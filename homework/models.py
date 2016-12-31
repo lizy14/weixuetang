@@ -32,7 +32,7 @@ class HomeworkStatus(models.Model, ChangesMixin):
     ignored = models.BooleanField(default=False)
 
 
-class CourseStatus(models.Model):
+class CourseStatus(models.Model, ChangesMixin):
     student = models.ForeignKey(Student, db_index=True)
     course = models.ForeignKey(Course)
     ignored = models.BooleanField(default=False)
