@@ -20,12 +20,7 @@ class NoticeStatus(models.Model):
 
 
 from wechat.tasks import send_template
-
-ignore_prefix = [
-    '文化素质教育讲座',
-    '实验室科研探究'
-]
-
+from homework.models import Course
 
 @receiver(post_save, sender=Notice)
 def create_status(sender, instance, **kwargs):
@@ -34,7 +29,7 @@ def create_status(sender, instance, **kwargs):
             notice=instance,
             student=instance._student,
         )
-        for prefix in ignore_prefix:
+        for prefix in Course.ignore_prefix:
             if instance.course.name.startswith(prefix):
                 return
         if created and instance._student.pref.s_notice and not instance._student.flushing:

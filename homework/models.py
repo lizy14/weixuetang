@@ -10,6 +10,11 @@ class Course(models.Model):
     xt_id = models.CharField(max_length=32)
     name = models.TextField()
 
+    ignore_prefix = [
+        '文化素质教育讲座',
+        '实验室科研探究'
+    ]
+
 
 class Homework(models.Model):
     xt_id = models.CharField(max_length=32)
@@ -38,7 +43,7 @@ class CourseStatus(models.Model, ChangesMixin):
     ignored = models.BooleanField(default=False)
 
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from wechat.tasks import *
 from codex.taskutils import *
@@ -114,6 +119,16 @@ def create_hw_status(sender, instance, created, **kwargs):
         'graded_by': instance._status.graded_by,
     })
     status.save()
+
+@receiver(pre_save, sender=CourseStatus)
+def mark_as_ignored(sender, instance, raw, **kwargs):
+    if raw:
+        return
+    for pfx in Course.ignore_prefix:
+        if instance.course.name.startswith(pfx):
+            instance.ignored = True
+            return
+
 
 @receiver(post_save, sender=CourseStatus)
 def modified_cs_status(sender, instance, created, **kwargs):
