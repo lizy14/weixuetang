@@ -65,8 +65,8 @@ def get_appointments(学号, 区间起点=None, 区间终点=None):
             })
         return 该课程的事件们
 
-
-    cache, created = PersonalCalendar.objects.get_or_create(student__xt_id=学号)
+    stu = Student.objects.get(xt_id=学号)
+    cache, created = PersonalCalendar.objects.get_or_create(student=stu)
 
     if created:
         纯纯课程列表 = get_curriculum(学号)
