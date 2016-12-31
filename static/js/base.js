@@ -100,7 +100,7 @@ window.getJSON = function(url, payload, callback, err_callback){
         }
     ).fail(wrapped_err);
 };
-window.postForm = function(url, payload, callback){
+window.postForm = function(url, payload, callback, err_callback){
     payload = $.extend(payload, window.urlParam);
     $.post(
         url,
@@ -108,6 +108,9 @@ window.postForm = function(url, payload, callback){
         function(data){
             if(data.code === 0){
                 data.data = datify(data.data);
+            }
+            if(data.code !== 0 && err_callback){
+                return err_callback(data);
             }
             if(callback){
                 callback(data);

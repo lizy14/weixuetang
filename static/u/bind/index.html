@@ -128,18 +128,17 @@
                     param = urlParam;
     	            param['student_id'] = $('#inputUsername').val();
     	            param['password'] = $('#inputPassword').val();
-                    postForm("/api/u/bind", param, function(data,status){
-                        this.bind_popup_showing = true;
+                    postForm("/api/u/bind", param, function(){
+                        vm.bind_popup_showing = true;
                         vm.disabled = false;
-    	                if (data.code == 0) {
-                            vm.msg_title = '绑定成功';
-                            vm.msg_content = '';
-                            vm.binded = true;
-    	                }
-    	                else {
-                            vm.msg_title = '出错啦';
-                            vm.msg_content = data.msg;
-    	                }
+                        vm.msg_title = '绑定成功';
+                        vm.msg_content = '';
+                        vm.binded = true;
+    	            }, function(data){
+                        vm.bind_popup_showing = true;
+                        vm.disabled = false;
+                        vm.msg_title = '出错啦';
+                        vm.msg_content = data.msg;
     	            });
                 },
             }

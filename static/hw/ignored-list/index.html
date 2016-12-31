@@ -121,6 +121,9 @@
                     })
                 },
                 undo_ignore: function(ev){
+                    if(!confirm('取消忽略？')){
+                        return;
+                    }
                     var _vm = this;
                     var id =  ev.currentTarget.id;
                     _vm.posting = true;
