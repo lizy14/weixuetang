@@ -3,7 +3,7 @@ from userpage.models import Student
 from django.http import HttpResponseForbidden
 from WeLearn.settings import IGNORE_CODE_CHECK
 from .baseview import *
-
+import logging
 
 class BaseAPI(BaseView):
 
@@ -23,7 +23,8 @@ class BaseAPI(BaseView):
                         obj.request.session['code'] = obj.input['code']
                         obj.request.session['openid'] = student.open_id
                         obj.request.session.set_expiry(0)
-                    except:
+                    except Exception as e:
+                        obj.logger.exception(str(e))
                         return HttpResponseForbidden()
                 obj.student = student
             else: # pragma: no cover

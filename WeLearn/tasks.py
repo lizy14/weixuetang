@@ -18,178 +18,83 @@ def main():
     loop.run_until_complete(update_all())
 
 
-def notification_notice_new(noticeStatus):
-    _logger.debug("NOTIFICATION %s new notice `%s` for course `%s`" % (
-        noticeStatus.student.xt_id,
-        noticeStatus.notice.title,
-        noticeStatus.notice.course.name)
-    )
-    notice = noticeStatus.notice
-    # send_template(noticeStatus.student.open_id, notice)
-
-
-def notification_hw_new(homeworkStatus):
-    _logger.debug("NOTIFICATION %s new homework `%s`" % (
-        homeworkStatus.student.xt_id,
-        homeworkStatus.homework.title)
-    )
-    hw = homeworkStatus.homework
-    # send_template(homeworkStatus.student.open_id, hw)
-
-
-def notification_hw_graded(homeworkStatus):
-    _logger.debug("NOTIFICATION %s homework graded `%s`" % (
-        homeworkStatus.student.xt_id,
-        homeworkStatus.homework.title)
-    )
-    # send_template(homeworkStatus.student.open_id, homeworkStatus)
-
-
-def notification_hw_ddl_modified(homeworkStatus, oldDdl):
-    _logger.debug("NOTIFICATION %s homework ddl modified `%s`, %s -> %s" % (
-        homeworkStatus.student.xt_id,
-        homeworkStatus.homework.title,
-        oldDdl,
-        homeworkStatus.homework.end_time)
-    )
-    hw = homeworkStatus.homework
-    # send_template(homeworkStatus.student.open_id, hw, 'ddl')
-
-
 async def update_all():
     students = Student.objects.filter(xt_id__isnull=False)
-    tasks = [update_student(i) for i in students]
+    tasks = [
+        update_student(i)
+        for i in students
+    ]
     await asyncio.gather(*tasks)
 
 
-async def update_student(student, mute=False):
+async def update_student(student):
     xt_id = student.xt_id
     _user = LearnDAO.User(
         username=xt_id
     )
     _semester = LearnDAO.Semester(_user)
-
     tasks = [
-        update_student_course(student, _course, mute)
+        update_student_course(student, _course)
         for _course in await _semester.courses
     ]
     await asyncio.gather(*tasks)
 
 
-async def update_student_course(student, _course, mute):
+async def update_student_course(student, _course):
     xt_id = student.xt_id
-    _logger.debug("Updating Student %s Course %s" % (xt_id, _course.id))
     course, created = Course.objects.get_or_create(
-        xt_id=_course.id
+        xt_id=_course.id,
+        name=_course.name
     )
-    if created:
-        course.name = _course.name
-        course.save()
     CourseStatus.objects.get_or_create(
-        course_id=course.id,
-        student_id=student.id
+        course=course,
+        student=student
     )
-
-    tasks = [
-        update_student_course_work(student, course, _homework, mute)
+    tasks_hw = [
+        update_student_course_work(student, course, _homework)
         for _homework in await _course.works
     ]
-    await asyncio.gather(*tasks)
+    tasks_nt = [
+        update_student_course_notice(student, course, _notice)
+        for _notice in await _course.messages
+    ]
 
-    for _notice in await _course.messages:
-        await update_student_course_notice(student, course, _notice, mute)
 
-
-async def update_student_course_notice(student, course, _notice, mute):
-
-    # Notice
+def update_student_course_notice(student, course, _notice):
     try:
         notice = Notice.objects.get(
             xt_id=_notice.id,
-            course__id=course.id
+            course=course,
         )
-        # TODO detect changes
-    except Notice.DoesNotExist:
-        notice = Notice()
-        notice.course = course
-        notice.xt_id = _notice.id
-
+    except:
+        notice = Notice(
+            xt_id=_notice.id,
+            course=course,
+        )
     notice.title = _notice.title
     notice.content = _notice.detail
     notice.publisher = _notice.author
     notice.publishtime = _notice.date
+    notice._student = student
     notice.save()
 
-    # NoticeStatus
-    newly_created = False
-    try:
-        noticeStatus = NoticeStatus.objects.get(
-            student=student,
-            notice=notice
-        )
-    except NoticeStatus.DoesNotExist:
-        newly_created = True if not mute else False
-        noticeStatus = NoticeStatus()
-        noticeStatus.student = student
-        noticeStatus.notice = notice
-        noticeStatus.read = False  # TODO
-        noticeStatus.save()
 
-    if newly_created and student.pref.s_notice:
-        notification_notice_new(noticeStatus)
-
-
-async def update_student_course_work(student, course, _homework, mute):
-
+def update_student_course_work(student, course, _homework):
     try:
         homework = Homework.objects.get(
             xt_id=_homework.id,
+            course=course,
         )
-
-    except Homework.DoesNotExist:
-        homework = Homework()
-        homework.course = course
-        homework.xt_id = _homework.id
-
-    ddl_modified = (not mute) and str(
-        homework.end_time) != str(_homework.end_time)
-    if ddl_modified:
-        old_ddl = homework.end_time
-
+    except:
+        homework = Homework(
+            xt_id=_homework.id,
+            course=course,
+        )
     homework.title = _homework.title
     homework.start_time = _homework.start_time
     homework.end_time = _homework.end_time
     homework.detail = _homework.detail
     homework.attachment = _homework.attachment
+    homework._status = _homework
+    homework._status.student = student
     homework.save()
-
-    newly_created = False
-    try:
-        homeworkStatus = HomeworkStatus.objects.get(
-            student=student,
-            homework=homework
-        )
-    except HomeworkStatus.DoesNotExist:
-        newly_created = True if not mute else False
-        homeworkStatus = HomeworkStatus()
-        homeworkStatus.student = student
-        homeworkStatus.homework = homework
-
-    graded = _homework.completion > 1
-    newly_graded = (not mute) and (
-        not newly_created) and graded and not homeworkStatus.graded
-
-    homeworkStatus.graded = graded if not mute else False
-    homeworkStatus.grading = _homework.grading
-    homeworkStatus.grading_comment = _homework.grading_comment
-    homeworkStatus.graded_by = _homework.grading_author
-    homeworkStatus.submitted = _homework.completion > 0
-    homeworkStatus.save()
-
-    # generate push notifications
-    if newly_created and student.pref.s_work:
-        notification_hw_new(homeworkStatus)
-    elif ddl_modified and student.pref.s_work:
-        notification_hw_ddl_modified(homeworkStatus, old_ddl)
-    if newly_graded and student.pref.s_work and student.pref.s_grading:
-        notification_hw_graded(homeworkStatus)

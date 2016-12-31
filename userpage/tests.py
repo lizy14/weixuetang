@@ -85,14 +85,13 @@ class UserpageTests(APITest):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()['code'], 0)
         self.assertJSONEqual(json.dumps(resp.json()['data']), json.loads(
-            '{"s_lecture": true, "s_class_ahead_time": 20, "s_notice": true, "s_academic": true, "s_work": true, "s_ddl_ahead_time": 60, "s_grading": true}'))
+            '{"s_lecture": true, "s_class_ahead_time": 20, "s_notice": true, "s_work": true, "s_ddl_ahead_time": 60, "s_grading": true}'))
 
     def test_pref_post(self):
         resp = self.simulate('post', '/api/u/pref/', {
             's_lecture': 0,
             's_notice': 1,
             's_class_ahead_time': 200,
-            's_academic': 0,
             's_work': 1,
             's_ddl_ahead_time': 600,
             's_grading': 1
@@ -104,6 +103,5 @@ class UserpageTests(APITest):
         self.assertTrue(pref.s_work)
         self.assertTrue(pref.s_grading)
         self.assertFalse(pref.s_lecture)
-        self.assertFalse(pref.s_academic)
         self.assertEqual(pref.s_class_ahead_time, 200)
         self.assertEqual(pref.s_ddl_ahead_time, 600)
