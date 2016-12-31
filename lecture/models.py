@@ -26,7 +26,7 @@ def create_lecture(sender, instance, **kwargs):
         if not dic:
             return
         try:
-            lec = Lecture.objects.get_or_create(title=title)
+            lec = Lecture.objects.get(title=title)
         except Lecture.DoesNotExist:
             lec = Lecture(title=title)
         lec.time = dic.get('time', None)
