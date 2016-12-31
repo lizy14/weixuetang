@@ -60,7 +60,7 @@ def update_hw_status(sender, instance, created, **kwargs):
         nonlocal instance
         ahead = instance.student.pref.s_ddl_ahead_time
         eta = timezone.make_aware(datetime.combine(instance.homework.end_time, time(
-            23, 59, 59)) - timedelta(minutes=ahead)
+            23, 59, 59)) - timedelta(minutes=ahead))
         if tup[1]:
             revoke_send(instance.student.open_id,
                         instance.homework, '', eta=eta)
@@ -71,11 +71,11 @@ def update_hw_status(sender, instance, created, **kwargs):
         nonlocal instance
         ahead=instance.student.pref.s_ddl_ahead_time
         eta=timezone.make_aware(datetime.combine(tup[0], time(
-            23, 59, 59)) - timedelta(minutes=ahead)
+            23, 59, 59)) - timedelta(minutes=ahead))
         revoke_send(instance.student.open_id,
                     instance.homework, '', eta=eta)
         eta=timezone.make_aware(datetime.combine(instance.homework.end_time, time(
-            23, 59, 59)) - timedelta(minutes=ahead)
+            23, 59, 59)) - timedelta(minutes=ahead))
         send_template(instance.student.open_id,
                       instance.homework, '', safe_apply_async, eta=eta)
     if created:
