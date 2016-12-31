@@ -81,8 +81,11 @@ def t_send_template(openid, temp, data, url):
         __logger__.exception(str(e))
 
 from userpage.models import Student
+from codex.taskutils import revoke
 
 # NOTE: apply_async_function(task, args=~list or tuple~, kwargs=~dict~, **options)
+
+
 def send_template(openid, ins, spec='', apply_async_function=None, wrapper=None, **options):
     usr = Student.get_by_openid(openid)
     try:
@@ -96,6 +99,20 @@ def send_template(openid, ins, spec='', apply_async_function=None, wrapper=None,
         else:
             apply_async_function(t_send_template, (openid, tup[
                                  0], t_data, tup[2]), {}, **options)
+    except OperationError:
+        return
+    except Exception as e:
+        __logger__.exception(str(e))
+
+
+def revoke_send(openid, ins, spec='', wrapper=None, **options):
+    usr = Student.get_by_openid(openid)
+    try:
+        tup = globals()['wrap_' + ins.__class__.__name__ + spec](ins, usr)
+        if not wrapper:
+            wrapper = default_wrapper
+        t_data = wrapper(tup[1])
+        revoke(t_send_template, args=(openid, tup[0], t_data, tup[2]), kwargs={}, **options)
     except OperationError:
         return
     except Exception as e:
