@@ -168,8 +168,8 @@ CELERYBEAT_SCHEDULE = {
         'schedule': 600,  # in seconds, or timedelta(seconds=10)
     },
     'Mo Qunzhu 2': {
-        'task': 'userpage.tasks.notify',
-        'schedule': crontab(minute=1, hour=0)
+        'task': 'calendar_.tasks.alert_class',
+        'schedule': crontab(minute=1, hour=0),
     },
 }
 CELERYD_TASK_SOFT_TIME_LIMIT = 120
