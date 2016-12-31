@@ -13,3 +13,4 @@ RUN pip install -r requirements.txt
 
 COPY . /code/
 RUN chmod +x /code/entrypoint.sh
+RUN python manage.py makemigrations calendar_ homework lecture notice team userpage wechat
