@@ -72,7 +72,8 @@ class UserPreference(APIView):
 
         for arg in ('s_work', 's_notice', 's_grading', 's_lecture'):
             try:
-                setattr(pref, arg, int(self.input[arg]) != 0)  # '0'/'1' -> Bool
+                # '0'/'1' -> Bool
+                setattr(pref, arg, int(self.input[arg]) != 0)
             except KeyError:
                 pass
         pref.save()

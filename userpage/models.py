@@ -17,6 +17,7 @@ class Student(models.Model):
     xt_id = models.CharField(max_length=32, null=True, db_index=True)
     pref = models.OneToOneField(Preference, related_name='student')
     flushing = models.NullBooleanField()
+
     @classmethod
     def get_by_openid(cls, openid):
         try:
@@ -28,6 +29,7 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from homework.models import *
 
+
 @receiver(pre_save, sender=Student)
 def create_preference(sender, instance, raw, **kwargs):
     if raw:
@@ -35,12 +37,15 @@ def create_preference(sender, instance, raw, **kwargs):
     if not instance.id:
         instance.pref = Preference.objects.create()
 
+
 @receiver(post_save, sender=Preference)
 def modified_pref(sender, instance, created, **kwargs):
     if created:
         return
+
     def hw_ddl_ahead_changed(tup):
-        works = HomeworkStatus.objects.filter(student=instance.student, ignored=False)
+        works = HomeworkStatus.objects.filter(
+            student=instance.student, ignored=False)
         for work in works:
             work.ignored = True
             work.save()

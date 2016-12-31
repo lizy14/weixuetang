@@ -5,11 +5,6 @@ from notice.models import *
 import ztylearn as LearnDAO
 import asyncio
 from celery import shared_task
-# from wechat.tasks import send_template
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
-_logger = logging.getLogger(__name__)
 
 
 @shared_task(name='WeLearn.tasks.main')

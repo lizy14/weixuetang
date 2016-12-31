@@ -6,6 +6,7 @@ import json
 from .models import *
 from .views import *
 
+
 class UserpageTests(APITest):
 
     def test_bind_get(self):
@@ -41,7 +42,8 @@ class UserpageTests(APITest):
             })
             self.assertEqual(resp.status_code, 200)
             self.assertEqual(resp.json()['code'], 0)  # correct pass
-            self.assertEqual(Student.objects.get(id=self.user.id).xt_id, 'lizy14')
+            self.assertEqual(Student.objects.get(
+                id=self.user.id).xt_id, 'lizy14')
 
     def test_unbind(self):
         resp = self.simulate('post', '/api/u/unbind/')

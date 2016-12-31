@@ -11,6 +11,7 @@ from .models import *
 from wechat_sdk.messages import *
 import logging
 
+
 def get_access_token():
     try:
         tok = AccessToken.objects.all()[0]

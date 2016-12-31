@@ -4,8 +4,7 @@ from django.shortcuts import render
 from codex.apiview import *
 from codex.baseerror import *
 from .models import *
-# import logging
-# __logger__ = logging.getLogger(name=__name__)
+
 
 class List(APIView):
 
@@ -19,7 +18,7 @@ class List(APIView):
                 'title': item.title,
             }
         result = Lecture.objects.all()
-        try: # pragma: no cover
+        try:  # pragma: no cover
             start = int(self.input['start'])
             limit = int(self.input['limit'])
             result = result[start: start + limit]

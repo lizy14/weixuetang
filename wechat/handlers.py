@@ -42,8 +42,6 @@ class UnBindStudentHandler(WeChatHandler):
             'openid': self.user.open_id
         })))
 
-from userpage.tasks import notify
-
 
 class TemplateHandler(WeChatHandler):
 
