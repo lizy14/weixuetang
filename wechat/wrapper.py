@@ -10,7 +10,7 @@ from userpage.models import *
 from .models import *
 from wechat_sdk.messages import *
 import logging
-
+_logger = logging.getLogger(name=__name__)
 
 def get_access_token():
     try:
@@ -27,6 +27,7 @@ def set_access_token(tok, exp):
         tok = AccessToken()
     tok.access_token = tok
     tok.access_token_expires_at = exp
+    _logger.critical(tok.access_token)
     tok.save()
 
 wechat_conf = WechatConf(
