@@ -35,4 +35,4 @@ def revoke(task, args=None, kwargs={}, **options):
             return True
         return False
     res = visit_requests(check)
-    return sum(res)
+    return sum([sum(x) for x in res])
