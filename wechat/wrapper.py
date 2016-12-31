@@ -4,12 +4,40 @@ from codex.baseview import BaseView
 from django.http import Http404, HttpResponse
 from django.template.loader import get_template
 import logging
-from wechat_sdk import WechatBasic
-from WeLearn.settings import wechat_conf
+from wechat_sdk import WechatBasic, WechatConf
+from WeLearn.settings import WECHAT_TOKEN, WECHAT_APPID, WECHAT_SECRET, MSG_ENCRYPT, WECHAT_AESKEY
 from userpage.models import *
-from .models import Template
+from .models import *
 from wechat_sdk.messages import *
 import logging
+
+
+def get_access_token():
+    try:
+        tok = AccessToken.objects.all()[0]
+        return (tok.access_token, tok.access_token_expires_at)
+    except:
+        return (None, None)
+
+
+def set_access_token(tok, exp):
+    if len(AccessToken.objects.all()) > 0:
+        tok = AccessToken.objects.all()[0]
+    else:
+        tok = AccessToken()
+    tok.access_token = tok
+    tok.access_token_expires_at = exp
+    tok.save()
+
+wechat_conf = WechatConf(
+    token=WECHAT_TOKEN,
+    appid=WECHAT_APPID,
+    appsecret=WECHAT_SECRET,
+    encrypt_mode=MSG_ENCRYPT,
+    encoding_aes_key=WECHAT_AESKEY,
+    access_token_getfunc=get_access_token,
+    access_token_setfunc=set_access_token,
+)
 
 
 class WeChatHandler(object):
@@ -36,7 +64,8 @@ class WeChatHandler(object):
         return self.msg_type_is('text') and (self.msg.content.lower() in args)
 
     # def is_click_of_event(self, eve):
-        # return self.msg.type == 'click' and self.msg.key == self.context.event_keys[eve]
+        # return self.msg.type == 'click' and self.msg.key ==
+        # self.context.event_keys[eve]
 
     def is_event_of(self, *events):
         return isinstance(self.msg, EventMessage) and self.msg.type in events
