@@ -29,6 +29,7 @@ class UserBind(BaseAPI):
         self.check_input('student_id', 'password')
         self.validate_user()
         self.student.xt_id = self.input['student_id']
+        self.student.flushing = True
         self.student.save()
         t_flush_student.delay(self.student.id)
 
