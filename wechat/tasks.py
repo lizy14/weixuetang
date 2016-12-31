@@ -17,6 +17,7 @@ from WeLearn.settings import get_redirect_url
 from datetime import date
 from codex.baseerror import OperationError
 
+
 def wrap_ClassInfo(ins, usr):
     if usr.pref.s_class_ahead_time < 0:
         raise OperationError
@@ -26,6 +27,7 @@ def wrap_ClassInfo(ins, usr):
         'end': ins.end.strftime('%H:%M'),
         'location': ins.location,
     }, None)
+
 
 def wrap_Notice(ins, usr):
     if not usr.pref.s_notice:

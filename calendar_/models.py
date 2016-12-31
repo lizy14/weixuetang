@@ -1,9 +1,7 @@
 from django.db import models
 from userpage.models import *
-
 import json
 from datetime import *
-
 from ztylearn.Util import get_curriculum, get_week_info, parse_zty_stamp
 
 
@@ -72,7 +70,6 @@ def get_appointments(学号, 区间起点=None, 区间终点=None):
         cache.save()
     else:
         纯纯课程列表 = json.loads(cache.classes)
-
 
     所有课程的事件们 = [处理一门课程(课程) for 课程 in 纯纯课程列表]
 

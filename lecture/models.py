@@ -3,8 +3,7 @@ from notice.models import Notice
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .utils import Parser
-# import logging
-# __logger__ = logging.getLogger(name=__name__)
+
 
 class Lecture(models.Model):
     time = models.CharField(max_length=128, null=True)
@@ -18,6 +17,7 @@ class Lecture(models.Model):
         return self.origin.content
 
 from wechat.tasks import send_template
+
 
 @receiver(post_save, sender=Notice)
 def create_lecture(sender, instance, **kwargs):

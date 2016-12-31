@@ -6,11 +6,9 @@ from codex.baseerror import *
 from codex.utils import *
 from wechat.wrapper import WeChatView
 from datetime import datetime
-import logging
-__logger__ = logging.getLogger(name=__name__)
 
 
-def parse_date(dt_str): # pragma: no cover
+def parse_date(dt_str):  # pragma: no cover
     return datetime.strptime(dt_str, '%Y-%m-%d')
 
 
@@ -65,7 +63,7 @@ class List(APIView):
         # 为保持接口兼容，start 字段有二义性
         # 与 limit 同时出现时，表示数目，供前端列表无限滚动
         # 与 end 同时出现时，表示日期，供前端日历显示
-        try: # pragma: no cover
+        try:  # pragma: no cover
             start = int(self.input['start'])
             limit = int(self.input['limit'])
             result = result[start: start + limit]
@@ -74,7 +72,7 @@ class List(APIView):
         except KeyError:
             pass
 
-        try: # pragma: no cover
+        try:  # pragma: no cover
             start = parse_date(self.input['start'])
             end = parse_date(self.input['end'])
             result = result.filter(
@@ -121,7 +119,7 @@ class IgnoreList(APIView):
             student__id=self.student.id,
             ignored=True
         ).order_by('-homework__start_time')
-        try: # pragma: no cover
+        try:  # pragma: no cover
             start = int(self.input['start'])
             limit = int(self.input['limit'])
             result = result[start: start + limit]

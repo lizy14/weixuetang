@@ -6,8 +6,6 @@ from codex.baseerror import *
 from .models import TeamPost
 from homework.models import Course
 from codex.utils import wrap_time as wrap_datetime
-# import logging
-# __logger__ = logging.getLogger(name=__name__)
 
 
 class List(APIView):

@@ -22,6 +22,7 @@ class NoticeStatus(models.Model):
 from wechat.tasks import send_template
 from homework.models import Course
 
+
 @receiver(post_save, sender=Notice)
 def create_status(sender, instance, **kwargs):
     try:

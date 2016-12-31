@@ -5,6 +5,7 @@ from WeLearn.settings import IGNORE_CODE_CHECK
 from .baseview import *
 import logging
 
+
 class BaseAPI(BaseView):
 
     logger = logging.getLogger('API')
@@ -17,7 +18,7 @@ class BaseAPI(BaseView):
                         open_id=obj.request.session['openid'])
                 else:
                     obj.check_input('code', 'state')
-                    try: # pragma: no cover
+                    try:  # pragma: no cover
                         student, create = Student.objects.get_or_create(
                             open_id=WeChatView.open_id_from_code(obj.input['code']))
                         obj.request.session['code'] = obj.input['code']
@@ -27,7 +28,7 @@ class BaseAPI(BaseView):
                         obj.logger.exception(str(e))
                         return HttpResponseForbidden()
                 obj.student = student
-            else: # pragma: no cover
+            else:  # pragma: no cover
                 obj.check_input('student_id')
                 student = Student.objects.get(pk=obj.input['student_id'])
                 obj.student = student
@@ -39,7 +40,7 @@ class BaseAPI(BaseView):
         self.input = self.query or self.body
         handler = getattr(self, self.request.method.lower(), None)
         if not callable(handler):
-            return self.http_method_not_allowed() # pragma: no cover
+            return self.http_method_not_allowed()  # pragma: no cover
         return self.api_wrapper(handler, *args, **kwargs)
 
     @property
@@ -63,15 +64,13 @@ class BaseAPI(BaseView):
         result = json_handler = None
         try:
             result = func(*args, **kwargs)
-            if result and isinstance(result, tuple) and len(result) > 1: # pragma: no cover
+            if result and isinstance(result, tuple) and len(result) > 1:  # pragma: no cover
                 json_handler = result[1]
                 result = result[0]
         except BaseError as e:
             code = e.code
             msg = e.msg
-            # self.logger.exception(
-            # 'Error occurred when requesting %s: %s', self.request.path, e)
-        except Exception as e: # pragma: no cover
+        except Exception as e:  # pragma: no cover
             code = -1
             msg = str(e)
             self.logger.exception(
@@ -82,7 +81,7 @@ class BaseAPI(BaseView):
                 'msg': msg,
                 'data': result,
             }, default=json_handler)
-        except: # pragma: no cover
+        except:  # pragma: no cover
             self.logger.exception(
                 'JSON Serializing failed in requesting %s', self.request.path)
             code = -1

@@ -52,4 +52,5 @@ class HomeworkTests(APITest):
         self.assertEqual(resp.json()['code'], 0)
         self.assertEqual(len(resp.json()['data']), matt)
         for it in resp.json()['data']:
-            self.assertTrue(HomeworkStatus.objects.get(student=self.user, homework__id=it['homework_id']))
+            self.assertTrue(HomeworkStatus.objects.get(
+                student=self.user, homework__id=it['homework_id']))

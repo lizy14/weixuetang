@@ -2,9 +2,6 @@ from django.db import models
 from userpage.models import Student
 from django_model_changes import ChangesMixin
 
-# import logging
-# __logger__ = logging.getLogger(name=__name__)
-
 
 class Course(models.Model):
     xt_id = models.CharField(max_length=32)
@@ -74,14 +71,15 @@ def update_hw_status(sender, instance, created, **kwargs):
         elif instance.student.pref.s_work:
             send_template(instance.student.open_id,
                           instance.homework, '', eta=eta)
+
     def ddl_changed(tup):
         nonlocal instance
-        ahead=instance.student.pref.s_ddl_ahead_time
-        eta=timezone.make_aware(datetime.combine(tup[0], time(
+        ahead = instance.student.pref.s_ddl_ahead_time
+        eta = timezone.make_aware(datetime.combine(tup[0], time(
             23, 59, 59)) - timedelta(minutes=ahead))
         revoke_send(instance.student.open_id,
                     instance.homework, '', eta=eta)
-        eta=timezone.make_aware(datetime.combine(instance.homework.end_time, time(
+        eta = timezone.make_aware(datetime.combine(instance.homework.end_time, time(
             23, 59, 59)) - timedelta(minutes=ahead))
         if eta < timezone.now() or ahead < 0:
             return
@@ -99,17 +97,16 @@ def update_hw_status(sender, instance, created, **kwargs):
             ddl_changed(v)
 
 
-
 from userpage.models import Student
 
 
 @receiver(post_save, sender=Homework)
 def create_hw_status(sender, instance, created, **kwargs):
     try:
-        status=HomeworkStatus.objects.get(
+        status = HomeworkStatus.objects.get(
             student=instance._status.student, homework__xt_id=instance.xt_id)
     except:
-        status=HomeworkStatus(
+        status = HomeworkStatus(
             student=instance._status.student, homework=instance)
     status.__dict__.update({
         'submitted': instance._status.submitted,
@@ -119,6 +116,7 @@ def create_hw_status(sender, instance, created, **kwargs):
         'graded_by': instance._status.graded_by,
     })
     status.save()
+
 
 @receiver(pre_save, sender=CourseStatus)
 def mark_as_ignored(sender, instance, raw, **kwargs):
@@ -134,10 +132,10 @@ def mark_as_ignored(sender, instance, raw, **kwargs):
 def modified_cs_status(sender, instance, created, **kwargs):
     def ignored(tup):
         nonlocal instance
-        works=HomeworkStatus.objects.filter(
+        works = HomeworkStatus.objects.filter(
             student=instance.student, homework__course=instance.course)
         for work in works:
-            work.ignored=tup[1]
+            work.ignored = tup[1]
             work.save()
     if created:
         return

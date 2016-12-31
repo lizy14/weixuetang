@@ -3,10 +3,10 @@
 from codex.basetest import APITest
 from .models import *
 from .views import *
-import logging
-__logger__ = logging.getLogger(name=__name__)
+
 
 class TeamTests(APITest):
+
     def test_course(self):
         resp = self.simulate('get', '/api/team/course/', {
             'course_id': 1
@@ -16,6 +16,7 @@ class TeamTests(APITest):
         self.assertEqual(len(resp.json()['data']), 2)
         self.assertNotIn('last_update', resp.json()['data'][0])
         self.assertTrue(resp.json()['data'][0]['i_am_the_author'])
+
     def test_edit(self):
         resp = self.simulate('post', '/api/team/edit/', {
             'post_id': 5,
@@ -50,6 +51,7 @@ class TeamTests(APITest):
         self.assertEqual(resp.status_code, 200)
         self.assertNotEqual(resp.json()['code'], 0)
         self.assertEqual(len(TeamPost.objects.all()), 3)
+
     def test_delete(self):
         resp = self.simulate('post', '/api/team/delete', {
             'post_id': 5
