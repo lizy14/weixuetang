@@ -27,6 +27,11 @@ class LectureTests(APITest):
         self.assertEqual(resp.status_code, 200)
         self.assertNotEqual(resp.json()['code'], 0)
 
+    def test_count(self):
+        len1 = len(Notice.objects.filter(course=Lecture.objects.all()[0].origin.course))
+        len2 = len(Lecture.objects.all())
+        self.assertGreater(len1, len2)
+
 
 class UtilTests(BaseTest):
 
@@ -55,7 +60,7 @@ class UtilTests(BaseTest):
 
 特别提示：（1）请本科同学携带学生IC卡刷卡入场；（2）入场时间为当日18:30；（3）根据《北京市消防条例（2011修订）》相关规定，为确保安全，入场人数控制在170人，额满即止。
         '''
-        _, res = Parser.parse('', content)
+        _, res = Parser.parse('第12周（周一）学生社团暨《文化素质教育讲座》课程预告-【蓝博洲 汪晖 刘震】', content)
         self.assertEqual(res, {
             'time': '2016年11月28日（周一）19:00-21:00',
             'place': '清华大学三教3300',
