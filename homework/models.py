@@ -119,9 +119,8 @@ def create_hw_status(sender, instance, created, **kwargs):
 def modified_cs_status(sender, instance, created, **kwargs):
     def ignored(tup):
         nonlocal instance
-        course = instance.course
         works=HomeworkStatus.objects.filter(
-            student=instance.student, course=course)
+            student=instance.student, homework__course=instance.course)
         for work in works:
             work.ignored=tup[1]
             work.save()
