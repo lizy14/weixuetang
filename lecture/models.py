@@ -29,6 +29,6 @@ def create_lecture(sender, instance, **kwargs):
             'place', None), lecturer=dic.get('lecturer', None), title=title, origin=instance)
         try:
             if instance._student.pref.s_lecture:
-                send_template(instance._student.open_id, instance)
+                send_template(instance._student.open_id, lec)
         except:
             pass

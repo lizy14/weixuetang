@@ -37,6 +37,6 @@ def create_status(sender, instance, **kwargs):
             if instance.course.name.startswith(prefix):
                 return
         if created and instance._student.pref.s_notice:
-            send_template(instance._student.open_id, ns)
+            send_template(instance._student.open_id, ns.notice)
     except:
         pass
