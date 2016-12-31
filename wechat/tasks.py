@@ -10,12 +10,22 @@ template_name = {
     'hw_checked': '您有一个作业被批改了',
     'new_notice': '新学堂公告',
     'new_lec': '新文化素质教育讲座',
+    'goto_class': '该起床去上课啦',
 }
 
 from WeLearn.settings import get_redirect_url
 from datetime import date
 from codex.baseerror import OperationError
 
+def wrap_ClassInfo(ins, usr):
+    if usr.pref.s_class_ahead_time < 0:
+        raise OperationError
+    return ('goto_class', {
+        'title': ins.title,
+        'begin': ins.begin.strftime('%H:%M'),
+        'end': ins.end.strftime('%H:%M'),
+        'location': ins.location,
+    }, None)
 
 def wrap_Notice(ins, usr):
     if not usr.pref.s_notice:
@@ -90,8 +100,7 @@ def t_send_template(openid, temp, data, url):
 from userpage.models import Student
 from codex.taskutils import revoke
 
-# NOTE: apply_async_function(task, args=~list or tuple~, kwargs=~dict~,
-# **options)
+# NOTE: apply_async_function(task, args=~list or tuple~, kwargs=~dict~, **options)
 
 
 def send_template(openid, ins, spec='', apply_async_function=None, wrapper=None, **options):
