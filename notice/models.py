@@ -1,6 +1,7 @@
 from django.db import models
 from homework.models import *
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Notice(models.Model):
     course = models.ForeignKey(Course)
@@ -14,4 +15,19 @@ class Notice(models.Model):
 class NoticeStatus(models.Model):
     notice = models.ForeignKey(Notice)
     student = models.ForeignKey(Student)
-    read = models.BooleanField()
+    read = models.BooleanField(default=False)
+
+import logging
+logger = logging.getLogger(name=__name__)
+
+@receiver(post_save, sender=Notice)
+def create_status(sender, instance, **kwargs):
+    try:
+        status, created = NoticeStatus.objects.get_or_create(
+            notice=instance,
+            student=instance._student,
+        )
+        if created:
+            logger.critical('msg')
+    except:
+        pass

@@ -75,6 +75,7 @@ def update_student_course_notice(student, course, _notice):
     notice.content = _notice.detail
     notice.publisher = _notice.author
     notice.publishtime = _notice.date
+    notice._student = student
     notice.save()
 
 
