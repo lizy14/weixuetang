@@ -26,6 +26,7 @@ ignore_prefix = [
     '实验室科研探究'
 ]
 
+
 @receiver(post_save, sender=Notice)
 def create_status(sender, instance, **kwargs):
     try:
@@ -36,7 +37,7 @@ def create_status(sender, instance, **kwargs):
         for prefix in ignore_prefix:
             if instance.course.name.startswith(prefix):
                 return
-        if created and instance._student.pref.s_notice:
+        if created and instance._student.pref.s_notice and not instance._student.flushing:
             send_template(instance._student.open_id, ns.notice)
     except:
         pass

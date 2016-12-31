@@ -28,7 +28,7 @@ def create_lecture(sender, instance, **kwargs):
         lec = Lecture.objects.create(time=dic.get('time', None), place=dic.get(
             'place', None), lecturer=dic.get('lecturer', None), title=title, origin=instance)
         try:
-            if instance._student.pref.s_lecture:
+            if instance._student.pref.s_lecture and not instance._student.flushing:
                 send_template(instance._student.open_id, lec)
         except:
             pass
