@@ -77,6 +77,7 @@ def update_student_course_notice(student, course, _notice):
 def update_student_course_work(student, course, _homework):
     homework = Homework.objects.get_or_create(
         xt_id=_homework.id,
+        course=course,
     )
     homework.title = _homework.title
     homework.start_time = _homework.start_time
