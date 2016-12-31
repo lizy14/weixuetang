@@ -1,5 +1,5 @@
 from userpage.models import *
-from .models import *
+from .models import get_appointments
 from codex.apiview import APIView
 from codex.baseerror import *
 from wechat.wrapper import WeChatView
@@ -7,7 +7,7 @@ import json
 
 from datetime import *
 
-from ztylearn.Util import get_curriculum, get_events, get_week_info
+from ztylearn.Util import get_curriculum, get_events, get_week_info, parse_zty_stamp
 
 
 def wrap_date(dt):
@@ -18,119 +18,27 @@ def wrap_datetime(dt):
     return int(dt.timestamp())
 
 
-def parse_zty_stamp(st):
-    return datetime.fromtimestamp(st / 1000)
-
-
 def parse_date(dt_str):
     return datetime.strptime(dt_str, '%Y-%m-%d')
-
-
 
 
 class Personal(APIView):
 
     def get(self):
-
-        def flatten(list_of_lists):
-            # 折叠一层
-            # [[1,2], [3,[4,5]]] -> [1, 2, 3, [4, 5]]
-            return [val for sublist in list_of_lists for val in sublist]
-
-        def 处理一门课程(课程):
-            该课程的事件们 = []
-            课程名 = 课程['coursename']
-            地点 = 课程['classroom']
-            星期几 = 课程['time'][0]
-            第几节 = 课程['time'][1]
-            周次表 = 课程['week']
-            for 周次减一 in range(16):
-                if(not 周次表[周次减一]):
-                    continue
-                该周周一 = 第一周第一天 + timedelta(days=7 * 周次减一)
-                日期 = 该周周一 + timedelta(days=星期几 - 1)
-                起止时分 = 大节起止时分[第几节]
-                开始 = 日期 + timedelta(hours=起止时分[0], minutes=起止时分[1])
-                结束 = 日期 + timedelta(hours=起止时分[2], minutes=起止时分[3])
-
-                if(前端只要某个区间):
-                    if 开始 < 区间起点 or 结束 > 区间终点:
-                        continue
-
-                该课程的事件们.append({
-                    'title': 课程名,
-                    'location': 地点,
-                    'begin': wrap_datetime(开始),
-                    'end': wrap_datetime(结束)
-                })
-            return 该课程的事件们
-
-
-        cache, created = PersonalCalendar.objects.get_or_create(student=self.student)
-        if created:
-            纯纯课程列表 = get_curriculum(self.student.xt_id)
-            cache.classes = json.dumps(纯纯课程列表)
-            cache.save()
-        else:
-            纯纯课程列表 = json.loads(cache.classes)
-
-        大节起止时分 = {
-            1: [8, 0, 9, 35],
-            2: [9, 50, 12, 15],
-            3: [13, 30, 15, 5],
-            4: [15, 20, 16, 55],
-            5: [17, 5, 18, 40],
-            6: [19, 20, 21, 45]
-        }
-        第一周第一天 = parse_zty_stamp(
-            get_week_info()['currentsemester']['begintime']
-        )
-
-        前端只要某个区间 = False
         try:
-            区间起点 = parse_date(self.input['start'])
-            区间终点 = parse_date(self.input['end'])
-            前端只要某个区间 = True
+            start = parse_date(self.input['start'])
+            end = parse_date(self.input['end'])
         except KeyError:
-            pass
+            start = None
+            end = None
 
-        所有课程的事件们 = [处理一门课程(课程) for 课程 in 纯纯课程列表]
-
-        return sorted(
-            flatten(所有课程的事件们),
-            key=lambda x: x['begin']
-        )
+        return get_appointments(self.student.xt_id, start, end)
 
 
 class Global(APIView):
 
     def get(self):
-
-        def ignore_event(ev):
-            name = ev['name']
-            if name.startswith('研 '):
-                return True
-            if ('研究生' in name) and ('本科生' not in name):
-                return True
-            return False
-
-        def wrap_event(ev):
-            status = ev['status']
-            status = {
-                'begin': '开始',
-                'end': '结束'
-            }[status]
-            today = datetime.combine(
-                datetime.today().date(), datetime.min.time())
-
-            return {
-                'title': ev['name'].strip() + status,
-                'date': wrap_date(today + timedelta(ev['remainingdays']))
-            }
-
-        events = get_events()
-
-        return [wrap_event(ev) for ev in events if not ignore_event(ev)]
+        return get_events()
 
 
 class Semester(APIView):

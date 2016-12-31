@@ -84,11 +84,3 @@ class Course:
             )
             for _ in response['documents']
         ]
-
-    @property
-    def dict(self):
-        d = self.__dict__.copy()
-        user = self.user.__dict__.copy()
-        del user['session']
-        d['user'] = user
-        return d

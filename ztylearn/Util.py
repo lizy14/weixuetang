@@ -3,14 +3,23 @@ import asyncio
 from .config import *
 import logging
 import json
-from datetime import date
+from datetime import *
+import requests
+
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
-import requests
 
 
 def from_stamp(stamp):
     return date.fromtimestamp(stamp / 1000)
+
+
+def wrap_date(dt):
+    return int(dt.timestamp())
+
+
+def parse_zty_stamp(st):
+    return datetime.fromtimestamp(st / 1000)
 
 
 async def wrapped_json(path, payload={}):  # path starts with '/'
@@ -47,19 +56,6 @@ def wrapped_json_sync(path, payload={}):  # path starts with '/'
     resp_json = r.json()
     return resp_json
 
-async def _register(username, password):
-    result = await wrapped_json('/users/register', payload={
-        'username': username,
-        'password': password
-    })
-    assert(result['message'] == 'Success')
-
-async def _unregister(username):
-    result = await wrapped_json('/students/{username}/cancel'.format_map({
-        'username': username
-    }))
-    assert(result['message'] == 'Success')
-
 
 def register(username, password):
     result = wrapped_json_sync('/users/register', payload={
@@ -85,55 +81,48 @@ def get_curriculum(username):
 
 
 def get_events():
-    return [
-        {
-            "name": "16-17春 研究生正选",
-            "remainingdays": 1,
-            "status": "begin"
-        },
-        {
-            "name": "16-17春 二级选课",
-            "remainingdays": 1,
-            "status": "end"
-        },
-        {
-            "name": "16-17春 研究生预选 ",
-            "remainingdays": 1,
-            "status": "end"
-        },
-        {
-            "name": "研 个人培养计划维护 ",
-            "remainingdays": 2,
-            "status": "end"
-        }
-    ]
+    return EVENTS
+
     response = wrapped_json_sync('/events')
     assert(response['message'] == 'Success')
-    return response['events']
+    events = response['events']
+
+    def ignore_event(ev):
+        name = ev['name']
+        if name.startswith('研 '):
+            return True
+        if ('研究生' in name) and ('本科生' not in name):
+            return True
+        return False
+
+    def wrap_event(ev):
+        status = ev['status']
+        status = {
+            'begin': '开始',
+            'end': '结束'
+        }[status]
+        today = datetime.combine(
+            datetime.today().date(), datetime.min.time())
+
+        return {
+            'title': ev['name'].strip() + status,
+            'date': wrap_date(today + timedelta(ev['remainingdays']))
+        }
+
+    return [wrap_event(ev) for ev in events if not ignore_event(ev)]
+
+
+cached_week_info = None
 
 
 def get_week_info():
-    return {
-        "updatetime": 1482930943958,
-        "currentsemester": {
-            "name": "2016-2017-秋季学期",
-            "id": "2016-2017-1",
-            "begintime": 1473609600000,
-            "endtime": 1487519999000
-        },
-        "currentteachingweek": {
-            "name": "16",
-            "id": "11065",
-            "begintime": 1482681600000,
-            "endtime": 1483286399000
-        },
-        "nextsemester": {
-            "name": "2016-2017-春季学期",
-            "id": "2016-2017-2",
-            "begintime": 1487520000000,
-            "endtime": 1498406399000
-        }
-    }
+    global cached_week_info
+    if(cached_week_info):
+        return cached_week_info
+
     response = wrapped_json_sync('/current')
     assert(response['message'] == 'Success')
-    return response['currentteachinginfo']
+    result = response['currentteachinginfo']
+
+    cached_week_info = result
+    return result

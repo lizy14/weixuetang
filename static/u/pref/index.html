@@ -78,12 +78,6 @@
                         <input class="weui-switch" type="checkbox" v-model="pref.s_lecture" />
                     </div>
                 </div>
-                <div class="weui-cell weui-cell_switch">
-                    <div class="weui-cell__bd">教务通知</div>
-                    <div class="weui-cell__ft">
-                        <input class="weui-switch" type="checkbox" v-model="pref.s_academic" />
-                    </div>
-                </div>
             </div>
 
 
@@ -182,7 +176,6 @@
                     renderPickerOptions(options), {
                     onChange: function(result) {},
                     onConfirm: function(result) {
-                        console.log(result)
                         vm.pref.s_class_ahead_time = result[0];
                     },
                     id: 'pick_s_class_ahead_time',
@@ -191,7 +184,7 @@
             },
             'course_ignore_toggled': function(index){
                 var c = this.courses[index];
-                console.log("course #" + c.course_id + ' (' + c.course_name + ') ignore set to ' + c.ignored);
+                // ignore toggled
                 var payload = {
                     course_id: c.course_id,
                     ignore: c.ignored + 0 // true/false -> 1/0
@@ -207,7 +200,7 @@
         for (key in pref) {
             (function(_key) {
                 vm.$watch('pref.' + _key, function() {
-                    console.log(_key + ' set to ' + this.pref[_key]);
+                    // preference changed
                     var payload = {};
                     var new_val = this.pref[_key];
                     if(false == _key.endsWith('_ahead_time')){

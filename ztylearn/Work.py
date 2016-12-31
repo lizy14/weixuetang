@@ -19,11 +19,3 @@ class Work:
         self.graded_by = grading_author
         self.grading_comment = grading_comment
         self.submitted = completion > 0
-
-
-    @property
-    async def dict(self):
-        d = self.__dict__.copy()
-        d["detail"] = await self.detail
-        del d['user']
-        return d
