@@ -16,7 +16,7 @@ class Student(models.Model):
     open_id = models.CharField(max_length=64, unique=True, db_index=True)
     xt_id = models.CharField(max_length=32, null=True, db_index=True)
     pref = models.OneToOneField(Preference, related_name='student')
-    flushing = models.BooleanField(null=True, default=None)
+    flushing = models.NullBooleanField()
     @classmethod
     def get_by_openid(cls, openid):
         try:
