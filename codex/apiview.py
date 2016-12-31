@@ -24,7 +24,7 @@ class BaseAPI(BaseView):
                         obj.request.session['openid'] = student.open_id
                         obj.request.session.set_expiry(0)
                     except Exception as e:
-                        self.logger.exception(str(e))
+                        obj.logger.exception(str(e))
                         return HttpResponseForbidden()
                 obj.student = student
             else: # pragma: no cover
