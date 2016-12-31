@@ -25,7 +25,7 @@ services:
   app:
     <<: *app_base
     entrypoint: ./entrypoint.sh
-    command: bash -c "python manage.py migrate; python manage.py synctemplate; python manage.py syncmenu; python manage.py celery purge -f; gunicorn -w 3 -b 0.0.0.0 WeLearn.wsgi"
+    command: bash -c "python manage.py makemigrations team userpage wechat homework notice calendar_ lecture; python manage.py migrate; python manage.py synctemplate; python manage.py syncmenu; python manage.py celery purge -f; gunicorn -w 3 -b 0.0.0.0 WeLearn.wsgi"
     volumes:
       - /code/static
     depends_on:
