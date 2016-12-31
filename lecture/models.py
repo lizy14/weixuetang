@@ -25,7 +25,10 @@ def create_lecture(sender, instance, **kwargs):
         title, dic = Parser.parse(instance.title, instance.content)
         if not dic:
             return
-        lec, created = Lecture.objects.get_or_create(title=title)
+        try:
+            lec = Lecture.objects.get_or_create(title=title)
+        except Lecture.DoesNotExist:
+            lec = Lecture(title=title)
         lec.time = dic.get('time', None)
         lec.place = dic.get('place', None)
         lec.lecturer = dic.get('lecturer', None)
