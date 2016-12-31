@@ -14,8 +14,6 @@ from .fortunes import get_fortune
 class UserBind(BaseAPI):
 
     def validate_user(self):
-        if self.input['student_id'] == 'lizy14':
-            return True
         try:
             register(self.input['student_id'], self.input['password'])
         except:
@@ -57,7 +55,6 @@ class UserPreference(APIView):
             's_work': pref.s_work,
             's_notice': pref.s_notice,
             's_grading': pref.s_grading,
-            's_academic': pref.s_academic,
             's_lecture': pref.s_lecture,
             's_class_ahead_time': pref.s_class_ahead_time,
             's_ddl_ahead_time': pref.s_ddl_ahead_time
@@ -72,7 +69,7 @@ class UserPreference(APIView):
             except KeyError:
                 pass
 
-        for arg in ('s_work', 's_notice', 's_grading', 's_academic', 's_lecture'):
+        for arg in ('s_work', 's_notice', 's_grading', 's_lecture'):
             try:
                 setattr(pref, arg, int(self.input[arg]) != 0)  # '0'/'1' -> Bool
             except KeyError:
