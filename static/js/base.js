@@ -100,10 +100,10 @@ window.getJSON = function(url, payload, callback, err_callback){
     };
     var wrapped_success = function(data){
         if(data.code == 10){
-            return window.unbind_redirect();
+            window.unbind_redirect();
         }
         if(data.code !== 0){
-            return wrapped_err(data);
+            wrapped_err(data);
         }
         if(data.code === 0){
             data.data = datify(data.data);
