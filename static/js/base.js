@@ -75,21 +75,7 @@ Date.prototype.days_left = function(){
 
 window.today =  new Date();
 
-
-window.unbind_redirect = function(){
-    if (location.pathname != BIND_LANDING) {
-        if(!window.alerting_bind_required){
-            window.alerting_bind_required = true;
-            alert('先绑定 info 账号才可以哦 :(');
-        }
-        location.href = BIND_LANDING + location.search;
-        return;
-    }
-};
-window.alerting_bind_required = false;
 window.getJSON = function(url, payload, callback, err_callback){
-(function(url, payload, callback, err_callback){ //造闭包
-
     payload = $.extend(payload, window.urlParam);
     var wrapped_err = function(err){
         if(err_callback){
@@ -98,26 +84,21 @@ window.getJSON = function(url, payload, callback, err_callback){
             alert("加载失败 " + (err.statusText || err.status || err.msg || err.code || ""));
         }
     };
-    var wrapped_success = function(data){
-        if(data.code == 10){
-            window.unbind_redirect();
-        }
-        if(data.code !== 0){
-            wrapped_err(data);
-        }
-        if(data.code === 0){
-            data.data = datify(data.data);
-        }
-        if(callback){
-            callback(data);
-        }
-    };
     $.getJSON(
         url,
         payload,
-        wrapped_success
+        function(data){
+            if(data.code !== 0){
+                wrapped_err(data);
+            }
+            if(data.code === 0){
+                data.data = datify(data.data);
+            }
+            if(callback){
+                callback(data);
+            }
+        }
     ).fail(wrapped_err);
-})(url, payload, callback, err_callback); //造闭包
 };
 window.postForm = function(url, payload, callback){
     payload = $.extend(payload, window.urlParam);
@@ -125,9 +106,6 @@ window.postForm = function(url, payload, callback){
         url,
         payload,
         function(data){
-            if(data.code == 10){
-                return window.unbind_redirect();
-            }
             if(data.code === 0){
                 data.data = datify(data.data);
             }
