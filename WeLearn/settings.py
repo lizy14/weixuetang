@@ -2,7 +2,6 @@ import os
 import json
 import logging
 import urllib.parse
-from wechat_sdk import WechatConf
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,14 +28,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 ALLOWED_HOSTS = ['*']
-
-wechat_conf = WechatConf(
-    token=WECHAT_TOKEN,
-    appid=WECHAT_APPID,
-    appsecret=WECHAT_SECRET,
-    encrypt_mode=MSG_ENCRYPT,
-    encoding_aes_key=WECHAT_AESKEY
-)
 
 # Application definition
 
