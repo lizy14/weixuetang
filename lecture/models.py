@@ -25,7 +25,7 @@ def create_lecture(sender, instance, **kwargs):
         title, dic = Parser.parse(instance.title, instance.content)
         if not dic:
             return
-        lec = Lecture.objects.create(time=dic.get('time', None), place=dic.get(
+        lec = Lecture.objects.get_or_create(time=dic.get('time', None), place=dic.get(
             'place', None), lecturer=dic.get('lecturer', None), title=title, origin=instance)
         try:
             if instance._student.pref.s_lecture and not instance._student.flushing:
