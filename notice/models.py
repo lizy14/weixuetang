@@ -19,12 +19,24 @@ class NoticeStatus(models.Model):
     read = models.BooleanField(default=False)
 
 
+from wechat.tasks import send_template
+
+ignore_prefix = [
+    '文化素质教育讲座',
+    '实验室科研探究'
+]
+
 @receiver(post_save, sender=Notice)
 def create_status(sender, instance, **kwargs):
     try:
-        NoticeStatus.objects.get_or_create(
+        ns, created = NoticeStatus.objects.get_or_create(
             notice=instance,
             student=instance._student,
         )
+        for prefix in ignore_prefix:
+            if instance.course.name.startswith(prefix):
+                return
+        if created and instance._student.pref.s_notice:
+            send_template(instance._student.open_id, ns)
     except:
         pass

@@ -17,6 +17,7 @@ class Lecture(models.Model):
     def detail(self):
         return self.origin.content
 
+from wechat.tasks import send_template
 
 @receiver(post_save, sender=Notice)
 def create_lecture(sender, instance, **kwargs):
@@ -24,5 +25,10 @@ def create_lecture(sender, instance, **kwargs):
         title, dic = Parser.parse(instance.title, instance.content)
         if not dic:
             return
-        Lecture.objects.create(time=dic.get('time', None), place=dic.get(
+        lec = Lecture.objects.create(time=dic.get('time', None), place=dic.get(
             'place', None), lecturer=dic.get('lecturer', None), title=title, origin=instance)
+        try:
+            if instance._student.pref.s_lecture:
+                send_template(instance._student.open_id, instance)
+        except:
+            pass
