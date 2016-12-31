@@ -9,7 +9,7 @@ class Lecture(models.Model):
     time = models.CharField(max_length=128, null=True)
     place = models.CharField(max_length=128, null=True)
     lecturer = models.CharField(max_length=128, null=True)
-    title = models.CharField(max_length=128)
+    title = models.CharField(max_length=128, db_index=True)
     origin = models.ForeignKey(Notice)
 
     @property
@@ -25,8 +25,12 @@ def create_lecture(sender, instance, **kwargs):
         title, dic = Parser.parse(instance.title, instance.content)
         if not dic:
             return
-        lec = Lecture.objects.get_or_create(time=dic.get('time', None), place=dic.get(
-            'place', None), lecturer=dic.get('lecturer', None), title=title, origin=instance)
+        lec, created = Lecture.objects.get_or_create(title=title)
+        lec.time = dic.get('time', None)
+        lec.place = dic.get('place', None)
+        lec.lecturer = dic.get('lecturer', None)
+        lec.origin = instance
+        lec.save()
         try:
             if instance._student.pref.s_lecture and not instance._student.flushing:
                 send_template(instance._student.open_id, lec)

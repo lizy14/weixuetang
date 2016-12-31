@@ -67,10 +67,10 @@ def update_hw_status(sender, instance, created, **kwargs):
             return
         if tup[1]:
             revoke_send(instance.student.open_id,
-                        instance.homework, '', eta=eta)
+                        instance.homework, eta=eta)
         elif instance.student.pref.s_work:
             send_template(instance.student.open_id,
-                          instance.homework, '', eta=eta)
+                          instance.homework, eta=eta)
 
     def ddl_changed(tup):
         nonlocal instance
