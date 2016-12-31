@@ -63,10 +63,16 @@ async def update_student_course(student, _course):
 
 
 def update_student_course_notice(student, course, _notice):
-    notice = Notice.objects.get_or_create(
-        xt_id=_notice.id,
-        course__id=course.id
-    )
+    try:
+        notice = Notice.objects.get(
+            xt_id=_notice.id,
+            course=course,
+        )
+    except:
+        notice = Notice(
+            xt_id=_notice.id,
+            course=course,
+        )
     notice.title = _notice.title
     notice.content = _notice.detail
     notice.publisher = _notice.author
