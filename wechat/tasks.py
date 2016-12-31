@@ -7,9 +7,9 @@ __logger__ = logging.getLogger(__name__)
 
 template_name = {
     'new_hw': '您有一个新作业',
-    'ddl_changed': '作业DDL有变化',
     'hw_checked': '您有一个作业被批改了',
     'new_notice': '新学堂公告',
+    'new_lec': '新文化素质教育讲座',
 }
 
 from WeLearn.settings import get_redirect_url
@@ -44,12 +44,6 @@ def wrap_Homework(ins, usr):
     }))
 
 
-def wrap_Homeworkddl(ins, usr):
-    tup = wrap_Homework(ins)
-    tup[0] = 'ddl_changed'
-    return tup
-
-
 def wrap_HomeworkStatus(ins, usr):
     if not usr.pref.s_work:
         raise OperationError
@@ -59,6 +53,19 @@ def wrap_HomeworkStatus(ins, usr):
         'score': ins.grading,
     }, get_redirect_url('hw/detail', {
         'homework_id': ins.homework.id
+    }))
+
+
+def wrap_Lecture(ins, usr):
+    if not usr.pref.s_lecture:
+        raise OperationError
+    return ('new_lec', {
+        'title': ins.title,
+        'lecturer': ins.lecturer,
+        'time': ins.time,
+        'place': ins.place,
+    }, get_redirect_url('lecture/detail', {
+        'lecture_id': ins.id
     }))
 
 
@@ -83,7 +90,8 @@ def t_send_template(openid, temp, data, url):
 from userpage.models import Student
 from codex.taskutils import revoke
 
-# NOTE: apply_async_function(task, args=~list or tuple~, kwargs=~dict~, **options)
+# NOTE: apply_async_function(task, args=~list or tuple~, kwargs=~dict~,
+# **options)
 
 
 def send_template(openid, ins, spec='', apply_async_function=None, wrapper=None, **options):
@@ -112,7 +120,8 @@ def revoke_send(openid, ins, spec='', wrapper=None, **options):
         if not wrapper:
             wrapper = default_wrapper
         t_data = wrapper(tup[1])
-        revoke(t_send_template, args=(openid, tup[0], t_data, tup[2]), kwargs={}, **options)
+        revoke(t_send_template, args=(openid, tup[
+               0], t_data, tup[2]), kwargs={}, **options)
     except OperationError:
         return
     except Exception as e:
