@@ -62,7 +62,7 @@ body {
 }
 
 .dialog-detail-box {
-    /*height: 300px;*/
+    max-height: 400px;
     display: -webkit-box !important;
     #-webkit-line-clamp: 15 !important;
     -webkit-box-orient: vertical;
