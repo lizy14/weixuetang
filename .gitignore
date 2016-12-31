@@ -102,3 +102,4 @@ reconstruct*
 */migrations/
 static/*.crt
 static/*.key
+secrets.env

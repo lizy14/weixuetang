@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh">
     <head>
-        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script src="../../js/base.js"></script>
+        <script src="../../js/calendar.js"></script>
 
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -30,7 +31,7 @@
         <div class="calendar-wrapper">
             <div class="calendar-container" id="month-view" v-if="view === 'month'">
                 <div class="header-wrapper">
-                    <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</h1>
+                    <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</span></h1>
                     <div id="views-switcher">
                         <span class="switcher primary-switcher" id="month-switch" v-on:click="set_view('month')">月</span>
                         <span class="switcher  default-switcher" id="week-switch" v-on:click="set_view('week')">周</span>
@@ -141,7 +142,7 @@
 
             <div class="calendar-container" id="week-view" v-if="view==='week'">
                 <div class="header-wrapper" >
-                    <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</h1>
+                    <h1 class="news-title">{{ focus_day.getMonth()+1 }}月<span style="font-size:16px;"> {{ focus_day.getFullYear() }}年</span></h1>
                     <div id="views-switcher">
                         <span class="switcher default-switcher" id="month-switch" v-on:click="set_view('month')">月</span>
                         <span class="switcher primary-switcher" id="week-switch" v-on:click="set_view('week')">周</span>
@@ -244,7 +245,6 @@
 
                     foo = 3;
                     getJSON('/api/cal/personal', param, function(data) {
-                        console.log(data);
                         raw_data = data;
                         if (raw_data.code == 0) {
                              course  = schedule(raw_data.data, _vm.num_dates, focus_day);
@@ -259,7 +259,6 @@
                     });
                     // Get important notice
                     getJSON('/api/cal/global', {}, function(data) {
-                        console.log(data);
                         raw_data = data;
                         if (raw_data.code == 0) {
                              _vm.notice  = schedule(raw_data.data, _vm.num_dates, focus_day);
@@ -269,7 +268,6 @@
                     });
                     // Get Homework ddls
                     getJSON('/api/hw/list', param, function(data) {
-                        console.log(data);
                         raw_data = data;
                         if (raw_data.code == 0) {
                              _vm.hw  = schedule(raw_data.data, _vm.num_dates, focus_day);

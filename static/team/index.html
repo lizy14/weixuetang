@@ -2,7 +2,7 @@
 <html lang="zh">
 
 <head>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="../../3rd/zepto.min.js"></script>
     <script src="../../js/base.js"></script>
@@ -290,7 +290,7 @@
                     }
                     var _vm = this;
                     var post = _vm.detail_item;
-                    console.log('deleting ' + JSON.stringify(post));
+                    // deleting
                     _vm.posting = true;
 
                     postForm('/api/team/delete', {'post_id': post.post_id}, function(){
@@ -333,7 +333,7 @@
                             check_text_field(post, 'contact')
                             );
                     }
-                    console.log("submitting " + JSON.stringify(post));
+                    // submitting
                     if(!check_fields(post)){
                         alert("所有项目均为必填");
                         return;
@@ -367,10 +367,10 @@
                     c = _vm.course;
                     _vm.posts = null;
                     if (c.course_id) {
-                        console.log('course changed to ' + c.course_id + ' (' + c.course_name + ')');
+                        // course changed
                         _vm.change_course();
                     } else {
-                        console.log('no course specified');
+                        // no course specified
                     }
                 },
             },

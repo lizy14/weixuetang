@@ -51,6 +51,9 @@ class FindTitle(regex):
         return {'title': self.match.group('title')}
 
 
+class CheckTitle(regex):
+    r'第\d+周（周.*）.*【.*】'
+
 import sys
 import inspect
 
@@ -69,8 +72,10 @@ class Parser(object):
     @classmethod
     def parse(cls, title, content):
         res = {}
+        if not CheckTitle().check(title):
+            return (title, res)
         for line in content.splitlines():
             res.update(cls.parse_line(line))
-        if getattr(res, 'title', False):
+        if res.get('title', False):
             title = res['title']
         return (title, res)

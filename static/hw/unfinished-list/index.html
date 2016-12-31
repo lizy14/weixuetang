@@ -2,7 +2,7 @@
 <html lang="zh">
 
 <head>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
     <script src="https://unpkg.com/vue-infinite-scroll@2.0.0"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="../../js/base.js"></script>
@@ -23,15 +23,19 @@
     <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
     <style>
-        .btn_dangerous{
+        .btn_dangerous {
             color: red;
+        }
+
+        hr {
+            margin: 1em;
         }
     </style>
 
 </head>
 
 <body>
-    <div id="vue-container" >
+    <div id="vue-container">
         <!-- Header -->
         <h1 class="news-title">未交作业</h1>
 
@@ -53,7 +57,7 @@
                     <div class="detail-box weui-media-box weui-media-box_text" v-bind:id="item.homework_id" v-for="item in items" v-on:click="show_detail">
                         <h5 class="weui-media-box__title">{{item.title}}</h5>
                         <h5 class="weui-media-box__title">ddl: {{item.end_time.readable()}}，还有<span class="weui-badge ddl-badge">{{item.end_time.days_left()}}</span>天</h5>
-                        <p class="weui-media-box__desc" >{{item.detail}}</p>
+                        <p class="weui-media-box__desc">{{item.detail}}</p>
                         <div class="weui-media-box__info">{{item.course_name}}</div>
                         <ul class="weui-media-box__info">
                             <li class="weui-media-box__info__meta">发布时间: {{item.start_time.readable()}}</li>
@@ -62,75 +66,48 @@
                     </div>
 
 
-                <div class="weui-panel__ft">
-                    <a :href="'/hw/list/?code=' + urlParam.code + '&state=' + urlParam.state" class="weui-cell weui-cell_access weui-cell_link">
-                        <div class="weui-cell__bd">查看本学期全部作业</div>
-                        <span class="weui-cell__ft"></span>
-                    </a>
-                </div>
+                    <div class="weui-panel__ft">
+                        <a :href="'/hw/list/?code=' + urlParam.code + '&state=' + urlParam.state" class="weui-cell weui-cell_access weui-cell_link">
+                            <div class="weui-cell__bd">查看本学期全部作业</div>
+                            <span class="weui-cell__ft"></span>
+                        </a>
+                    </div>
 
                 </div>
             </div>
 
 
+
+
             <!-- Detail Dialog -->
-            <transition id="dialog-container" v-if="detail_showing" name="fade" >
-                <div  class="detail-dialog">
+            <div id="dialog-container">
+                <div v-if="detail_showing" class="detail-dialog">
                     <div class="weui-mask"></div>
                     <div class="weui-dialog">
                         <div class="weui-dialog__hd">
                             <strong class="weui-dialog__title">{{detail_item.title}}</strong>
                         </div>
 
-                        <div class="dialog-detail-box weui-dialog__bd">
-                            <div class="news-container">
-                                <div class="weui-panel weui-panel_access">
-                                    <div class="weui-panel__bd">
-                                        <div class="weui-media-box weui-media-box_text">
-                                            <h5 class="weui-media-box__title">截止时间: {{detail_item.end_time.readable()}}</h5>
-                                            <h5 class="weui-media-box__title">发布时间: {{detail_item.start_time.readable()}}</h5>
-                                            <div class="weui-media-box__desc detail-description" v-if="detail_item.detail">{{detail_item.detail}}
-                                            </div>
-                                            <div class="weui-dialog__desc" v-else>无描述</div>
-
-
-                                            <div class="weui-media-box__info">
-                                                <span v-if="detail_item.attachment">附件:{{detail_item.attachment}}</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div class="weui-dialog__bd dialog-detail-box">
+                            <div class="weui-dialog__info">{{detail_item.course_name}}</div>
+                            <div class="weui-dialog__info">发布时间: {{detail_item.start_time.readable()}}</div>
+                            <div class="weui-dialog__info">截止时间: {{detail_item.end_time.readable()}}</div>
+                            <hr />
+                            <div class="dialog-detail-box weui-dialog__desc">
+                                <div v-if="detail_item.detail">{{detail_item.detail}}
                                 </div>
-
-
-                                <!-- Submission -->
-                                <div class="weui-panel weui-panel_access">
-                                    <div class="weui-panel__bd">
-                                        <div class="weui-media-box weui-media-box_text">
-                                            <h5 v-if="detail_item.status === 0" class="weui-media-box__title">未提交</h5>
-                                            <h5 v-else class="weui-media-box__title">已提交</h5>
-                                        </div>
-                                    </div>
-                                </div><!-- Submission -->
-
-                                <!-- Grade -->
-                                <div class="weui-panel weui-panel_access" v-if="detail_item.status === 2">
-                                    <div class="weui-panel__bd">
-                                        <div class="weui-media-box weui-media-box_text">
-                                            <p class="weui-media-box__title">批改信息</p>
-                                            <h5 class="weui-media-box__desc" v-if="detail_item.grade">分数: {{ detail_item.grade }}</h5>
-                                            <h5 class="weui-media-box__info" v-if="detail_item.grade_by">批改人: {{ detail_item.grade_by }}</h5>
-                                            <div class="weui-media-box__info detail-description">
-                                                <span v-if="detail_item.comment">批语：{{ detail_item.comment }}</span>
-                                                <span v-else>无批语</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div><!-- Grade -->
+                                <div v-else>无描述</div>
                             </div>
+                            <hr />
+                            <div class="weui-dialog__info">
+                                <span v-if="detail_item.attachment">附件:{{detail_item.attachment}}</span>
+                            </div>
+
+                            <!-- Submission and Grade: unneccesary -->
                         </div>
 
                         <div class="weui-dialog__ft">
-                            <a v-on:click="ignore" class="weui-dialog__btn weui-dialog__btn_primary btn_dangerous">忽略</a>
+                            <a v-on:click="ignore" class="weui-dialog__btn weui-dialog__btn_default btn_dangerous">隐藏</a>
                             <a v-on:click="hide_detail" class="weui-dialog__btn weui-dialog__btn_primary">返回</a>
                         </div>
                         <div v-if="posting" class="weui-loadmore">
@@ -139,7 +116,8 @@
                         </div>
                     </div>
                 </div>
-            </transition>
+            </div>
+            <!-- Detail Dialog -->
         </div>
     </div>
 
@@ -157,9 +135,9 @@
             methods: {
                 init: function() {
                     var _vm = this;
-                    getJSON('/api/hw/unfinished-list/', urlParam, function(data){
+                    getJSON('/api/hw/unfinished-list/', urlParam, function(data) {
                         // expand(data.data);
-                        data.data.sort(function(a, b){
+                        data.data.sort(function(a, b) {
                             return a.days_left - b.days_left;
                         });
                         _vm.items = data.data
@@ -181,7 +159,7 @@
                         _vm.detail_item = data.data;
                     })
                 },
-                ignore: function(){
+                ignore: function() {
                     var _vm = this;
                     var post = _vm.detail_item;
                     _vm.posting = true;
@@ -189,22 +167,22 @@
                     postForm('/api/hw/mark', {
                         'homework_id': post.homework_id,
                         'ignore': 1
-                    }, function(){
+                    }, function() {
                         _vm.posting = false;
                         _vm.detail_showing = false;
 
                         var i;
                         var n = _vm.items.length;
-                        for(i=0; i<n; i++){
-                            if(_vm.items[i].homework_id == post.homework_id){
+                        for (i = 0; i < n; i++) {
+                            if (_vm.items[i].homework_id == post.homework_id) {
                                 break;
                             }
                         }
-                        if(i < n){
+                        if (i < n) {
                             _vm.items.splice(i, 1);
                         }
 
-                    }, function(){
+                    }, function() {
                         _vm.posting = false;
                     });
                 }
@@ -212,8 +190,8 @@
         });
 
         vm.init();
-
-
     </script>
 
 </body>
+
+</html>

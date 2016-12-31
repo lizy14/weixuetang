@@ -3,7 +3,7 @@ from userpage.models import Student
 from django.http import HttpResponseForbidden
 from WeLearn.settings import IGNORE_CODE_CHECK
 from .baseview import *
-
+import logging
 
 class BaseAPI(BaseView):
 
@@ -12,23 +12,24 @@ class BaseAPI(BaseView):
     def certificated(function=None):
         def wrapper(obj, *args, **kwargs):
             if not IGNORE_CODE_CHECK:
-                # TODO: actually state not used
-                obj.check_input('code', 'state')
-                if obj.request.session.get('code', False) and obj.request.session.get('openid', False) and obj.input['code'] == obj.request.session['code']:
+                if obj.request.session.get('openid', False):
                     student = Student.objects.get(
                         open_id=obj.request.session['openid'])
                 else:
+                    obj.check_input('code', 'state')
                     try: # pragma: no cover
                         student, create = Student.objects.get_or_create(
                             open_id=WeChatView.open_id_from_code(obj.input['code']))
                         obj.request.session['code'] = obj.input['code']
                         obj.request.session['openid'] = student.open_id
                         obj.request.session.set_expiry(0)
-                    except:
+                    except Exception as e:
+                        obj.logger.exception(str(e))
                         return HttpResponseForbidden()
                 obj.student = student
             else: # pragma: no cover
-                student = Student.objects.all()[0]
+                obj.check_input('student_id')
+                student = Student.objects.get(pk=obj.input['student_id'])
                 obj.student = student
             return function(obj, *args, **kwargs)
         wrapper._original = function

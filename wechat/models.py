@@ -13,3 +13,8 @@ class Template(models.Model):
             return cls.objects.get(t_title=name).t_id
         except cls.DoesNotExist:
             raise LogicError('Template not found.')
+
+
+class AccessToken(models.Model):
+    access_token = models.TextField()
+    access_token_expires_at = models.IntegerField()

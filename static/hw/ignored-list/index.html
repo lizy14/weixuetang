@@ -2,7 +2,7 @@
 <html lang="zh">
 
 <head>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
     <script src="https://unpkg.com/vue-infinite-scroll@2.0.0"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="../../js/base.js"></script>
@@ -121,6 +121,9 @@
                     })
                 },
                 undo_ignore: function(ev){
+                    if(!confirm('取消忽略？')){
+                        return;
+                    }
                     var _vm = this;
                     var id =  ev.currentTarget.id;
                     _vm.posting = true;
