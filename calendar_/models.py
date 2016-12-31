@@ -9,8 +9,7 @@ from ztylearn.Util import get_curriculum, get_week_info, parse_zty_stamp
 
 class PersonalCalendar(models.Model):
     classes = models.TextField()  # JSON string, quick and dirty
-    student = models.ForeignKey(Student)
-
+    xt_id = models.CharField(max_length=32, null=True, db_index=True)
 
 大节起止时分 = {
     1: [8, 0, 9, 35],
@@ -65,8 +64,7 @@ def get_appointments(学号, 区间起点=None, 区间终点=None):
             })
         return 该课程的事件们
 
-    stu = Student.objects.get(xt_id=学号)
-    cache, created = PersonalCalendar.objects.get_or_create(student=stu)
+    cache, created = PersonalCalendar.objects.get_or_create(xt_id=学号)
 
     if created:
         纯纯课程列表 = get_curriculum(学号)
