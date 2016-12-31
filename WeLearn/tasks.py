@@ -58,8 +58,6 @@ async def update_student_course(student, _course):
         update_student_course_notice(student, course, _notice)
         for _notice in await _course.messages
     ]
-    await asyncio.gather(*tasks_hw)
-    await asyncio.gather(*tasks_nt)
 
 
 def update_student_course_notice(student, course, _notice):
