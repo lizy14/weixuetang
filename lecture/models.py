@@ -27,15 +27,15 @@ def create_lecture(sender, instance, **kwargs):
             return
         try:
             lec = Lecture.objects.get(title=title)
+            lec.__dict__.update(dic)
+            lec.save()
         except Lecture.DoesNotExist:
             lec = Lecture(title=title)
-        lec.time = dic.get('time', None)
-        lec.place = dic.get('place', None)
-        lec.lecturer = dic.get('lecturer', None)
-        lec.origin = instance
-        lec.save()
-        try:
-            if instance._student.pref.s_lecture and not instance._student.flushing:
-                send_template(instance._student.open_id, lec)
-        except:
-            pass
+            lec.__dict__.update(dic)
+            lec.origin = instance
+            lec.save()
+            try:
+                if instance._student.pref.s_lecture and not instance._student.flushing:
+                    send_template(instance._student.open_id, lec)
+            except:
+                pass
