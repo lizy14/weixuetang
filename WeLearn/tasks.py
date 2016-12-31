@@ -84,4 +84,5 @@ def update_student_course_work(student, course, _homework):
     homework.detail = _homework.detail
     homework.attachment = _homework.attachment
     homework._status = _homework
+    homework._status.student = student
     homework.save()

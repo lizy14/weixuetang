@@ -4,7 +4,9 @@ from wechat.tasks import send_template, t_send_template
 from codex.taskutils import *
 from django.utils import timezone
 from datetime import datetime, time, timedelta
-
+from .models import *
+import logging
+logger = logging.getLogger(name=__name__)
 
 @receiver(post_save, sender=HomeworkStatus)
 def update_hw_status(sender, instance, raw, **kwargs):
@@ -26,17 +28,18 @@ def update_hw_status(sender, instance, raw, **kwargs):
                 23, 59, 59)) - timedelta(minutes=ahead) if not getattr(instance, 'force_now', False) else datetime.now() + timedelta(seconds=10), timezone.get_current_timezone())
             send_template(instance.student.open_id,
                           instance.homework, '', safe_apply_async, eta=eta)
-    for k, v in instance.changes().items():
-        if k == 'graded':
-            graded(v)
-        elif k == 'ignored':
-            ignored(v)
-        else:
-            pass
+    logger.critical(instance.changes().items())
+    # for k, v in instance.changes().items():
+    #     if k == 'graded':
+    #         graded(v)
+    #     elif k == 'ignored':
+    #         ignored(v)
+    #     else:
+    #         pass
     # if 'ignored' not in instance.changes():
         # ignored((0, 0))
-    if getattr(instance, 'force_now', False):
-        ignored((0, 0))
+    # if getattr(instance, 'force_now', False):
+        # ignored((0, 0))
 
 
 from userpage.models import Student
@@ -46,13 +49,15 @@ from userpage.models import Student
 def create_hw_status(sender, instance, raw, **kwargs):
     if raw:
         return
-    subscribes = CourseStatus.objects.filter(course=instance.course)
-    for sub in subscribes:
-        stu = sub.student
-        try:
-            _ = HomeworkStatus.objects.get(student=stu, homework=instance)
-        except:
-            hws = HomeworkStatus(student=stu, homework=instance)
-            if getattr(instance, 'force_now', False):
-                hws.force_now = True
-            hws.save()
+    try:
+        status = HomeworkStatus.objects.get(student=instance._status.student, homework__xt_id=instance.xt_id)
+    except:
+        status = HomeworkStatus(student=instance._status.student, homework=instance)
+    status.__dict__.update({
+        'submitted': instance._status.submitted,
+        'graded': instance._status.graded,
+        'grading': instance._status.grading,
+        'grading_comment': instance._status.grading_comment,
+        'graded_by': instance._status.graded_by,
+    })
+    status.save()
