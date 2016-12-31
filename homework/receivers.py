@@ -28,14 +28,28 @@ def update_hw_status(sender, instance, created, **kwargs):
         elif instance.student.pref.s_work:
             send_template(instance.student.open_id,
                           instance.homework, '', safe_apply_async, eta=eta)
-
+    def ddl_changed(tup):
+        nonlocal instance
+        ahead=instance.student.pref.s_ddl_ahead_time
+        eta=timezone.make_aware(datetime.combine(tup[0], time(
+            23, 59, 59)) - timedelta(minutes=ahead)
+        revoke_send(instance.student.open_id,
+                    instance.homework, '', eta=eta)
+        eta=timezone.make_aware(datetime.combine(instance.homework.end_time, time(
+            23, 59, 59)) - timedelta(minutes=ahead)
+        send_template(instance.student.open_id,
+                      instance.homework, '', safe_apply_async, eta=eta)
+    if created:
+        ignored((0, 0))
+        return
     for k, v in instance.changes().items():
         if k == 'graded':
             graded(v)
         elif k == 'ignored':
             ignored(v)
-    if created:
-        ignored((0, 0))
+        elif k == 'end_time':
+            ddl_changed(v)
+
 
 
 from userpage.models import Student
