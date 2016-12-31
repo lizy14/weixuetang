@@ -61,7 +61,7 @@ def update_hw_status(sender, instance, created, **kwargs):
         ahead = instance.student.pref.s_ddl_ahead_time
         eta = timezone.make_aware(datetime.combine(instance.homework.end_time, time(
             23, 59, 59)) - timedelta(minutes=ahead))
-        if eta < timezone.now():
+        if eta < timezone.now() or ahead < 0:
             return
         if tup[1]:
             revoke_send(instance.student.open_id,
@@ -78,7 +78,7 @@ def update_hw_status(sender, instance, created, **kwargs):
                     instance.homework, '', eta=eta)
         eta=timezone.make_aware(datetime.combine(instance.homework.end_time, time(
             23, 59, 59)) - timedelta(minutes=ahead))
-        if eta < timezone.now():
+        if eta < timezone.now() or ahead < 0:
             return
         send_template(instance.student.open_id,
                       instance.homework, '', safe_apply_async, eta=eta)
@@ -119,8 +119,9 @@ def create_hw_status(sender, instance, created, **kwargs):
 def modified_cs_status(sender, instance, created, **kwargs):
     def ignored(tup):
         nonlocal instance
+        course = instance.course
         works=HomeworkStatus.objects.filter(
-            student=instance.student, course=instance.course)
+            student=instance.student, course=course)
         for work in works:
             work.ignored=tup[1]
             work.save()
