@@ -23,7 +23,7 @@ from wechat.tasks import send_template
 def create_lecture(sender, instance, **kwargs):
     if instance.course.name.startswith('文化素质教育讲座'):
         title, dic = Parser.parse(instance.title, instance.content)
-        if not dic:
+        if not dic or not title:
             return
         try:
             lec = Lecture.objects.get(title=title)

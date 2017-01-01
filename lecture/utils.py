@@ -76,6 +76,6 @@ class Parser(object):
             return (title, res)
         for line in content.splitlines():
             res.update(cls.parse_line(line))
-        if res.get('title', False) and len(res['title']) > 0:
+        if res.get('title', False):
             title = res['title']
         return (title, res)
