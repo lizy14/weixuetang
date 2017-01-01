@@ -17,7 +17,7 @@ class List(APIView):
                 'lecturer': item.lecturer,
                 'title': item.title,
             }
-        result = Lecture.objects.all()
+        result = Lecture.objects.all().order_by('id')
         try:  # pragma: no cover
             start = int(self.input['start'])
             limit = int(self.input['limit'])
